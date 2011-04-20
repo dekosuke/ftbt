@@ -45,7 +45,7 @@ public class FutabaAdapter extends ArrayAdapter {
         Display display = wm.getDefaultDisplay();
         width = display.getWidth();
         height = display.getHeight();
-     }  
+    }  
   
     @Override  
     public View getView(int position, View convertView,
@@ -74,7 +74,7 @@ public class FutabaAdapter extends ArrayAdapter {
 
             //画像をセット
             try{
-                if(item.getImgURL() != ""){
+                if(item.getImgURL() != null){
                     /*
                     InputStream is = imgURL.openStream();
                     Bitmap bm = BitmapFactory.decodeStream(is);
@@ -88,8 +88,11 @@ public class FutabaAdapter extends ArrayAdapter {
                     ImageView iv = (ImageView)view.findViewById(R.id.image);
                     iv.setImageBitmap(bm); 
                     */
+                    Log.d( "ftbt", "hoge" );
                     ImageView iv = (ImageView)view.findViewById(R.id.image);
+                    Log.d( "ftbt", "hoge1" );
                     ImageGetTask task = new ImageGetTask(iv);
+                    Log.d( "ftbt", "hoge2" );
                     task.execute(item.getImgURL());
                     screenName.setText("(画像あり)");
                 }else{
@@ -116,7 +119,7 @@ public class FutabaAdapter extends ArrayAdapter {
         
         public ImageGetTask(ImageView _image) {
             image = _image;
-            tag = image.getTag().toString();
+            //tag = image.getTag().toString();
         }
 
         @Override
@@ -149,9 +152,9 @@ public class FutabaAdapter extends ArrayAdapter {
         @Override
         protected void onPostExecute(Bitmap result) {
             // Tagが同じものが確認して、同じであれば画像を設定する
-            if (tag.equals(image.getTag())) {
+            //if (tag.equals(image.getTag())) {
                 image.setImageBitmap(result);
-            }
+            //}
         }
     }
 }  

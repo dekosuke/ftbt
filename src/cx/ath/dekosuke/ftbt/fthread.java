@@ -59,7 +59,7 @@ public class fthread extends ListActivity {
 //            doGetRequest("http://may.2chan.net/40/futaba.php?mode=cat"); //ふたば東方
 //        String threadUrl = "http://may.2chan.net/40/res/1457519.htm"; //東方テストスレ
 
-        String threadURL = "http://may.2chan.net/40/res/1477544.htm";
+        String threadURL = "http://may.2chan.net/40/res/1485800.htm";
         statuses = new ArrayList<FutabaStatus>();
         FutabaThreadParser parser = new FutabaThreadParser(threadURL);
         parser.parse();
