@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.util.Log;
+import android.os.AsyncTask;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -73,7 +74,6 @@ public class FutabaAdapter extends ArrayAdapter {
 
             //画像をセット
             try{
-                URL imgURL = new URL(item.getImgURL());
                 if(item.getImgURL() != ""){
                     /*
                     InputStream is = imgURL.openStream();
@@ -89,8 +89,8 @@ public class FutabaAdapter extends ArrayAdapter {
                     iv.setImageBitmap(bm); 
                     */
                     ImageView iv = (ImageView)view.findViewById(R.id.image);
-                    GetImageTask task = new GetImageTask(iv);
-                    task.execute(imgURL);
+                    ImageGetTask task = new ImageGetTask(iv);
+                    task.execute(item.getImgURL());
                     screenName.setText("(画像あり)");
                 }else{
                     //Bitmap bm = null;
@@ -120,36 +120,29 @@ public class FutabaAdapter extends ArrayAdapter {
         }
 
         @Override
-        protected Bitmap doInBackground(URLs... urls) {
-            URL imgURL = urls[0];
-            Bitmap bm = ImageCache.getImage(imgURL);
+        protected Bitmap doInBackground(String... urls) {
+            Bitmap bm = ImageCache.getImage(urls[0]);
             if (bm == null){ //does not exist on cache
-                InputStream is = imgURL.openStream();
-                Bitmap bm = BitmapFactory.decodeStream(is);
-                float s_x = Math.max(1.0f, 
-                    (float) bm.getWidth()  / (float)Math.min(width, height) );
-                float s_y = Math.max(1.0f,
-                    (float) bm.getHeight() / (float)Math.min(width, height) );
-                float scale = Math.max(s_x, s_y);
-                int new_x = (int)( bm.getWidth()  / scale );
-                int new_y = (int)( bm.getHeight() / scale );
-                bm = Bitmap.createScaledBitmap(bm, new_x, new_y, false);
-                ImageCache.setImage(imgURL, bm);
+                try{
+                    URL imgURL = new URL(urls[0]);
+                    InputStream is = imgURL.openStream();
+                    bm = BitmapFactory.decodeStream(is);
+                    float s_x = Math.max(1.0f, 
+                        (float) bm.getWidth()  / (float)Math.min(width, height) );
+                    float s_y = Math.max(1.0f,
+                        (float) bm.getHeight() / (float)Math.min(width, height) );
+                    float scale = Math.max(s_x, s_y);
+                    int new_x = (int)( bm.getWidth()  / scale );
+                    int new_y = (int)( bm.getHeight() / scale );
+                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, false);
+                    ImageCache.setImage(urls[0], bm);
+                } catch (Exception e) {
+                    Log.d( "ftbt", e.toString() );
+                }
+
+ 
             }
             return bm;
-            /*
-            //メモリのキャッシュディレクトリに保存
-            String cacheDirPath = null;
-            File cacheDir = getCacheDir()
-            if(cacheDir != null){
-                cacheDirPath = cacheDir.getPath();
-            }else{
-                Log.d( "ftbt", "Cachedir is null.");
-            }
-            */
-            //ImageView iv = (ImageView)view.findViewById(R.id.image);
-            //iv.setImageBitmap(bm); 
-            //return null;
         }
 
         //メインスレッドで実行する処理

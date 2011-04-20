@@ -2,12 +2,29 @@ package cx.ath.dekosuke.ftbt;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.ArrayList;
 
 import android.util.Log;
+import android.os.AsyncTask;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.content.Context;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.NameValuePair;
+import org.apache.http.HttpResponse;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 
 public class FutabaCatalogParser {  
   
@@ -20,12 +37,12 @@ public class FutabaCatalogParser {
     public FutabaCatalogParser(String urlStr) {  
         this.urlStr = urlStr;
         title="(title)";
-        statuses = new ArrayList<FutabaThread>();
+        fthreads = new ArrayList<FutabaThread>();
     }  
  
     // メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
     // スレッドの形式:
-    public void parse() {  
+    public void parse(Context context) {  
         try {  
             //正規表現でパーズ範囲を絞り込む
             Pattern honbunPattern = 
@@ -38,7 +55,7 @@ public class FutabaCatalogParser {
                 Pattern.compile("<img.*?src=\"(.+?)\"", Pattern.DOTALL);
             Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
          
-            cookieSyncManager.createInstance(this);
+            CookieSyncManager.createInstance(context);
             CookieSyncManager.getInstance().startSync();
             CookieManager.getInstance().setAcceptCookie(true);
             CookieManager.getInstance().removeExpiredCookie();
@@ -65,10 +82,30 @@ public class FutabaCatalogParser {
                 Log.d( "ftbt", "httppost error" );
             }
 
+            HttpGet httpget = new HttpGet( urlStr );
+            HttpResponse httpResponse = null;
+            try {
+                httpResponse = httpClient.execute(httpget);
+            } catch (Exception e) {
+                Log.d( "ftbt", "httpget error");
+            }
 
-            byte[] data = httpClient.getByteArrayFromURL(urlStr);  
-            //parser.setInput(new StringReader(new String(data, "UTF-8")));  
-            Matcher mc = honbunPattern.matcher(new String(data, "Shift-JIS"));
+            int status = httpResponse.getStatusLine().getStatusCode();
+            String data = null;
+            if (HttpStatus.SC_OK == status) {
+                try {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    httpResponse.getEntity().writeTo(outputStream);
+                    data = outputStream.toString();
+                    //parse(outputStream.toString());
+                } catch (Exception e) {
+                     Log.d( "ftbt", "error in creating bytestream");
+                }
+            } else {
+                Log.d( "ftbt", "NON-OK Status" + status);
+            }
+
+            Matcher mc = honbunPattern.matcher(data);
             mc.find();
             mc.find(); //2つ目
             String honbun = mc.group(0);
@@ -78,19 +115,19 @@ public class FutabaCatalogParser {
                 Matcher mcText = textPattern.matcher(mcRes.group(1));
                 //Log.d( "ftbt", mcRes.group(1) );
                 mcText.find();
-                FutabaStatus status = new FutabaStatus();
+                FutabaThread thread = new FutabaThread();
                 String text = mcText.group(1);
                 text = tagPattern.matcher(text).replaceAll(""); //タグ除去
-                status.setText(text);
-                Matcher mcImg = thumbPattern.matcher(mcRes.group(1));
+                thread.setText(text);
+                Matcher mcImg = imgPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
-                    status.setImgURL(mcImg.group(1));
+                    thread.setImgURL(mcImg.group(1));
                     Log.d( "ftbt", mcImg.group(1) );
                 }
                 //Log.d( "ftbt", text );
-                statuses.add(status);
+                fthreads.add(thread);
             }
-            Log.d( "ftbt", String.valueOf(statuses.size()) );
+            Log.d( "ftbt", String.valueOf(fthreads.size()) );
         } catch (Exception e) { 
             Log.d( "ftbt", e.toString() ); 
             throw new RuntimeException(e);  

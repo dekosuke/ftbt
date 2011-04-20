@@ -1,5 +1,9 @@
 package cx.ath.dekosuke.ftbt;
 
+import java.util.HashMap;
+import android.graphics.Bitmap;
+import android.util.Log;
+
 public class ImageCache {  
     private static HashMap<String,Bitmap> cache = new HashMap<String,Bitmap>();  
       
