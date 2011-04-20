@@ -74,7 +74,8 @@ public class ftbt extends Activity
             getClass().getPackage().getName()+".catalog");
         */
         intent.setClassName(getPackageName(), 
-            getClass().getPackage().getName()+".fthread");
+            //getClass().getPackage().getName()+".fthread");
+            getClass().getPackage().getName()+".catalog");
         startActivity(intent);
     }
 }
