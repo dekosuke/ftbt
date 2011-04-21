@@ -67,7 +67,7 @@ public class ftbt extends Activity
     }
 
     // 設定画面に遷移
-    private void transSetting() {
+    public void transSetting() {
         Intent intent = new Intent();
         /*
         intent.setClassName(getPackageName(), 

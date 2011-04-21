@@ -2,6 +2,8 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
 import android.graphics.Typeface;
@@ -11,6 +13,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.util.Log;
 import android.os.AsyncTask;
+
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -28,6 +34,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
   
     private ArrayList items;  
     private LayoutInflater inflater;
+    private Context context;
 
     //画面サイズ
     private int width;
@@ -36,7 +43,8 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
     public FutabaCatalogAdapter(Context context, int textViewResourceId,  
                          ArrayList items) {  
         super(context, textViewResourceId, items);  
-        this.items = items;  
+        this.items = items;
+        this.context = context;
         this.inflater = (LayoutInflater) context  
             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
  
@@ -52,13 +60,25 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
                         ViewGroup parent) {  
         // ビューを受け取る  
         View view = convertView;  
-  
+
         if (view == null) {  
             // 受け取ったビューがnullなら新しくビューを生成  
             view = inflater.inflate(R.layout.futaba_catalog_row, null);  
             // 背景画像をセットする  
-            //view.setBackgroundResource(R.drawable.back);  
-        }
+            //view.setBackgroundResource(R.drawable.back);
+            
+            view.setOnClickListener( new View.OnClickListener() {    
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    Activity activity = (Activity)getContext();
+                    //TODO:IntentでActivityにデータを渡す
+                    intent.setClassName(activity.getPackageName(), 
+                        activity.getClass().getPackage().getName()+".fthread");
+                    activity.startActivity(intent); //Never called!
+                }}
+            );
+       }
 
         // 表示すべきデータの取得  
         FutabaThread item = (FutabaThread)items.get(position);  

@@ -4,8 +4,14 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.content.Intent;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.view.View.OnClickListener;
 
+import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,13 +30,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.DefaultedHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-//XML Parser
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
 //板カタログ表示アクティビティ
-public class catalog extends ListActivity {
+public class catalog extends ListActivity implements OnClickListener{
 
     private ArrayList<FutabaThread> fthreads = null;
     private FutabaCatalogAdapter adapter = null;
@@ -53,5 +54,19 @@ public class catalog extends ListActivity {
 
         DebugUtility.showToast(this, "catalog");
     }
+    
+    public void onClick(View v) {
+        Log.d( "ftbt", "catalog onclick" );
+        transSettingToThread();
+    }
 
+    // スレッド画面に遷移
+    public void transSettingToThread() {
+        Intent intent = new Intent();
+        
+        //TODO:IntentでActivityにデータを渡す
+        intent.setClassName(getPackageName(), 
+            getClass().getPackage().getName()+".fthread");
+        startActivity(intent);
+    }
 }
