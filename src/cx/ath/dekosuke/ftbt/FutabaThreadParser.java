@@ -57,17 +57,30 @@ public class FutabaThreadParser {
             mc.find();
             mc.find(); //2つ目
             String honbun = mc.group(0);
+            //ここで画像(img)とテキスト(blockquote)のマッチング
+            FutabaStatus statusTop = new FutabaStatus();
+            Matcher mcImg = thumbPattern.matcher(honbun);
+            mcImg.find();
+            Log.d( "ftbt", "test1" );
+            statusTop.setImgURL(mcImg.group(1));
+            Matcher mcText = textPattern.matcher(honbun);
+            mcText.find();
+            String text = mcText.group(1);
+            text = tagPattern.matcher(text).replaceAll(""); //タグ除去
+            statusTop.setText(text);
+            statuses.add(statusTop);
+         
             //Log.d( "ftbt", honbun );
             Matcher mcRes = resPattern.matcher(honbun);
             while( mcRes.find() ){
-                Matcher mcText = textPattern.matcher(mcRes.group(1));
+                mcText = textPattern.matcher(mcRes.group(1));
                 //Log.d( "ftbt", mcRes.group(1) );
                 mcText.find();
                 FutabaStatus status = new FutabaStatus();
-                String text = mcText.group(1);
+                text = mcText.group(1);
                 text = tagPattern.matcher(text).replaceAll(""); //タグ除去
                 status.setText(text);
-                Matcher mcImg = thumbPattern.matcher(mcRes.group(1));
+                mcImg = thumbPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
                     status.setImgURL(mcImg.group(1));
                     Log.d( "ftbt", mcImg.group(1) );
