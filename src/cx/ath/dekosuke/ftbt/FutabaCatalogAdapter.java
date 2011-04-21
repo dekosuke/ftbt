@@ -60,8 +60,10 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             //view.setBackgroundResource(R.drawable.back);  
         }
 
+        Log.d( "ftbt", "screenname set" );
+        
         // 表示すべきデータの取得  
-        FutabaStatus item = (FutabaStatus)items.get(position);  
+        FutabaThread item = (FutabaThread)items.get(position);  
         if (item != null) {  
             TextView screenName = (TextView)view.findViewById(R.id.toptext);  
             screenName.setTypeface(Typeface.DEFAULT_BOLD);  
@@ -72,6 +74,8 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
                 screenName.setText("(no text)");//item.getImgURL());
             }
 
+            Log.d( "ftbt", "screenname set" );
+
             //画像をセット
             try{
                 if(item.getImgURL() != null){
@@ -79,6 +83,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
                     ImageGetTask task = new ImageGetTask(iv);
                     task.execute(item.getImgURL());
                     screenName.setText("(画像あり)");
+                    Log.d( "ftbt", "image "+item.getImgURL()+"set" );
                 }else{
                     //Bitmap bm = null;
                     //ImageView iv = (ImageView)view.findViewById(R.id.image);

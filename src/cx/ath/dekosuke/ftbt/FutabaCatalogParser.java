@@ -52,7 +52,7 @@ public class FutabaCatalogParser {
             Pattern textPattern = 
                 Pattern.compile("<small.*?>(.+?)</small>", Pattern.DOTALL);
             Pattern imgPattern = 
-                Pattern.compile("<img.*?src=\"(.+?)\"", Pattern.DOTALL);
+                Pattern.compile("<img.*?src=(?:\"|')(.+?)(?:\"|')", Pattern.DOTALL);
             Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
          
             CookieSyncManager.createInstance(context);
@@ -68,6 +68,7 @@ public class FutabaCatalogParser {
             httpClient.getParams().setParameter("http.socket.timeout", 3000);
             HttpPost httppost = new HttpPost(urlStr);
             List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(3);
+            nameValuePair.add(new BasicNameValuePair("mode", "catset"));
             nameValuePair.add(new BasicNameValuePair("cx", "10"));
             nameValuePair.add(new BasicNameValuePair("cy", "5"));
             nameValuePair.add(new BasicNameValuePair("cl", "10"));
@@ -82,7 +83,7 @@ public class FutabaCatalogParser {
                 Log.d( "ftbt", "httppost error" );
             }
 
-            HttpGet httpget = new HttpGet( urlStr );
+            HttpGet httpget = new HttpGet( urlStr+"?mode=cat" );
             HttpResponse httpResponse = null;
             try {
                 httpResponse = httpClient.execute(httpget);
@@ -96,7 +97,7 @@ public class FutabaCatalogParser {
                 try {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     httpResponse.getEntity().writeTo(outputStream);
-                    data = outputStream.toString();
+                    data = outputStream.toString("SHIFT-JIS");
                     //parse(outputStream.toString());
                 } catch (Exception e) {
                      Log.d( "ftbt", "error in creating bytestream");
@@ -113,7 +114,7 @@ public class FutabaCatalogParser {
             Matcher mcRes = resPattern.matcher(honbun);
             while( mcRes.find() ){
                 Matcher mcText = textPattern.matcher(mcRes.group(1));
-                //Log.d( "ftbt", mcRes.group(1) );
+                Log.d( "ftbt", mcRes.group(1) );
                 mcText.find();
                 FutabaThread thread = new FutabaThread();
                 String text = mcText.group(1);

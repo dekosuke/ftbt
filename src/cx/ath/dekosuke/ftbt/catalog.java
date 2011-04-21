@@ -45,22 +45,11 @@ public class catalog extends ListActivity {
         parser.parse(getApplicationContext());
         fthreads = parser.getThreads();
         Log.d( "ftbt", "catalog parse end" );
-        /*
-        statuses.add(new FutabaStatus());
-        statuses.add(new FutabaStatus());
-        statuses.add(new FutabaStatus());
-        */
 
-        //サムネイル画像を一括取得してキャッシュに放り込む
-        //遅いので将来的には別スレッドに入れる必要があるかもしれない
-
-        //Log.d( "ftbt", "hoge2" );
         adapter = new FutabaCatalogAdapter(this, R.layout.futaba_catalog_row, fthreads);
-        //ListView listView = (ListView)this.findViewById(R.id.hoge_list_view);
-        //listView.setAdapter(adapter);
-        //Log.d( "ftbt", "hoge4" );
+        Log.d( "ftbt", "adapter created" );
         setListAdapter(adapter);
-        //Log.d( "ftbt", "hoge5" );
+        Log.d( "ftbt", "setlitadapter end" );
 
         DebugUtility.showToast(this, "catalog");
     }
