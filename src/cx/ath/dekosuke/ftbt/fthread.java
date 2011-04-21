@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.content.Intent;
 
 import android.util.Log;
 
@@ -59,7 +60,9 @@ public class fthread extends ListActivity {
 //            doGetRequest("http://may.2chan.net/40/futaba.php?mode=cat"); //ふたば東方
 //        String threadUrl = "http://may.2chan.net/40/res/1457519.htm"; //東方テストスレ
 
-        String threadURL = "http://may.2chan.net/40/res/1485800.htm";
+        Intent intent = getIntent();
+        String threadURL = "http://may.2chan.net/40/res/" + (String) intent.getSerializableExtra("threadNum");
+        Log.d( "ftbt", "threadURL:"+threadURL );
         statuses = new ArrayList<FutabaStatus>();
         FutabaThreadParser parser = new FutabaThreadParser(threadURL);
         parser.parse();

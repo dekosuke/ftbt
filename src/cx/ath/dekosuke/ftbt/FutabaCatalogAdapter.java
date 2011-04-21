@@ -61,6 +61,10 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
         // ビューを受け取る  
         View view = convertView;  
 
+        // 表示すべきデータの取得  
+        FutabaThread item = (FutabaThread)items.get(position);
+        final String threadNum = item.getThreadNum();
+ 
         if (view == null) {  
             // 受け取ったビューがnullなら新しくビューを生成  
             view = inflater.inflate(R.layout.futaba_catalog_row, null);  
@@ -70,9 +74,11 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             view.setOnClickListener( new View.OnClickListener() {    
                 @Override
                 public void onClick(View v) {
+                    Log.d ( "ftbt", "intent calling thread activity" );
                     Intent intent = new Intent();
                     Activity activity = (Activity)getContext();
-                    //TODO:IntentでActivityにデータを渡す
+                    //Log.d ( "ftbt", threadNum ); 
+                    intent.putExtra("threadNum", threadNum );
                     intent.setClassName(activity.getPackageName(), 
                         activity.getClass().getPackage().getName()+".fthread");
                     activity.startActivity(intent); //Never called!
@@ -80,12 +86,9 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             );
        }
 
-        // 表示すべきデータの取得  
-        FutabaThread item = (FutabaThread)items.get(position);  
-        if (item != null) {  
+       if (item != null) {  
             // スクリーンネームをビューにセット  
             TextView text = (TextView)view.findViewById(R.id.bottomtext);  
-            Log.d( "ftbt", "aaa" );
             
             //画像をセット
             try{
@@ -93,7 +96,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
                     ImageView iv = (ImageView)view.findViewById(R.id.image);
                     ImageGetTask task = new ImageGetTask(iv);
                     task.execute(item.getImgURL());
-                    Log.d( "ftbt", "image "+item.getImgURL()+"set" );
+                    //Log.d( "ftbt", "image "+item.getImgURL()+"set" );
                 }else{
                     //Bitmap bm = null;
                     //ImageView iv = (ImageView)view.findViewById(R.id.image);

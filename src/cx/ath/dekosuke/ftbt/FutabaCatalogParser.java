@@ -53,6 +53,8 @@ public class FutabaCatalogParser {
                 Pattern.compile("<small.*?>(.+?)</small>", Pattern.DOTALL);
             Pattern imgPattern = 
                 Pattern.compile("<img.*?src=(?:\"|')(.+?)(?:\"|')", Pattern.DOTALL);
+            Pattern threadNumPattern = 
+                Pattern.compile("<a.*?href=(?:\"|')res/([0-9]+[.]htm)(?:\"|')", Pattern.DOTALL);
             Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
          
             CookieSyncManager.createInstance(context);
@@ -120,6 +122,10 @@ public class FutabaCatalogParser {
                 String text = mcText.group(1);
                 text = tagPattern.matcher(text).replaceAll(""); //タグ除去
                 thread.setText(text);
+                Matcher mcThreadNum = threadNumPattern.matcher(mcRes.group(1));
+                mcThreadNum.find();
+                String threadNum = mcThreadNum.group(1);
+                thread.setThreadNum(threadNum);
                 Matcher mcImg = imgPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
                     thread.setImgURL(mcImg.group(1));

@@ -11,6 +11,7 @@ public class FutabaThread {
     private String mailTo;
     private int id;
     private String imgURL;
+    private String threadNum;
     //投稿時刻private date
     //画像private  
 
@@ -36,5 +37,7 @@ public class FutabaThread {
     public void setId(int id_arg){ id=id_arg; }
     public String getImgURL(){ return imgURL; }
     public void setImgURL(String str){ imgURL=str; }
+    public String getThreadNum(){ return threadNum; }
+    public void setThreadNum(String str){ threadNum=str; }
     
 }
