@@ -86,6 +86,10 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             );
        }
 
+       Bitmap bm = null;
+       ImageView iv = (ImageView)view.findViewById(R.id.image);
+       iv.setImageBitmap(bm); 
+ 
        if (item != null) {  
             // スクリーンネームをビューにセット  
             TextView text = (TextView)view.findViewById(R.id.bottomtext);  
@@ -93,7 +97,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             //画像をセット
             try{
                 if(item.getImgURL() != null){
-                    ImageView iv = (ImageView)view.findViewById(R.id.image);
+                    iv.setTag(item.getImgURL());
                     ImageGetTask task = new ImageGetTask(iv);
                     task.execute(item.getImgURL());
                     //Log.d( "ftbt", "image "+item.getImgURL()+"set" );
@@ -121,7 +125,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
         
         public ImageGetTask(ImageView _image) {
             image = _image;
-            //tag = image.getTag().toString();
+            tag = _image.getTag().toString();
         }
 
         @Override
@@ -153,10 +157,11 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
         //メインスレッドで実行する処理
         @Override
         protected void onPostExecute(Bitmap result) {
+            //Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
             // Tagが同じものが確認して、同じであれば画像を設定する
-            //if (tag.equals(image.getTag())) {
+            if (tag.equals(image.getTag().toString())) {
                 image.setImageBitmap(result);
-            //}
+            }
         }
     }
 }  
