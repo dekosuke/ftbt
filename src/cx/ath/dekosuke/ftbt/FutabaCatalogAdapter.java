@@ -55,34 +55,24 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
   
         if (view == null) {  
             // 受け取ったビューがnullなら新しくビューを生成  
-            view = inflater.inflate(R.layout.futaba_row, null);  
+            view = inflater.inflate(R.layout.futaba_catalog_row, null);  
             // 背景画像をセットする  
             //view.setBackgroundResource(R.drawable.back);  
         }
 
-        Log.d( "ftbt", "screenname set" );
-        
         // 表示すべきデータの取得  
         FutabaThread item = (FutabaThread)items.get(position);  
         if (item != null) {  
-            TextView screenName = (TextView)view.findViewById(R.id.toptext);  
-            screenName.setTypeface(Typeface.DEFAULT_BOLD);  
-  
             // スクリーンネームをビューにセット  
             TextView text = (TextView)view.findViewById(R.id.bottomtext);  
-            if (screenName != null) {  
-                screenName.setText("(no text)");//item.getImgURL());
-            }
-
-            Log.d( "ftbt", "screenname set" );
-
+            Log.d( "ftbt", "aaa" );
+            
             //画像をセット
             try{
                 if(item.getImgURL() != null){
                     ImageView iv = (ImageView)view.findViewById(R.id.image);
                     ImageGetTask task = new ImageGetTask(iv);
                     task.execute(item.getImgURL());
-                    screenName.setText("(画像あり)");
                     Log.d( "ftbt", "image "+item.getImgURL()+"set" );
                 }else{
                     //Bitmap bm = null;
