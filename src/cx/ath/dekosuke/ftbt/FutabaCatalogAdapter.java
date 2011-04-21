@@ -71,6 +71,9 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             // 背景画像をセットする  
             //view.setBackgroundResource(R.drawable.back);
             
+      }
+
+        if(true){
             view.setOnClickListener( new View.OnClickListener() {    
                 @Override
                 public void onClick(View v) {
@@ -84,7 +87,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
                     activity.startActivity(intent); //Never called!
                 }}
             );
-       }
+        }
 
        Bitmap bm = null;
        ImageView iv = (ImageView)view.findViewById(R.id.image);
