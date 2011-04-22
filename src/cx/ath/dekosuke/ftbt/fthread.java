@@ -52,14 +52,6 @@ public class fthread extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        //setContentView(R.layout.catalog);
-        //DebugUtility.showToast(this, "Catalog.onCreate()");
-        
-        //webページを取得
-//        String result = 
-//            doGetRequest("http://may.2chan.net/40/futaba.php?mode=cat"); //ふたば東方
-//        String threadUrl = "http://may.2chan.net/40/res/1457519.htm"; //東方テストスレ
-
         Intent intent = getIntent();
         String threadURL = "http://may.2chan.net/40/res/" + (String) intent.getSerializableExtra("threadNum");
         Log.d( "ftbt", "threadURL:"+threadURL );
@@ -68,13 +60,7 @@ public class fthread extends ListActivity {
         parser.parse();
         statuses = parser.getStatuses(); 
         Log.d( "ftbt", "parse end" );
-        /*
-        statuses.add(new FutabaStatus());
-        statuses.add(new FutabaStatus());
-        statuses.add(new FutabaStatus());
-        */
 
-        //サムネイル画像を一括取得してキャッシュに放り込む
         //遅いので将来的には別スレッドに入れる必要があるかもしれない
 
         //Log.d( "ftbt", "hoge2" );

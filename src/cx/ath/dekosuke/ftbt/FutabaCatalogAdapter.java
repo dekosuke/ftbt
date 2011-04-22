@@ -71,7 +71,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             // 背景画像をセットする  
             //view.setBackgroundResource(R.drawable.back);
             
-      }
+        }
 
         if(true){
             view.setOnClickListener( new View.OnClickListener() {    
