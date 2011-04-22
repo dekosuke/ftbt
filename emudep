@@ -1,4 +1,4 @@
 ant clean
 ant debug
-adb uninstall cx.ath.dekosuke.ftbt
-adb install bin/ftbt-debug.apk
+adb -e uninstall cx.ath.dekosuke.ftbt
+adb -e install bin/ftbt-debug.apk
