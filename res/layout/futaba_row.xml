@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
     android:layout_width="fill_parent"
     android:padding="6dip"
-        android:orientation="vertical"
+    android:background="#F0E0D6"
+    android:orientation="vertical"
     >  
    <LinearLayout
         android:orientation="vertical"
@@ -11,6 +12,7 @@
         <TextView android:id="@+id/toptext" android:layout_width="fill_parent"  
             android:layout_height="wrap_content" android:layout_weight="1"  
             android:textSize="12sp"
+            android:textColor="#800000"
             android:gravity="center_vertical" />  
     </LinearLayout>  
     <LinearLayout
@@ -29,6 +31,7 @@
        <TextView android:layout_width="fill_parent"  
             android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/bottomtext"  
             android:textSize="12sp"
+            android:textColor="#800000"
             android:ellipsize="marquee" />  
     </LinearLayout>  
 </LinearLayout>  

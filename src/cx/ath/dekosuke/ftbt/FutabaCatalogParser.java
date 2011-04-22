@@ -73,7 +73,7 @@ public class FutabaCatalogParser {
             nameValuePair.add(new BasicNameValuePair("mode", "catset"));
             nameValuePair.add(new BasicNameValuePair("cx", "10"));
             nameValuePair.add(new BasicNameValuePair("cy", "5"));
-            nameValuePair.add(new BasicNameValuePair("cl", "10"));
+            nameValuePair.add(new BasicNameValuePair("cl", "100"));
 
             // ログイン処理
             try {

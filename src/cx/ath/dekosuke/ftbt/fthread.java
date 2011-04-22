@@ -44,17 +44,9 @@ public class fthread extends ListActivity {
         statuses = parser.getStatuses(); 
         Log.d( "ftbt", "parse end" );
 
-        //遅いので将来的には別スレッドに入れる必要があるかもしれない
-
-        //Log.d( "ftbt", "hoge2" );
         adapter = new FutabaAdapter(this, R.layout.futaba_row, statuses);
-        //ListView listView = (ListView)this.findViewById(R.id.hoge_list_view);
-        //listView.setAdapter(adapter);
-        //Log.d( "ftbt", "hoge4" );
         setListAdapter(adapter);
-        //Log.d( "ftbt", "hoge5" );
 
-        DebugUtility.showToast(this, "fthread");
     }
 
 }
