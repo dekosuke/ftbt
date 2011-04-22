@@ -5,32 +5,31 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.os.Environment;
 
+import java.io.File;
+
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+
 //File Saver
 public class SDCard {  
       
     public static void saveBin(String name, byte[] bytes) { 
         String sdcard_dir = Environment.
             getExternalStorageDirectory().getPath(); 
-        String filename = sdcard_dif + "/" + name;
-        File file = new File(filePath);
+        String filename = sdcard_dir + "/" + name;
+        File file = new File(filename);
         file.getParentFile().mkdir();
         try {
-             BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(file));
+            BufferedOutputStream fos = new BufferedOutputStream(new FileOutputStream(file));
             fos.write(bytes);
         } catch (Exception e) {
-            Log.d( 'ftbt', "failed to write file"+name );
+            Log.d( "ftbt", "failed to write file"+name );
         }
         //Environment.getDataDirectory().getPath(); // /dataなど
         //Environment.getDownloadCacheDirectory().getPath(); // cacheなど
     }
-
-    /**
-     * 画像オブジェクトを指定した画像フォーマットのバイナリ表現に変換します。
-     * @param image 画像オブジェクト
-     * @param imageFormat 画像フォーマット
-     * @return バイナリ表現
-     */
-    public static byte[] getImageBytes(BufferedImage image,
+/*
+    public static byte[] getImageBytes(hoge,
                                  String imageFormat)  throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         BufferedOutputStream os = new BufferedOutputStream(bos);
@@ -45,6 +44,6 @@ public class SDCard {
         byte[] bytes = getImageBytes(image, imageFormat);
         saveBin(name, bytes);
     }
-
+*/
     
 } 

@@ -3,24 +3,35 @@ package cx.ath.dekosuke.ftbt;
 import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
+import android.app.Activity;
+import android.os.Bundle;
 import android.graphics.*;
+import android.view.SurfaceView;
+import android.view.SurfaceHolder;
+import android.content.Intent;
+import android.util.Log;
+
+import java.util.ArrayList;
+
+import java.io.File;
+
 
 //画像カタログ
 //指定された画像の登録および、隣の画像への移動
 //画像の円リストは別のデータ構造で。
-public class imageCatalog extend Activity {
+public class imageCatalog extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
         Intent intent = getIntent();
-        String threadURL = (String) intent.getSerializableExtra("threadNum");
-        Log.d( "ftbt", "threadURL:"+threadURL );
- 
+        int imageNum = Integer.parseInt( (String) intent.getSerializableExtra("imageNum") );
+        CircleList.set(imageNum);
     } 
 }
 
+/*
 public class imageCatalogView extends View {
     
     public imageCatalogView(Context context) {
@@ -31,32 +42,84 @@ public class imageCatalogView extends View {
     protected void onDraw(Canvas c) {
         super.onDraw(c);
         Paint p = new Paint();
-        Bitmap img0, img1;
+        //Bitmap img0, img1;
         
-        /*
+        Bitmap bmp = ImageCache.getImage(urls[0]);
         Resources res = this.getContext().getResources();
-        img0 = BitmapFactory.decodeResource(res, R.drawable.back);
-        img1 = BitmapFactory.decodeResource(res, R.drawable.image);
+        //img0 = BitmapFactory.decodeResource(res, R.drawable.back);
+        //img1 = BitmapFactory.decodeResource(res, R.drawable.image);
         
-        c.drawBitmap(img0,0,0,p);
-        c.drawBitmap(img1,0,0,p);
-        */
+        c.drawBitmap(bmp, 0, 0, p);
+        //c.drawBitmap(img1,0,0,p);
     }
 
 }
+*/
+
+class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
+
+    public imageCatalogView(Context context) {
+        super(context);
+        
+        getHolder().addCallback(this);
+    }
+
+    @Override
+    public void surfaceChanged (SurfaceHolder holder, int format, int width, int height) {
+        // SurfaceViewが変化（画面の大きさ，ピクセルフォーマット）した時のイベントの処理を記述
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        // SurfaceViewが作成された時の処理（初期画面の描画等）を記述
+        Canvas canvas = holder.lockCanvas();
+
+        // この間にグラフィック描画のコードを記述する。
+
+        Paint p = new Paint();
+        String imgFile = CircleList.get();
+        Bitmap bmp = ImageCache.getImage(imgFile);
+        canvas.drawBitmap(bmp, 0, 0, p);
+ 
+
+        // この間にグラフィック描画のコードを記述する。
+
+        holder.unlockCanvasAndPost(canvas);
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        // SurfaceViewが廃棄されたる時の処理を記述
+    }
+}
 
 //円状のリスト。カタログに載っているファイルのリスト。
-public class CircleList {  
+class CircleList {  
     private static ArrayList<String> list = new ArrayList<String>();  
     private static int pointer=-1; //基本的に-1になるときは0件のときのみ。
   
     public static void add(String str) {
-         
+        list.add(str); 
     }
 
-    public static void get(){
+    public static String get(){
+        return list.get(pointer);
     }
+
+    public static void set(int i){ pointer=i; }
 
     public static void move(int i){
-    }  
+        pointer+=i;
+        pointer = pointer % list.size();
+    }
+
+    public static void moveToZero(){ pointer = 0; }  
+    
+    public static int pos(){
+        return pointer;
+    }
+
+    public static int size(){
+        return list.size();
+    }
 }
