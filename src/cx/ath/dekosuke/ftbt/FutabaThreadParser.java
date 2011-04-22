@@ -80,7 +80,7 @@ public class FutabaThreadParser {
                 text = mcText.group(1);
                 text = tagPattern.matcher(text).replaceAll(""); //タグ除去
                 status.setText(text);
-                mcImg = thumbPattern.matcher(mcRes.group(1));
+                mcImg = imgPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
                     status.setImgURL(mcImg.group(1));
                     Log.d( "ftbt", mcImg.group(1) );

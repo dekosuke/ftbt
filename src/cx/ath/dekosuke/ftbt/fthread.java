@@ -25,23 +25,6 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.DefaultedHttpContext;
 import org.apache.http.protocol.HttpContext;
 
-//XML Parser
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
-
-/*
-public class fthread extends Activity {
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.catalog);
-
-        DebugUtility.showToast(this, "fthread");
-    }
-}
-*/
-
 //スレッド表示アクティビティ
 public class fthread extends ListActivity {
 

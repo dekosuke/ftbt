@@ -79,19 +79,6 @@ public class FutabaAdapter extends ArrayAdapter {
             //画像をセット
             try{
                 if(item.getImgURL() != null){
-                    /*
-                    InputStream is = imgURL.openStream();
-                    Bitmap bm = BitmapFactory.decodeStream(is);
-                    float s_x = Math.max(1.0f, (float) bm.getWidth()  / (float)Math.min(width, height) );
-                    float s_y = Math.max(1.0f, (float) bm.getHeight() / (float)Math.min(width, height) );
-                    float scale = Math.max(s_x, s_y);
-                    int new_x = (int)( bm.getWidth()  / scale );
-                    int new_y = (int)( bm.getHeight() / scale );
-                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, false);
-                       
-                    ImageView iv = (ImageView)view.findViewById(R.id.image);
-                    iv.setImageBitmap(bm); 
-                    */
                     Log.d( "ftbt", "hoge" );
                     iv.setTag(item.getImgURL());
                     Log.d( "ftbt", "hoge1" );
@@ -135,9 +122,9 @@ public class FutabaAdapter extends ArrayAdapter {
                     InputStream is = imgURL.openStream();
                     bm = BitmapFactory.decodeStream(is);
                     float s_x = Math.max(1.0f, 
-                        (float) bm.getWidth()  / (float)Math.min(width, height) );
+                        (float) bm.getWidth()  / (float)width );
                     float s_y = Math.max(1.0f,
-                        (float) bm.getHeight() / (float)Math.min(width, height) );
+                        (float) bm.getHeight() / (float)height );
                     float scale = Math.max(s_x, s_y);
                     int new_x = (int)( bm.getWidth()  / scale );
                     int new_y = (int)( bm.getHeight() / scale );
