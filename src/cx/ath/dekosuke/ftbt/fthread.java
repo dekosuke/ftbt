@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,7 +29,7 @@ import org.apache.http.protocol.HttpContext;
 //スレッド表示アクティビティ
 public class fthread extends ListActivity {
 
-    private ArrayList<FutabaStatus> statuses = null;
+    public ArrayList<FutabaStatus> statuses = null;  //レス一覧
     private FutabaAdapter adapter = null;
 
     @Override
@@ -49,4 +50,20 @@ public class fthread extends ListActivity {
 
     }
 
+    //スレッドに存在するすべての画像のURLを配列にして返す
+    public ArrayList<String> getImageURLs(){
+        Iterator iterator = statuses.iterator(); 
+        int i=0;
+        ArrayList list = new ArrayList<String>();
+        //ループ
+        while(iterator.hasNext()){
+            FutabaStatus status = (FutabaStatus)iterator.next();
+            if(status.getImgURL() != null){
+                Log.d( "ftbt", "image"+status.getImgURL() );
+                list.add(status.getImgURL());
+            }
+            i++;
+        }
+        return list;
+    }
 }

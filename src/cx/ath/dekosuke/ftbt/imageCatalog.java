@@ -24,10 +24,23 @@ public class imageCatalog extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+       
+        Log.d( "ftbt", "imageCatalog.onCreate start" ); 
         Intent intent = getIntent();
-        int imageNum = Integer.parseInt( (String) intent.getSerializableExtra("imageNum") );
-        CircleList.set(imageNum);
+        Log.d( "ftbt", "hoge" );
+        ArrayList<String> statuses = (ArrayList<String>) intent.getSerializableExtra("imgURLs");        
+
+        Log.d( "ftbt", "hoge1" );
+        String myImageURL = (String) intent.getSerializableExtra("myImgURL");
+        Log.d( "ftbt", "hoge2" );
+ 
+        //ここでIntentによる追加情報からCircleListを構築する
+
+        //これスタティックにするのはどうかという感じがする
+        CircleList.add(myImageURL);
+        CircleList.move(1);
+
+        setContentView(new imageCatalogView(this));
     } 
 }
 
@@ -78,6 +91,7 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
 
         Paint p = new Paint();
         String imgFile = CircleList.get();
+        Log.d( "ftbt", "imgFile="+imgFile );
         Bitmap bmp = ImageCache.getImage(imgFile);
         canvas.drawBitmap(bmp, 0, 0, p);
  
@@ -114,6 +128,7 @@ class CircleList {
     }
 
     public static void moveToZero(){ pointer = 0; }  
+    public static void moveToLast(){ pointer = list.size()-1; }  
     
     public static int pos(){
         return pointer;

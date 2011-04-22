@@ -11,6 +11,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.util.Log;
 import android.os.AsyncTask;
+import android.content.Intent;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -144,6 +145,25 @@ public class FutabaAdapter extends ArrayAdapter {
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (tag.equals(image.getTag())) {
                 image.setImageBitmap(result);
+
+        if(true){ //クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
+            image.setOnClickListener( new View.OnClickListener() {   
+                @Override
+                public void onClick(View v) {
+                    Log.d ( "ftbt", "intent calling thread activity" );
+                    Intent intent = new Intent();
+                    fthread activity = (fthread)getContext();
+                    //Log.d ( "ftbt", threadNum ); 
+                    //これスレッドごとに作られているのが結構ひどい気がする
+                    intent.putExtra("imgURLs", activity.getImageURLs() );
+                    intent.putExtra("myImgURL", tag);
+                    intent.setClassName(activity.getPackageName(), 
+                        activity.getClass().getPackage().getName()+".imageCatalog");
+                    activity.startActivity(intent); //Never called!
+                }}
+            );
+        }
+
             }
         }
     }

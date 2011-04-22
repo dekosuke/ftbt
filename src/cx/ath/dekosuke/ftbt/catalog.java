@@ -52,7 +52,6 @@ public class catalog extends ListActivity implements OnClickListener{
         setListAdapter(adapter);
         Log.d( "ftbt", "setlitadapter end" );
 
-        DebugUtility.showToast(this, "catalog");
     }
     
     public void onClick(View v) {
