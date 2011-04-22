@@ -44,31 +44,6 @@ public class imageCatalog extends Activity {
     } 
 }
 
-/*
-public class imageCatalogView extends View {
-    
-    public imageCatalogView(Context context) {
-        super(context);
-    }
-    
-    @Override
-    protected void onDraw(Canvas c) {
-        super.onDraw(c);
-        Paint p = new Paint();
-        //Bitmap img0, img1;
-        
-        Bitmap bmp = ImageCache.getImage(urls[0]);
-        Resources res = this.getContext().getResources();
-        //img0 = BitmapFactory.decodeResource(res, R.drawable.back);
-        //img1 = BitmapFactory.decodeResource(res, R.drawable.image);
-        
-        c.drawBitmap(bmp, 0, 0, p);
-        //c.drawBitmap(img1,0,0,p);
-    }
-
-}
-*/
-
 class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
 
     public imageCatalogView(Context context) {
