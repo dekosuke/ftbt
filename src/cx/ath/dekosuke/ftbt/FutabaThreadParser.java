@@ -59,7 +59,7 @@ public class FutabaThreadParser {
             String honbun = mc.group(0);
             //ここで画像(img)とテキスト(blockquote)のマッチング
             FutabaStatus statusTop = new FutabaStatus();
-            Matcher mcImg = thumbPattern.matcher(honbun);
+            Matcher mcImg = imgPattern.matcher(honbun);
             mcImg.find();
             Log.d( "ftbt", "test1" );
             statusTop.setImgURL(mcImg.group(1));
@@ -89,53 +89,6 @@ public class FutabaThreadParser {
                 statuses.add(status);
             }
             Log.d( "ftbt", String.valueOf(statuses.size()) );
-            /*
-            parser.setInput(new StringReader(mc.group(0)));
-            boolean isFinished = false;  
-            int eventType=parser.next();
-            int formNum=2;
-            boolean threadImage = false;
-            Log.d( "ftbt", "parse start" );
-            */
-            /*
-            while (eventType != XmlPullParser.END_DOCUMENT && !isFinished) {  
-                String name = null; 
-                switch (eventType) {  
-                case XmlPullParser.START_DOCUMENT:  
-                    //list = new ArrayList<TwitterStatus>();  
-                    break;  
-                case XmlPullParser.START_TAG:  
-                    name = parser.getName();  
-                    Log.d( "ftbt", name );
-                    if (name.equalsIgnoreCase(FORMTAG)) {
-                        formNum++;
-                    }else if(name.equalsIgnoreCase(BLOCKQUOTETAG)){
-                        if(formNum==2){ //スレッドタイトル
-                            title=parser.getText();
-                             //スレッド追加
-                            FutabaStatus status = new FutabaStatus();
-                            status.setText(title);
-                            status.setImgURL(titleImgURL);
-                            statuses.add(status);
-                        }
-                    }else if(name.equalsIgnoreCase(IMGTAG)){
-                        if(formNum==2 && !threadImage){ //スレ画像
-                            titleImgURL = getAttributeByName(parser, SRCTAG);
-                            threadImage = true;
-                        }
-                    }else if(name.equalsIgnoreCase(TABLETAG)){
-                        if(formNum==2 && threadImage){ //ここから各レスを検索
-                            addStatus(parser);
-                        }
-                    }
-                    break;  
-                case XmlPullParser.END_TAG:  
-                    name = parser.getName(); 
-                    break;  
-                }  
-                eventType = parser.next();  
-            }
-            */
         } catch (Exception e) { 
             Log.d( "ftbt", e.toString() ); 
             throw new RuntimeException(e);  

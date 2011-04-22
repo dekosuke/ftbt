@@ -3,7 +3,10 @@
       package="cx.ath.dekosuke.ftbt"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:label="@string/app_name">
+    <application 
+        android:label="@string/app_name"
+        android:icon="@drawable/icon"
+        >
         <activity android:name="ftbt"
                   android:label="@string/app_name">
             <intent-filter>
