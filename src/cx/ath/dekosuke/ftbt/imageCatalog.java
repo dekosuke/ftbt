@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import java.io.File;
 
+import android.view.MotionEvent;
 
 //画像カタログ
 //指定された画像の登録および、隣の画像への移動
@@ -28,7 +29,7 @@ public class imageCatalog extends Activity {
         Log.d( "ftbt", "imageCatalog.onCreate start" ); 
         Intent intent = getIntent();
         Log.d( "ftbt", "hoge" );
-        ArrayList<String> statuses = (ArrayList<String>) intent.getSerializableExtra("imgURLs");        
+        ArrayList<String> imgURLs = (ArrayList<String>) intent.getSerializableExtra("imgURLs");        
 
         Log.d( "ftbt", "hoge1" );
         String myImageURL = (String) intent.getSerializableExtra("myImgURL");
@@ -37,11 +38,62 @@ public class imageCatalog extends Activity {
         //ここでIntentによる追加情報からCircleListを構築する
 
         //これスタティックにするのはどうかという感じがする
-        CircleList.add(myImageURL);
-        CircleList.move(1);
+        for(int i=0;i<imgURLs.size();i++){
+            String imgURL = imgURLs.get(i);
+            CircleList.add(imgURL);
+            if(imgURL.equals(myImageURL)){ CircleList.moveToLast(); }
+        }
+        //CircleList.add(myImageURL);
+        //CircleList.move(1);
 
-        setContentView(new imageCatalogView(this));
+        imageCatalogView view = new imageCatalogView(this);
+        view.setOnTouchListener(new FlickTouchListener());
+        setContentView(view);
     } 
+
+    private float lastTouchX;
+    private float currentX;
+    private class FlickTouchListener implements View.OnTouchListener {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN:
+                lastTouchX = event.getX();
+                break;
+
+            case MotionEvent.ACTION_UP:
+                currentX = event.getX();
+                if (lastTouchX < currentX) {
+                    //前に戻る動作
+                    Log.d("ftbt", "motion prev");
+                    CircleList.move(-1);
+                    ((imageCatalogView)v).doDraw();
+                    //v.doDraw();
+                }
+                if (lastTouchX > currentX) {
+                    //次に移動する動作
+                    CircleList.move(1);
+                    Log.d("ftbt", "motion next");
+                    ((imageCatalogView)v).doDraw();
+                }
+                break;
+
+            case MotionEvent.ACTION_CANCEL:
+                currentX = event.getX();
+                if (lastTouchX < currentX) {
+                    //前に戻る動作
+                }
+                if (lastTouchX > currentX) {
+                     //次に移動する動作
+                }
+                break;
+            }
+            return true;
+        }
+    }
+
 }
 
 class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
@@ -59,17 +111,22 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        doDraw();
+    }
+
+    public void doDraw() {
+        SurfaceHolder holder = getHolder();
         // SurfaceViewが作成された時の処理（初期画面の描画等）を記述
         Canvas canvas = holder.lockCanvas();
 
         // この間にグラフィック描画のコードを記述する。
 
+        canvas.drawColor(0,PorterDuff.Mode.CLEAR ); 
         Paint p = new Paint();
         String imgFile = CircleList.get();
         Log.d( "ftbt", "imgFile="+imgFile );
         Bitmap bmp = ImageCache.getImage(imgFile);
-        canvas.drawBitmap(bmp, 0, 0, p);
- 
+        canvas.drawBitmap(bmp, 0, 0, p); 
 
         // この間にグラフィック描画のコードを記述する。
 
@@ -88,7 +145,8 @@ class CircleList {
     private static int pointer=-1; //基本的に-1になるときは0件のときのみ。
   
     public static void add(String str) {
-        list.add(str); 
+        list.add(str);
+        if(pointer==-1){ pointer=0; }
     }
 
     public static String get(){
@@ -99,7 +157,7 @@ class CircleList {
 
     public static void move(int i){
         pointer+=i;
-        pointer = pointer % list.size();
+        pointer = (pointer+list.size()) % list.size();
     }
 
     public static void moveToZero(){ pointer = 0; }  
