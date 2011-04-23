@@ -9,13 +9,19 @@ public class ImageCache {
       
     public static Bitmap getImage(String key) {  
         if (cache.containsKey(key)) {  
-            Log.d("cache", "cache hit!");  
-            return cache.get(key);  
+            Log.d("ftbt", "cache hit!");  
+            Bitmap bmp = cache.get(key);  
+            if(bmp == null){
+                Log.d("ftbt", "cache contents null");  
+                return null;
+            }
+            return bmp;
         }  
         return null;  
     }  
       
     public static void setImage(String key, Bitmap image) {  
         cache.put(key, image);  
-    }  
+    }
+
 } 
