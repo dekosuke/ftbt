@@ -116,7 +116,6 @@ public class FutabaCatalogParser {
             Matcher mcRes = resPattern.matcher(honbun);
             while( mcRes.find() ){
                 Matcher mcText = textPattern.matcher(mcRes.group(1));
-                Log.d( "ftbt", mcRes.group(1) );
                 mcText.find();
                 FutabaThread thread = new FutabaThread();
                 String text = mcText.group(1);
@@ -129,12 +128,10 @@ public class FutabaCatalogParser {
                 Matcher mcImg = imgPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
                     thread.setImgURL(mcImg.group(1));
-                    Log.d( "ftbt", mcImg.group(1) );
                 }
                 //Log.d( "ftbt", text );
                 fthreads.add(thread);
             }
-            Log.d( "ftbt", String.valueOf(fthreads.size()) );
         } catch (Exception e) { 
             Log.d( "ftbt", e.toString() ); 
             throw new RuntimeException(e);  

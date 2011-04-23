@@ -1,7 +1,6 @@
 package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
-
 import android.view.View;
 import android.widget.TextView;
 import android.graphics.Typeface;
@@ -16,14 +15,12 @@ import android.content.Intent;
 import java.io.InputStream;
 import java.net.URL;
 
-//AsyncTask内での画像読み込みが失敗する問題への対応
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.client.HttpClient;
-import org.apache.http.HttpResponse;
-import java.net.URI;
+//BufferedStreamのエラー問題対応
+import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.OutputStream;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -119,6 +116,7 @@ public class FutabaAdapter extends ArrayAdapter {
         return view;  
     }
 
+    static Object lock = new Object();
     //画像取得用スレッド
     class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
         private ImageView image;
@@ -133,22 +131,15 @@ public class FutabaAdapter extends ArrayAdapter {
         protected Bitmap doInBackground(String... urls) {
             Bitmap bm = ImageCache.getImage(urls[0]);
             Log.d( "ftbt", "futabaAdapter thread start" );
-            while (bm == null){ //does not exist on cache
+            if (bm == null){ //does not exist on cache
+                synchronized (FutabaAdapter.lock){
                 try{
-                    //URL imgURL = new URL(urls[0]);
-
-                    //InputStream is = imgURL.openStream();
-                    HttpGet httpRequest = new HttpGet(new URI(urls[0]));
-                    HttpClient httpclient = new DefaultHttpClient();
-                    HttpResponse response = (HttpResponse) httpclient.execute(httpRequest);
-                    HttpEntity entity = response.getEntity();
-                    BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);
-                    
-                    InputStream is = bufHttpEntity.getContent();
-                    if(is!=null){ Log.d("ftbt", "is is not null" ); }
+                    URL imgURL = new URL(urls[0]);
+                    InputStream is = imgURL.openStream();
                     bm = BitmapFactory.decodeStream(is);
-                    if(bm==null){ Log.d("ftbt", "bm is null"); }
-                    else{ Log.d("ftbt", String.valueOf(bm.getWidth())+":"+String.valueOf(bm.getHeight()) ); }
+                    if(bm==null){
+                        return null;
+                    }
                     float s_x = Math.max(1.0f, 
                         (float) bm.getWidth()  / (float)width );
                     float s_y = Math.max(1.0f,
@@ -167,6 +158,7 @@ public class FutabaAdapter extends ArrayAdapter {
                         Log.i( "ftbt", "message", e2 );
                     }
                 } 
+                }
             }
             return bm;
         }
@@ -177,6 +169,13 @@ public class FutabaAdapter extends ArrayAdapter {
             Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (tag.equals(image.getTag())) {
+                if(result == null){ //画像読み込み失敗時
+                    TextView screenName = (TextView)image.findViewById(R.id.toptext);  
+                    if (screenName != null) {  
+                        screenName.setText("(画像読み込み失敗)");//item.getImgURL());
+                    }
+                    return; 
+                }
                 image.setImageBitmap(result);
 
         if(true){ //クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
@@ -198,6 +197,37 @@ public class FutabaAdapter extends ArrayAdapter {
         }
 
             }
+        }
+        
+        private Bitmap MyDecodeStream(InputStream in){
+            final int IO_BUFFER_SIZE = 4*1024;
+            Bitmap bitmap = null;
+            BufferedOutputStream out = null;
+            try {
+
+                in = new BufferedInputStream(in, IO_BUFFER_SIZE);
+
+                final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+                out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
+                byte[] b = new byte[IO_BUFFER_SIZE];
+                int read;
+                while ((read = in.read(b)) != -1) {
+                    out.write(b, 0, read);
+                }
+                //               streamCopy(in, out);
+                out.flush();
+
+                final byte[] data = dataStream.toByteArray();
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+            } catch (Exception e){
+                Log.i( "ftbt", "message", e);
+            }        
+            return bitmap;
+        }
+
+        private void streamCopy(InputStream in, OutputStream out) throws IOException {
+
         }
     }
 }  

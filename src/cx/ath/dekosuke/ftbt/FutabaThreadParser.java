@@ -62,7 +62,6 @@ public class FutabaThreadParser {
             FutabaStatus statusTop = new FutabaStatus();
             Matcher mcImg = imgPattern.matcher(honbun);
             mcImg.find();
-            Log.d( "ftbt", "test1" );
             statusTop.setImgURL(mcImg.group(1));
             Matcher mcText = textPattern.matcher(honbun);
             mcText.find();
@@ -84,12 +83,10 @@ public class FutabaThreadParser {
                 mcImg = imgPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
                     status.setImgURL(mcImg.group(1));
-                    Log.d( "ftbt", mcImg.group(1) );
                 }
                 //Log.d( "ftbt", text );
                 statuses.add(status);
             }
-            Log.d( "ftbt", String.valueOf(statuses.size()) );
         } catch (Exception e) { 
             Log.i("ftbt", "failure in FutabaThreadParser", e);
         }  

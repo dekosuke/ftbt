@@ -35,19 +35,22 @@ public class fthread extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        Intent intent = getIntent();
-        String threadURL = "http://may.2chan.net/40/res/" + (String) intent.getSerializableExtra("threadNum");
-        Log.d( "ftbt", "threadURL:"+threadURL );
-        statuses = new ArrayList<FutabaStatus>();
-        FutabaThreadParser parser = new FutabaThreadParser(threadURL);
-        parser.parse();
-        statuses = parser.getStatuses(); 
-        Log.d( "ftbt", "parse end" );
+       
+        try{ 
+            Intent intent = getIntent();
+            String threadURL = "http://may.2chan.net/40/res/" + (String) intent.getSerializableExtra("threadNum");
+            Log.d( "ftbt", "threadURL:"+threadURL );
+            statuses = new ArrayList<FutabaStatus>();
+            FutabaThreadParser parser = new FutabaThreadParser(threadURL);
+            parser.parse();
+            statuses = parser.getStatuses(); 
+            Log.d( "ftbt", "parse end" );
 
-        adapter = new FutabaAdapter(this, R.layout.futaba_row, statuses);
-        setListAdapter(adapter);
-
+            adapter = new FutabaAdapter(this, R.layout.futaba_row, statuses);
+            setListAdapter(adapter);
+        }catch(Exception e){
+            Log.i("ftbt", "message", e);
+        }
     }
 
     //スレッドに存在するすべての画像のURLを配列にして返す
