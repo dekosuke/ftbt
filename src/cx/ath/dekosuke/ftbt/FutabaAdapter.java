@@ -117,14 +117,21 @@ public class FutabaAdapter extends ArrayAdapter {
     }
 
     static Object lock = new Object();
+    static Object lock_id = new Object();
+    static int LastTaskID=-1;
     //画像取得用スレッド
     class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
         private ImageView image;
         private String tag;
+        private int id;
         
         public ImageGetTask(ImageView _image) {
             image = _image;
             tag = image.getTag().toString();
+            synchronized (FutabaAdapter.lock_id){
+                FutabaAdapter.LastTaskID+=1;
+                id=FutabaAdapter.LastTaskID; 
+            }
         }
 
         @Override
@@ -134,14 +141,17 @@ public class FutabaAdapter extends ArrayAdapter {
             if (bm == null){ //does not exist on cache
                 synchronized (FutabaAdapter.lock){
                 try{
+                    if( id+5 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     URL imgURL = new URL(urls[0]);
                     InputStream is = imgURL.openStream();
+                    if( id+5 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     //bm = BitmapFactory.decodeStream(is);
                     bm = MyDecodeStream(is);
                     if(bm==null){ //メモリ不足とか
                         ImageCache.GC();
                         return null;
                     }
+                    if( id+5 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     float s_x = Math.max(1.0f, 
                         (float) bm.getWidth()  / (float)width );
                     float s_y = Math.max(1.0f,
