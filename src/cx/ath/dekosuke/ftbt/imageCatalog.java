@@ -29,6 +29,12 @@ import android.view.Display;
 //指定された画像の登録および、隣の画像への移動
 //画像の円リストは別のデータ構造で。
 public class imageCatalog extends Activity {
+  
+    //画像を読み込む際にAsyncTaskを使うが、
+    //新しいAsyncTaskが来たら古いAsyncTaskは諦めて終了する。
+    //ここに登録されてないIDのタスクはキャンセル
+    static int LastTaskID=-1;
+    static Object lock = new Object();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -167,10 +173,16 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
     class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
         private imageCatalogView image;
         private String tag;
+        private int id;
         
         public ImageGetTask(imageCatalogView _image) {
             image = _image;
             tag = image.getTag().toString();
+            //ID登録
+            synchronized (imageCatalog.lock){
+               imageCatalog.LastTaskID+=1;
+               id=imageCatalog.LastTaskID;
+            }
         }
 
         @Override
@@ -183,12 +195,14 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             int height = display.getHeight();
  
             Log.d( "ftbt", "cache loading start"+urls[0]);
+            if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
             Bitmap bm = ImageCache.getImage(urls[0]);
             if (bm == null){ //does not exist on cache
                 try{
                     URL imgURL = new URL(urls[0]);
                     InputStream is = imgURL.openStream();
                     bm = BitmapFactory.decodeStream(is);
+                    if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
                     float s_x = Math.max(1.0f, 
                         (float) bm.getWidth()  / (float)width );
                     float s_y = Math.max(1.0f,
@@ -197,6 +211,7 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                     int new_x = (int)( bm.getWidth()  / scale );
                     int new_y = (int)( bm.getHeight() / scale );
                     bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
+                    if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
                     ImageCache.setImage(urls[0], bm);
                 } catch (Exception e) {
                     Log.d( "ftbt", e.toString() );
