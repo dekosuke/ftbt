@@ -91,8 +91,7 @@ public class FutabaThreadParser {
             }
             Log.d( "ftbt", String.valueOf(statuses.size()) );
         } catch (Exception e) { 
-            Log.d( "ftbt", e.toString() ); 
-            throw new RuntimeException(e);  
+            Log.i("ftbt", "failure in FutabaThreadParser", e);
         }  
         //return list;  
     }

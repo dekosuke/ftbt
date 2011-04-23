@@ -90,7 +90,7 @@ public class FutabaAdapter extends ArrayAdapter {
                     //iv.setImageBitmap(bm); 
                 }
             } catch (Exception e) {
-                Log.d( "ftbt", e.toString() );
+                Log.i("ftbt", "message", e);
             }
 
             // テキストをビューにセット  
