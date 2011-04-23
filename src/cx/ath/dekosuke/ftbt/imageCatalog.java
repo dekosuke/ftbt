@@ -212,7 +212,7 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (tag.equals(image.getTag())) {
                 //image.setImageBitmap(result);
-                image.doDraw(); //再描画
+                if(image){ image.doDraw(); } //再描画 
             }
         }
     }
