@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import java.util.Iterator;
 
+import java.io.File;
+import java.net.URL;
+
 public class ImageCache {  
     private static HashMap<String,Bitmap> cache = new HashMap<String,Bitmap>();  
     private final static int SIZE_SUM_MAX = 1000*1000*10;
@@ -34,6 +37,8 @@ public class ImageCache {
                 GC();
             }
             cache.put(key, image);
+            File file = new File(key);
+            //SDCard.saveFromURL(file.getName(), new URL(key));
             sizeSum+=image.getWidth()*image.getHeight();
         }catch(Exception e){
             Log.i("ftbt", "failure in image cache set", e);
