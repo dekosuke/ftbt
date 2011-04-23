@@ -136,8 +136,10 @@ public class FutabaAdapter extends ArrayAdapter {
                 try{
                     URL imgURL = new URL(urls[0]);
                     InputStream is = imgURL.openStream();
-                    bm = BitmapFactory.decodeStream(is);
-                    if(bm==null){
+                    //bm = BitmapFactory.decodeStream(is);
+                    bm = MyDecodeStream(is);
+                    if(bm==null){ //メモリ不足とか
+                        ImageCache.GC();
                         return null;
                     }
                     float s_x = Math.max(1.0f, 

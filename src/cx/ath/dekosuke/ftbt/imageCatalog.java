@@ -20,6 +20,13 @@ import java.net.URL;
 import android.view.MotionEvent;
 import android.os.AsyncTask;
 
+//BufferedStreamのエラー問題対応
+import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.OutputStream;
+
 //画面サイズ取得のため
 import android.view.WindowManager;
 import android.content.Context;
@@ -82,15 +89,14 @@ public class imageCatalog extends Activity {
                 currentX = event.getX();
                 if (lastTouchX < currentX) {
                     //前に戻る動作
-                    Log.d("ftbt", "motion prev");
                     CircleList.move(-1);
+                    Log.d("ftbt", "motion prev "+CircleList.pos());
                     ((imageCatalogView)v).doDraw();
-                    //v.doDraw();
                 }
                 if (lastTouchX > currentX) {
                     //次に移動する動作
                     CircleList.move(1);
-                    Log.d("ftbt", "motion next");
+                    Log.d("ftbt", "motion next "+CircleList.pos());
                     ((imageCatalogView)v).doDraw();
                 }
                 break;
@@ -140,22 +146,17 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
         
         try{
             canvas.drawColor(0,PorterDuff.Mode.CLEAR ); 
-            Paint p = new Paint();
             Bitmap bmp = ImageCache.getImage(imgFile);
-            Log.d( "ftbt", "imgFile="+imgFile );
             if(bmp == null){ //キャッシュない
-                Log.d( "ftbt", "cache miss and image retrieving start" );
                 //ImageCache.asyncSetImage(imgFile, imgFile);
                 ImageGetTask task = new ImageGetTask(this);
                 task.execute(imgFile); 
             }else{
-                Log.d( "ftbt", "load cache" );
+                Paint p = new Paint();
                 canvas.drawBitmap(bmp, 0, 0, p);
             }
         }catch (Exception e){
             //Log.i("ftbt", "message", new Throwable());
-            //e.printStackTrace();
-            //e.printStackTrace();
             Log.i("ftbt", "message", e);
         }
 
@@ -183,40 +184,48 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                imageCatalog.LastTaskID+=1;
                id=imageCatalog.LastTaskID;
             }
+            Log.d( "ftbt", "thread id"+id+" created." );
         }
 
         @Override
         protected Bitmap doInBackground(String... urls) {
-            Log.d( "ftbt", "getting width/height"+urls[0]);
-            Context context = getContext();
-            WindowManager wm = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
-            Display display = wm.getDefaultDisplay();
-            int width = display.getWidth();
-            int height = display.getHeight();
+
+            Bitmap bm=null;
+            try{
+                Log.d( "ftbt", "getting"+urls[0]);
+                Context context = getContext();
+                WindowManager wm = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
+                Display display = wm.getDefaultDisplay();
+                int width = display.getWidth();
+                int height = display.getHeight();
  
-            Log.d( "ftbt", "cache loading start"+urls[0]);
-            if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-            Bitmap bm = ImageCache.getImage(urls[0]);
-            if (bm == null){ //does not exist on cache
-                try{
-                    URL imgURL = new URL(urls[0]);
-                    InputStream is = imgURL.openStream();
-                    bm = BitmapFactory.decodeStream(is);
-                    if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                    float s_x = Math.max(1.0f, 
-                        (float) bm.getWidth()  / (float)width );
-                    float s_y = Math.max(1.0f,
-                        (float) bm.getHeight() / (float)height );
-                    float scale = Math.max(s_x, s_y);
-                    int new_x = (int)( bm.getWidth()  / scale );
-                    int new_y = (int)( bm.getHeight() / scale );
-                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
-                    if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                    ImageCache.setImage(urls[0], bm);
-                } catch (Exception e) {
-                    Log.d( "ftbt", e.toString() );
-                } 
-            }
+                if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
+                bm = ImageCache.getImage(urls[0]);
+                if (bm == null){ //does not exist on cache
+                        URL imgURL = new URL(urls[0]);
+                        InputStream is = imgURL.openStream();
+                        //bm = BitmapFactory.decodeStream(is); //メモリ足りない/大ファイルだとこれnullになりがち
+                        bm = MyDecodeStream(is);
+                        if( bm == null ){
+                            Log.d( "ftbt", "failed to get file "+urls[0] );
+                            ImageCache.GC();
+                            return null;
+                        }
+                        if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
+                        float s_x = Math.max(1.0f, 
+                            (float) bm.getWidth()  / (float)width );
+                        float s_y = Math.max(1.0f,
+                            (float) bm.getHeight() / (float)height );
+                        float scale = Math.max(s_x, s_y);
+                        int new_x = (int)( bm.getWidth()  / scale );
+                        int new_y = (int)( bm.getHeight() / scale );
+                        bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
+                        if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
+                        ImageCache.setImage(urls[0], bm);
+                }
+            } catch (Exception e) {
+                Log.i( "ftbt", "message", e );
+            } 
             return bm;
         }
 
@@ -228,6 +237,39 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                 //image.setImageBitmap(result);
                 image.doDraw(); //再描画
             }
+            Log.d( "ftbt", "thread "+id+"end." );
+        }
+
+        @Override
+        protected void onCancelled() {
+            Log.d( "ftbt", "スレッドキャンセル id="+id );
+        }
+
+        private Bitmap MyDecodeStream(InputStream in){
+            final int IO_BUFFER_SIZE = 4*1024;
+            Bitmap bitmap = null;
+            BufferedOutputStream out = null;
+            try {
+
+                in = new BufferedInputStream(in, IO_BUFFER_SIZE);
+
+                final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+                out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
+                byte[] b = new byte[IO_BUFFER_SIZE];
+                int read;
+                while ((read = in.read(b)) != -1) {
+                    out.write(b, 0, read);
+                }
+                //               streamCopy(in, out);
+                out.flush();
+
+                final byte[] data = dataStream.toByteArray();
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+            } catch (Exception e){
+                Log.i( "ftbt", "message", e);
+            }        
+            return bitmap;
         }
     }
 }

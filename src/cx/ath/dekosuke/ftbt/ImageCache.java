@@ -7,6 +7,8 @@ import java.util.Iterator;
 
 public class ImageCache {  
     private static HashMap<String,Bitmap> cache = new HashMap<String,Bitmap>();  
+    private final static int SIZE_SUM_MAX = 1000*1000*10;
+    private static int sizeSum=0;
       
     public static Bitmap getImage(String key) {
         try{
@@ -27,28 +29,26 @@ public class ImageCache {
       
     public static void setImage(String key, Bitmap image) { 
         try{
-            cache.put(key, image);  
+            if(sizeSum > SIZE_SUM_MAX){
+                Log.d( "ftbt", "delete some cache" );
+                GC();
+            }
+            cache.put(key, image);
+            sizeSum+=image.getWidth()*image.getHeight();
         }catch(Exception e){
             Log.i("ftbt", "failure in image cache set", e);
-            deleteRandomImage(5);
-            try{
-                cache.put(key, image);  
-            }catch(Exception e2){
-                Log.i("ftbt", "failure in image cache set2", e2);
-            }
         }
     }
 
-    public static void deleteRandomImage(int num){
-        cache = new HashMap<String, Bitmap>();
-        if(num>cache.size()){
-            cache.clear();
-        }else{ //ランダムに消す
-            while(num>0){
-                Iterator it = cache.keySet().iterator();
-                cache.remove(it.next());
-                num--;
-            } 
-        }
+    public static void GC(){
+        int num = cache.size()/2; 
+        Log.d( "ftbt", "gc num="+num );
+        while(num>0){
+            Iterator it = cache.keySet().iterator();
+            String key = (String)it.next();
+            cache.remove(key);
+            Log.d( "ftbt", "removed cache of "+key );
+            num--;
+        } 
     }
 } 
