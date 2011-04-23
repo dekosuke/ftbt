@@ -16,6 +16,15 @@ import android.content.Intent;
 import java.io.InputStream;
 import java.net.URL;
 
+//AsyncTask内での画像読み込みが失敗する問題への対応
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.client.HttpClient;
+import org.apache.http.HttpResponse;
+import java.net.URI;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
@@ -24,6 +33,8 @@ import android.widget.ImageView;
 import android.view.WindowManager;
 import android.content.Context;
 import android.view.Display;
+
+import java.lang.Thread; //To call Thread.sleep
 
 public class FutabaAdapter extends ArrayAdapter {  
   
@@ -51,9 +62,11 @@ public class FutabaAdapter extends ArrayAdapter {
     @Override  
     public View getView(int position, View convertView,
                         ViewGroup parent) {  
-        // ビューを受け取る  
+         // ビューを受け取る  
         View view = convertView;  
-  
+
+        try{
+ 
         if (view == null) {  
             // 受け取ったビューがnullなら新しくビューを生成  
             view = inflater.inflate(R.layout.futaba_row, null);  
@@ -98,6 +111,11 @@ public class FutabaAdapter extends ArrayAdapter {
                 text.setText(item.getText());  
             }
         } 
+
+        }catch(Exception e){
+            Log.i("ftbt", "message", e);
+        }
+        
         return view;  
     }
 
@@ -114,11 +132,23 @@ public class FutabaAdapter extends ArrayAdapter {
         @Override
         protected Bitmap doInBackground(String... urls) {
             Bitmap bm = ImageCache.getImage(urls[0]);
-            if (bm == null){ //does not exist on cache
+            Log.d( "ftbt", "futabaAdapter thread start" );
+            while (bm == null){ //does not exist on cache
                 try{
-                    URL imgURL = new URL(urls[0]);
-                    InputStream is = imgURL.openStream();
+                    //URL imgURL = new URL(urls[0]);
+
+                    //InputStream is = imgURL.openStream();
+                    HttpGet httpRequest = new HttpGet(new URI(urls[0]));
+                    HttpClient httpclient = new DefaultHttpClient();
+                    HttpResponse response = (HttpResponse) httpclient.execute(httpRequest);
+                    HttpEntity entity = response.getEntity();
+                    BufferedHttpEntity bufHttpEntity = new BufferedHttpEntity(entity);
+                    
+                    InputStream is = bufHttpEntity.getContent();
+                    if(is!=null){ Log.d("ftbt", "is is not null" ); }
                     bm = BitmapFactory.decodeStream(is);
+                    if(bm==null){ Log.d("ftbt", "bm is null"); }
+                    else{ Log.d("ftbt", String.valueOf(bm.getWidth())+":"+String.valueOf(bm.getHeight()) ); }
                     float s_x = Math.max(1.0f, 
                         (float) bm.getWidth()  / (float)width );
                     float s_y = Math.max(1.0f,
@@ -129,7 +159,13 @@ public class FutabaAdapter extends ArrayAdapter {
                     bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
                     ImageCache.setImage(urls[0], bm);
                 } catch (Exception e) {
-                    Log.d( "ftbt", e.toString() );
+                    Log.i( "ftbt", "message", e );
+                    Log.d( "ftbt", "fail with "+urls[0] ); 
+                    try{
+                        Thread.sleep(1 * 1000);
+                    } catch (Exception e2){
+                        Log.i( "ftbt", "message", e2 );
+                    }
                 } 
             }
             return bm;

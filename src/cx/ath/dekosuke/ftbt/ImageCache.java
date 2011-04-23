@@ -3,6 +3,7 @@ package cx.ath.dekosuke.ftbt;
 import java.util.HashMap;
 import android.graphics.Bitmap;
 import android.util.Log;
+import java.util.Iterator;
 
 public class ImageCache {  
     private static HashMap<String,Bitmap> cache = new HashMap<String,Bitmap>();  
@@ -40,12 +41,14 @@ public class ImageCache {
 
     public static void deleteRandomImage(int num){
         cache = new HashMap<String, Bitmap>();
-        /*
         if(num>cache.size()){
-            cache = new HashMap<String, Bitmap>();
+            cache.clear();
         }else{ //ランダムに消す
-            
+            while(num>0){
+                Iterator it = cache.keySet().iterator();
+                cache.remove(it.next());
+                num--;
+            } 
         }
-        */
     }
 } 
