@@ -27,6 +27,8 @@ public class FutabaThreadParser {
     private String titleImgURL;
 
     private ArrayList<FutabaStatus> statuses;    
+
+    private static Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
   
     public FutabaThreadParser(String urlStr) {  
         this.urlStr = urlStr;
@@ -50,7 +52,6 @@ public class FutabaThreadParser {
                 Pattern.compile("<a.*?target.*?href=\"(.+?)\"", Pattern.DOTALL);
             Pattern thumbPattern = 
                 Pattern.compile("<img.*?src=\"(.+?)\"", Pattern.DOTALL);
-            Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
             byte[] data = HttpClient.getByteArrayFromURL(urlStr);  
             //parser.setInput(new StringReader(new String(data, "UTF-8")));  
             Matcher mc = honbunPattern.matcher(new String(data, "Shift-JIS"));
@@ -66,7 +67,7 @@ public class FutabaThreadParser {
             Matcher mcText = textPattern.matcher(honbun);
             mcText.find();
             String text = mcText.group(1);
-            text = tagPattern.matcher(text).replaceAll(""); //タグ除去
+            text = normalize(text);
             statusTop.setText(text);
             statuses.add(statusTop);
          
@@ -78,7 +79,7 @@ public class FutabaThreadParser {
                 mcText.find();
                 FutabaStatus status = new FutabaStatus();
                 text = mcText.group(1);
-                text = tagPattern.matcher(text).replaceAll(""); //タグ除去
+                text = normalize(text);
                 status.setText(text);
                 mcImg = imgPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
@@ -95,6 +96,14 @@ public class FutabaThreadParser {
         }  
         //return list;  
     }
+
+    private String normalize(String text){
+        text = text.replaceAll("<br>", "\n" );
+        text = tagPattern.matcher(text).replaceAll(""); //タグ除去
+        text = text.replaceAll("&gt;", ">");
+        return text;
+    }
+ 
 
     //返信ひとつげっと
     public void addStatus(XmlPullParser parser){

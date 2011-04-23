@@ -80,11 +80,8 @@ public class FutabaAdapter extends ArrayAdapter {
             //画像をセット
             try{
                 if(item.getImgURL() != null){
-                    Log.d( "ftbt", "hoge" );
                     iv.setTag(item.getImgURL());
-                    Log.d( "ftbt", "hoge1" );
                     ImageGetTask task = new ImageGetTask(iv);
-                    Log.d( "ftbt", "hoge2" );
                     task.execute(item.getImgURL());
                     screenName.setText("(画像あり)");
                 }else{
@@ -129,7 +126,7 @@ public class FutabaAdapter extends ArrayAdapter {
                     float scale = Math.max(s_x, s_y);
                     int new_x = (int)( bm.getWidth()  / scale );
                     int new_y = (int)( bm.getHeight() / scale );
-                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, false);
+                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
                     ImageCache.setImage(urls[0], bm);
                 } catch (Exception e) {
                     Log.d( "ftbt", e.toString() );

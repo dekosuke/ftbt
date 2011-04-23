@@ -196,7 +196,7 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                     float scale = Math.max(s_x, s_y);
                     int new_x = (int)( bm.getWidth()  / scale );
                     int new_y = (int)( bm.getHeight() / scale );
-                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, false);
+                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
                     ImageCache.setImage(urls[0], bm);
                 } catch (Exception e) {
                     Log.d( "ftbt", e.toString() );
@@ -208,11 +208,10 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
         //メインスレッドで実行する処理
         @Override
         protected void onPostExecute(Bitmap result) {
-            Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
             // Tagが同じものが確認して、同じであれば画像を設定する
-            if (tag.equals(image.getTag())) {
+            if (image!=null && tag!=null & tag.equals(image.getTag())) {
                 //image.setImageBitmap(result);
-                if(image){ image.doDraw(); } //再描画 
+                image.doDraw(); //再描画
             }
         }
     }
