@@ -38,7 +38,9 @@ public class fthread extends ListActivity {
        
         try{ 
             Intent intent = getIntent();
-            String threadURL = "http://may.2chan.net/40/res/" + (String) intent.getSerializableExtra("threadNum");
+            String threadURL = 
+                 (String) intent.getSerializableExtra("baseUrl")+
+                 (String) intent.getSerializableExtra("threadNum");
             Log.d( "ftbt", "threadURL:"+threadURL );
             statuses = new ArrayList<FutabaStatus>();
             FutabaThreadParser parser = new FutabaThreadParser(threadURL);

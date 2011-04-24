@@ -35,12 +35,15 @@ public class catalog extends ListActivity implements OnClickListener{
 
     private ArrayList<FutabaThread> fthreads = null;
     private FutabaCatalogAdapter adapter = null;
+    public String baseUrl = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        String catalogURL = "http://may.2chan.net/40/futaba.php";
+        Intent intent = getIntent();
+        baseUrl = (String) intent.getSerializableExtra("baseUrl");
+        String catalogURL = baseUrl + "futaba.php";
         fthreads = new ArrayList<FutabaThread>();
         FutabaCatalogParser parser = new FutabaCatalogParser(catalogURL);
         parser.parse(getApplicationContext());
