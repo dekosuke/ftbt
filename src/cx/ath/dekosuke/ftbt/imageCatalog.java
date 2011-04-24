@@ -221,8 +221,8 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                         URL imgURL = new URL(urls[0]);
                         InputStream is = imgURL.openStream();
                         if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                        //bm = BitmapFactory.decodeStream(is); //メモリ足りない/大ファイルだとこれnullになりがち
-                        bm = MyDecodeStream(is);
+                        bm = BitmapFactory.decodeStream(is); //メモリ足りない/大ファイルだとこれnullになりがち
+                        //bm = MyDecodeStream(is);
                         if( bm == null ){
                             Log.d( "ftbt", "failed to get file "+urls[0] );
                             ImageCache.GC();

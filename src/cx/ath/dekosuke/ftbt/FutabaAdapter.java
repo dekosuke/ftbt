@@ -177,8 +177,8 @@ public class FutabaAdapter extends ArrayAdapter {
                     is = con.getInputStream();  
                     //InputStream is = imgURL.openStream();
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    //bm = BitmapFactory.decodeStream(is);
-                    bm = MyDecodeStream(is);
+                    bm = BitmapFactory.decodeStream(is);
+                    //bm = MyDecodeStream(is);
                     if(bm==null){ //メモリ不足とか
                         ImageCache.GC();
                         return null;
