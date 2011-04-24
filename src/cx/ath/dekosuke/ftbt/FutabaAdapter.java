@@ -142,7 +142,7 @@ public class FutabaAdapter extends ArrayAdapter {
 
         @Override
         protected Bitmap doInBackground(String... urls) {
-            Bitmap bm = ImageCache.getImage(urls[0]);
+            Bitmap bm = ImageCache.getImage(urls[0]+"_sml");
             HttpURLConnection con=null;
             InputStream is = null;
             Log.d( "ftbt", "futabaAdapter thread start" );
@@ -164,14 +164,14 @@ public class FutabaAdapter extends ArrayAdapter {
                     }
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     float s_x = Math.max(1.0f, 
-                        (float) bm.getWidth()  / (float)width );
+                        (float) bm.getWidth()*1.5f  / (float)width );
                     float s_y = Math.max(1.0f,
-                        (float) bm.getHeight() / (float)height );
+                        (float) bm.getHeight()*2.0f / (float)height );
                     float scale = Math.max(s_x, s_y);
                     int new_x = (int)( bm.getWidth()  / scale );
                     int new_y = (int)( bm.getHeight() / scale );
                     bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
-                    ImageCache.setImage(urls[0], bm);
+                    ImageCache.setImage(urls[0]+"_sml", bm);
                 } catch (Exception e) {
                     Log.i( "ftbt", "message", e );
                     Log.d( "ftbt", "fail with "+urls[0] ); 
@@ -212,7 +212,6 @@ public class FutabaAdapter extends ArrayAdapter {
                     return; 
                 }
                 image.setImageBitmap(result);
-
         if(true){ //クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
             image.setOnClickListener( new View.OnClickListener() {   
                 @Override
