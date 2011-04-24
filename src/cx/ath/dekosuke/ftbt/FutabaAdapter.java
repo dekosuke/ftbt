@@ -93,14 +93,18 @@ public class FutabaAdapter extends ArrayAdapter {
             //画像をセット
             try{
                 if(item.getImgURL() != null){
-                    iv.setTag(item.getImgURL());
+                    iv.setTag(item.bigImgURL);
+                    bm = Bitmap.createBitmap(item.width, item.height, Bitmap.Config.ALPHA_8);
+                    iv.setImageBitmap(bm);  
                     ImageGetTask task = new ImageGetTask(iv);
                     task.execute(item.getImgURL());
                     screenName.setText("(画像あり)");
-                }else{
-                    //Bitmap bm = null;
-                    //ImageView iv = (ImageView)view.findViewById(R.id.image);
-                    //iv.setImageBitmap(bm); 
+                }else{ //画像なし
+                    /*
+                    Log.d("ftbt", "w="+item.width+" h="+item.height );
+                    bm = Bitmap.createBitmap(item.width, item.height, Bitmap.Config.ALPHA_8);
+                    iv.setImageBitmap(bm); 
+                    */
                 }
             } catch (Exception e) {
                 Log.i("ftbt", "message", e);
@@ -117,6 +121,23 @@ public class FutabaAdapter extends ArrayAdapter {
         }
         
         return view;  
+    }
+
+   static int getSmlImageWidth(Bitmap bm, int width, int height){
+        float s_x = Math.max(1.0f, 
+                   (float) bm.getWidth()*1.5f  / (float)width );
+        float s_y = Math.max(1.0f,
+                   (float) bm.getHeight()*2.0f / (float)height );
+        float scale = Math.max(s_x, s_y);
+        return (int)( bm.getWidth()  / scale );
+    }
+   static int getSmlImageHeight(Bitmap bm, int width, int height){
+        float s_x = Math.max(1.0f, 
+                   (float) bm.getWidth()*1.5f  / (float)width );
+        float s_y = Math.max(1.0f,
+                   (float) bm.getHeight()*2.0f / (float)height );
+        float scale = Math.max(s_x, s_y);
+        return (int)( bm.getHeight() / scale );
     }
 
     static Object lock = new Object();
@@ -161,16 +182,12 @@ public class FutabaAdapter extends ArrayAdapter {
                     if(bm==null){ //メモリ不足とか
                         ImageCache.GC();
                         return null;
-                    }
+                    }/*
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    float s_x = Math.max(1.0f, 
-                        (float) bm.getWidth()*1.5f  / (float)width );
-                    float s_y = Math.max(1.0f,
-                        (float) bm.getHeight()*2.0f / (float)height );
-                    float scale = Math.max(s_x, s_y);
-                    int new_x = (int)( bm.getWidth()  / scale );
-                    int new_y = (int)( bm.getHeight() / scale );
+                    int new_x = FutabaAdapter.getSmlImageWidth(bm, width, height);
+                    int new_y = FutabaAdapter.getSmlImageHeight(bm, width, height);
                     bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
+                    */
                     ImageCache.setImage(urls[0]+"_sml", bm);
                 } catch (Exception e) {
                     Log.i( "ftbt", "message", e );

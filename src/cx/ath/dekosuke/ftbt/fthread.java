@@ -61,9 +61,9 @@ public class fthread extends ListActivity {
         //ループ
         while(iterator.hasNext()){
             FutabaStatus status = (FutabaStatus)iterator.next();
-            if(status.getImgURL() != null){
-                Log.d( "ftbt", "image"+status.getImgURL() );
-                list.add(status.getImgURL());
+            if(status.bigImgURL != null){
+                Log.d( "ftbt", "image"+status.bigImgURL );
+                list.add(status.bigImgURL);
             }
             i++;
         }
