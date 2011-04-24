@@ -141,17 +141,17 @@ public class FutabaAdapter extends ArrayAdapter {
             if (bm == null){ //does not exist on cache
                 synchronized (FutabaAdapter.lock){
                 try{
-                    if( id+5 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
+                    if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     URL imgURL = new URL(urls[0]);
                     InputStream is = imgURL.openStream();
-                    if( id+5 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
+                    if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     //bm = BitmapFactory.decodeStream(is);
                     bm = MyDecodeStream(is);
                     if(bm==null){ //メモリ不足とか
                         ImageCache.GC();
                         return null;
                     }
-                    if( id+5 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
+                    if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     float s_x = Math.max(1.0f, 
                         (float) bm.getWidth()  / (float)width );
                     float s_y = Math.max(1.0f,

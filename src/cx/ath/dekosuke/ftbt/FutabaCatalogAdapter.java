@@ -120,15 +120,22 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
         } 
         return view;  
     }
-
+    
+    static Object lock_id = new Object();
+    static int LastTaskID=-1;
     //画像取得用スレッド
     class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
         private ImageView image;
         private String tag;
+        private int id;
         
         public ImageGetTask(ImageView _image) {
             image = _image;
             tag = _image.getTag().toString();
+             synchronized (FutabaCatalogAdapter.lock_id){
+                FutabaCatalogAdapter.LastTaskID+=1;
+                id=FutabaCatalogAdapter.LastTaskID; 
+            }
         }
 
         @Override
@@ -136,9 +143,12 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
             Bitmap bm = ImageCache.getImage(urls[0]);
             if (bm == null){ //does not exist on cache
                 try{
+                    if( id+15 < FutabaCatalogAdapter.LastTaskID ){ cancel(true);return null; }
                     URL imgURL = new URL(urls[0]);
                     InputStream is = imgURL.openStream();
+                    if( id+15 < FutabaCatalogAdapter.LastTaskID ){ cancel(true);return null; }
                     bm = BitmapFactory.decodeStream(is);
+                    if( id+15 < FutabaCatalogAdapter.LastTaskID ){ cancel(true);return null; }
                     float s_x = Math.max(1.0f, 
                         (float) bm.getWidth()  / (float)Math.min(width, height) );
                     float s_y = Math.max(1.0f,
@@ -162,7 +172,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
         protected void onPostExecute(Bitmap result) {
             //Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
             // Tagが同じものが確認して、同じであれば画像を設定する
-            if (tag.equals(image.getTag().toString())) {
+            if (result!=null && tag.equals(image.getTag().toString())) {
                 image.setImageBitmap(result);
             }
         }

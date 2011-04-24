@@ -11,6 +11,7 @@ import android.view.SurfaceHolder;
 import android.content.Intent;
 import android.util.Log;
 
+import android.widget.Toast;
 import java.util.ArrayList;
 
 import java.io.File;
@@ -75,6 +76,8 @@ public class imageCatalog extends Activity {
 
     private float lastTouchX;
     private float currentX;
+    private float lastTouchY;
+    private float currentY;
     private class FlickTouchListener implements View.OnTouchListener {
 
         @Override
@@ -83,17 +86,30 @@ public class imageCatalog extends Activity {
 
             case MotionEvent.ACTION_DOWN:
                 lastTouchX = event.getX();
+                lastTouchY = event.getY();
                 break;
 
             case MotionEvent.ACTION_UP:
                 currentX = event.getX();
-                if (lastTouchX < currentX) {
+                currentY = event.getY();
+                float moveX = currentX-lastTouchX;
+                float moveY = currentY-lastTouchY;
+                if(moveY>5.0f && moveY*moveY>moveX*moveX){
+                    //画像を保存する
+                    String imgFile = CircleList.get();
+                    File file = new File(imgFile);
+                    try{
+                        SDCard.saveFromURL(file.getName(), new URL(imgFile));
+                        Toast.makeText(v.getContext(), "画像"+file.getName()+"を保存しました", Toast.LENGTH_LONG).show();
+                    }catch(Exception e){
+                        Log.i( "ftbt", "message", e ); 
+                    }
+                }else if (moveX > 5.0f) {
                     //前に戻る動作
                     CircleList.move(-1);
                     Log.d("ftbt", "motion prev "+CircleList.pos());
                     ((imageCatalogView)v).doDraw();
-                }
-                if (lastTouchX > currentX) {
+                }else if (moveX < -5.0f) {
                     //次に移動する動作
                     CircleList.move(1);
                     Log.d("ftbt", "motion next "+CircleList.pos());

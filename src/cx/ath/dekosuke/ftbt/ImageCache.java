@@ -54,6 +54,7 @@ public class ImageCache {
             cache.remove(key);
             Log.d( "ftbt", "removed cache of "+key );
             num--;
-        } 
+        }
+        sizeSum/=2; 
     }
 } 
