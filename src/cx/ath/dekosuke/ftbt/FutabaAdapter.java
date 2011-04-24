@@ -21,6 +21,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
+//その２
+import java.net.HttpURLConnection;
+
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -127,6 +130,9 @@ public class FutabaAdapter extends ArrayAdapter {
         
         public ImageGetTask(ImageView _image) {
             image = _image;
+            if( _image == null ){
+                Log.d("ftbt", "imageview is null!!!");
+            }
             tag = image.getTag().toString();
             synchronized (FutabaAdapter.lock_id){
                 FutabaAdapter.LastTaskID+=1;
@@ -137,13 +143,18 @@ public class FutabaAdapter extends ArrayAdapter {
         @Override
         protected Bitmap doInBackground(String... urls) {
             Bitmap bm = ImageCache.getImage(urls[0]);
+            HttpURLConnection con=null;
+            InputStream is = null;
             Log.d( "ftbt", "futabaAdapter thread start" );
             if (bm == null){ //does not exist on cache
-                synchronized (FutabaAdapter.lock){
+                //synchronized (FutabaAdapter.lock){
                 try{
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     URL imgURL = new URL(urls[0]);
-                    InputStream is = imgURL.openStream();
+                    con = (HttpURLConnection) imgURL.openConnection(); 
+                    con.connect();
+                    is = con.getInputStream();  
+                    //InputStream is = imgURL.openStream();
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     //bm = BitmapFactory.decodeStream(is);
                     bm = MyDecodeStream(is);
@@ -169,7 +180,18 @@ public class FutabaAdapter extends ArrayAdapter {
                     } catch (Exception e2){
                         Log.i( "ftbt", "message", e2 );
                     }
-                } 
+                } finally {  
+                    try {  
+                        if (con != null) {  
+                            con.disconnect();  
+                        }  
+                        if (is != null) {  
+                            is.close();  
+                        }  
+                    } catch (Exception e) {  
+                        Log.e( "ftbt", "doInBackground", e);  
+                    }           
+                //}
                 }
             }
             return bm;
@@ -178,7 +200,8 @@ public class FutabaAdapter extends ArrayAdapter {
         //メインスレッドで実行する処理
         @Override
         protected void onPostExecute(Bitmap result) {
-            Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
+            //Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
+            try{
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (tag.equals(image.getTag())) {
                 if(result == null){ //画像読み込み失敗時
@@ -208,6 +231,10 @@ public class FutabaAdapter extends ArrayAdapter {
             );
         }
 
+            }
+
+            } catch (Exception e) {
+                Log.i( "ftbt", "message", e);
             }
         }
         

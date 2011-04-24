@@ -252,7 +252,11 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (image!=null && tag!=null & tag.equals(image.getTag())) {
                 //image.setImageBitmap(result);
-                image.doDraw(); //再描画
+                try{
+                    image.doDraw(); //再描画
+                } catch (Exception e) {
+                    Log.i("ftbt", "message", e);
+                }
             }
             Log.d( "ftbt", "thread "+id+"end." );
         }

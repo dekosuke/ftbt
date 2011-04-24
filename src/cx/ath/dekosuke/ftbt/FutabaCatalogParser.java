@@ -133,7 +133,7 @@ public class FutabaCatalogParser {
                 fthreads.add(thread);
             }
         } catch (Exception e) { 
-            Log.d( "ftbt", e.toString() ); 
+            Log.i( "ftbt", "parser error", e ); 
             throw new RuntimeException(e);  
         }  
         //return list;  
