@@ -3,6 +3,7 @@ package cx.ath.dekosuke.ftbt;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.net.URL;
 
 import android.util.Log;
 import android.util.Xml;
@@ -54,9 +55,10 @@ public class FutabaThreadParser {
                 Pattern.compile("<img.*?src=\"(.+?)\".+?width=([0-9]+).+?height=([0-9]+)", Pattern.DOTALL);
             String allData = "";
             try{
-                byte[] data = HttpClient.getByteArrayFromURL(urlStr); 
-                allData = new String(data, "Shift-JIS");
-                SDCard.saveFromBiteArray(FutabaCrypt.createDigest(urlStr), data, true); //キャッシュに保存
+                //byte[] data = HttpClient.getByteArrayFromURL(urlStr); 
+                //allData = new String(data, "Shift-JIS");
+                SDCard.saveFromURL(FutabaCrypt.createDigest(urlStr), new URL(urlStr), true); //キャッシュに保存
+                allData = SDCard.loadTextCache(FutabaCrypt.createDigest(urlStr));
             }catch(Exception e){ //ネットワークつながってないときとか
                 Log.d("ftbt", "failed to get catalog html");
                 if(SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))){
