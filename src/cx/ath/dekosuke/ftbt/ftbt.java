@@ -29,6 +29,9 @@ public class ftbt extends Activity
         ArrayAdapter<String> adapter = 
             new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         // アイテムを追加します
+        adapter.add("野球");
+        adapter.add("数学");
+        adapter.add("ねこ");
         adapter.add("東方");
         ListView listView = (ListView) findViewById(id.listview);
         // アダプターを設定します
@@ -45,7 +48,7 @@ public class ftbt extends Activity
                 // クリックされたアイテムを取得します
                 String item = (String) listView.getItemAtPosition(position);
               //  Toast.makeText(ftbt.this, item, Toast.LENGTH_LONG).show();
-                transSetting();
+                transSetting(item);
             }
         });
 
@@ -67,12 +70,22 @@ public class ftbt extends Activity
     }
 
     // 設定画面に遷移
-    public void transSetting() {
+    public void transSetting(String item) {
         Intent intent = new Intent();
         /*
         intent.setClassName(getPackageName(), 
             getClass().getPackage().getName()+".catalog");
         */
+        //あとで自動化したい
+        if(item.equals("東方")){
+            intent.putExtra("baseUrl", "http://may.2chan.net/40/");
+        }else if(item.equals("野球")){
+            intent.putExtra("baseUrl", "http://zip.2chan.net/1/");
+        }else if(item.equals("ねこ")){
+            intent.putExtra("baseUrl", "http://may.2chan.net/27/");
+        }else if(item.equals("数学")){
+            intent.putExtra("baseUrl", "http://cgi.2chan.net/m/");
+        }
         intent.setClassName(getPackageName(), 
             //getClass().getPackage().getName()+".fthread");
             getClass().getPackage().getName()+".catalog");

@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class ImageCache {  
     private static HashMap<String,Bitmap> cache = new HashMap<String,Bitmap>();  
-    private final static int SIZE_SUM_MAX = 1000*1000*10;
+    private final static int SIZE_SUM_MAX = 1000*1000*20;
     private static int sizeSum=0;
       
     public static Bitmap getImage(String key) {

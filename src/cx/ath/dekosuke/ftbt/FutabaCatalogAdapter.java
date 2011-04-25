@@ -79,8 +79,10 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
                 public void onClick(View v) {
                     Log.d ( "ftbt", "intent calling thread activity" );
                     Intent intent = new Intent();
-                    Activity activity = (Activity)getContext();
-                    //Log.d ( "ftbt", threadNum ); 
+                    catalog activity = (catalog)getContext();
+                    //Log.d ( "ftbt", threadNum );
+                    String baseUrl = activity.baseUrl;
+                    intent.putExtra("baseUrl", baseUrl );
                     intent.putExtra("threadNum", threadNum );
                     intent.setClassName(activity.getPackageName(), 
                         activity.getClass().getPackage().getName()+".fthread");

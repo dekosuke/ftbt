@@ -51,7 +51,7 @@ public class FutabaThreadParser {
             Pattern imgPattern = 
                 Pattern.compile("<a.*?target.*?href=\"(.+?)\"", Pattern.DOTALL);
             Pattern thumbPattern = 
-                Pattern.compile("<img.*?src=\"(.+?)\"", Pattern.DOTALL);
+                Pattern.compile("<img.*?src=\"(.+?)\".+?width=([0-9]+).+?height=([0-9]+)", Pattern.DOTALL);
             String allData = "";
             try{
                 byte[] data = HttpClient.getByteArrayFromURL(urlStr); 
@@ -71,9 +71,15 @@ public class FutabaThreadParser {
             String honbun = mc.group(0);
             //ここで画像(img)とテキスト(blockquote)のマッチング
             FutabaStatus statusTop = new FutabaStatus();
-            Matcher mcImg = imgPattern.matcher(honbun);
+            Matcher mcImg = thumbPattern.matcher(honbun);
             mcImg.find();
             statusTop.setImgURL(mcImg.group(1));
+            //Log.d("ftbt", "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
+            statusTop.width=Integer.parseInt(mcImg.group(2));
+            statusTop.height=Integer.parseInt(mcImg.group(3));
+            Matcher mcBigImg = imgPattern.matcher(honbun);
+            mcBigImg.find();
+            statusTop.bigImgURL = mcBigImg.group(1);
             Matcher mcText = textPattern.matcher(honbun);
             mcText.find();
             String text = mcText.group(1);
@@ -91,9 +97,16 @@ public class FutabaThreadParser {
                 text = mcText.group(1);
                 text = normalize(text);
                 status.setText(text);
-                mcImg = imgPattern.matcher(mcRes.group(1));
+                mcImg = thumbPattern.matcher(mcRes.group(1));
                 if( mcImg.find() ){
                     status.setImgURL(mcImg.group(1));
+                    status.width=Integer.parseInt(mcImg.group(2));
+                    status.height=Integer.parseInt(mcImg.group(3));    
+                    //Log.d("ftbt", "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
+                }
+                mcBigImg = imgPattern.matcher(mcRes.group(1));
+                if( mcBigImg.find() ){
+                    status.bigImgURL = mcBigImg.group(1);
                 }
                 //Log.d( "ftbt", text );
                 statuses.add(status);

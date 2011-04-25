@@ -11,6 +11,9 @@ public class FutabaStatus {
     private String mailTo;
     private int id;
     private String imgURL;
+    public String bigImgURL;
+    public int width;
+    public int height;
     //投稿時刻private date
     //画像private  
 
@@ -21,6 +24,8 @@ public class FutabaStatus {
         text="";
         mailTo="";
         id=0;
+        width=0;
+        height=0;
     }
    
     //それぞれのgetter/setter

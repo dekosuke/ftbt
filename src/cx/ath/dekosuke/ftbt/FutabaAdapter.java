@@ -21,6 +21,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
+//その２
+import java.net.HttpURLConnection;
+
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -90,14 +93,18 @@ public class FutabaAdapter extends ArrayAdapter {
             //画像をセット
             try{
                 if(item.getImgURL() != null){
-                    iv.setTag(item.getImgURL());
+                    iv.setTag(item.bigImgURL);
+                    bm = Bitmap.createBitmap(item.width, item.height, Bitmap.Config.ALPHA_8);
+                    iv.setImageBitmap(bm);  
                     ImageGetTask task = new ImageGetTask(iv);
                     task.execute(item.getImgURL());
                     screenName.setText("(画像あり)");
-                }else{
-                    //Bitmap bm = null;
-                    //ImageView iv = (ImageView)view.findViewById(R.id.image);
-                    //iv.setImageBitmap(bm); 
+                }else{ //画像なし
+                    /*
+                    Log.d("ftbt", "w="+item.width+" h="+item.height );
+                    bm = Bitmap.createBitmap(item.width, item.height, Bitmap.Config.ALPHA_8);
+                    iv.setImageBitmap(bm); 
+                    */
                 }
             } catch (Exception e) {
                 Log.i("ftbt", "message", e);
@@ -116,6 +123,23 @@ public class FutabaAdapter extends ArrayAdapter {
         return view;  
     }
 
+   static int getSmlImageWidth(Bitmap bm, int width, int height){
+        float s_x = Math.max(1.0f, 
+                   (float) bm.getWidth()*1.5f  / (float)width );
+        float s_y = Math.max(1.0f,
+                   (float) bm.getHeight()*2.0f / (float)height );
+        float scale = Math.max(s_x, s_y);
+        return (int)( bm.getWidth()  / scale );
+    }
+   static int getSmlImageHeight(Bitmap bm, int width, int height){
+        float s_x = Math.max(1.0f, 
+                   (float) bm.getWidth()*1.5f  / (float)width );
+        float s_y = Math.max(1.0f,
+                   (float) bm.getHeight()*2.0f / (float)height );
+        float scale = Math.max(s_x, s_y);
+        return (int)( bm.getHeight() / scale );
+    }
+
     static Object lock = new Object();
     static Object lock_id = new Object();
     static int LastTaskID=-1;
@@ -127,6 +151,9 @@ public class FutabaAdapter extends ArrayAdapter {
         
         public ImageGetTask(ImageView _image) {
             image = _image;
+            if( _image == null ){
+                Log.d("ftbt", "imageview is null!!!");
+            }
             tag = image.getTag().toString();
             synchronized (FutabaAdapter.lock_id){
                 FutabaAdapter.LastTaskID+=1;
@@ -136,31 +163,32 @@ public class FutabaAdapter extends ArrayAdapter {
 
         @Override
         protected Bitmap doInBackground(String... urls) {
-            Bitmap bm = ImageCache.getImage(urls[0]);
+            Bitmap bm = ImageCache.getImage(urls[0]+"_sml");
+            HttpURLConnection con=null;
+            InputStream is = null;
             Log.d( "ftbt", "futabaAdapter thread start" );
             if (bm == null){ //does not exist on cache
-                synchronized (FutabaAdapter.lock){
+                //synchronized (FutabaAdapter.lock){
                 try{
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
                     URL imgURL = new URL(urls[0]);
-                    InputStream is = imgURL.openStream();
+                    con = (HttpURLConnection) imgURL.openConnection(); 
+                    con.connect();
+                    is = con.getInputStream();  
+                    //InputStream is = imgURL.openStream();
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    //bm = BitmapFactory.decodeStream(is);
-                    bm = MyDecodeStream(is);
+                    bm = BitmapFactory.decodeStream(is);
+                    //bm = MyDecodeStream(is);
                     if(bm==null){ //メモリ不足とか
                         ImageCache.GC();
                         return null;
-                    }
+                    }/*
                     if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    float s_x = Math.max(1.0f, 
-                        (float) bm.getWidth()  / (float)width );
-                    float s_y = Math.max(1.0f,
-                        (float) bm.getHeight() / (float)height );
-                    float scale = Math.max(s_x, s_y);
-                    int new_x = (int)( bm.getWidth()  / scale );
-                    int new_y = (int)( bm.getHeight() / scale );
+                    int new_x = FutabaAdapter.getSmlImageWidth(bm, width, height);
+                    int new_y = FutabaAdapter.getSmlImageHeight(bm, width, height);
                     bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
-                    ImageCache.setImage(urls[0], bm);
+                    */
+                    ImageCache.setImage(urls[0]+"_sml", bm);
                 } catch (Exception e) {
                     Log.i( "ftbt", "message", e );
                     Log.d( "ftbt", "fail with "+urls[0] ); 
@@ -169,7 +197,18 @@ public class FutabaAdapter extends ArrayAdapter {
                     } catch (Exception e2){
                         Log.i( "ftbt", "message", e2 );
                     }
-                } 
+                } finally {  
+                    try {  
+                        if (con != null) {  
+                            con.disconnect();  
+                        }  
+                        if (is != null) {  
+                            is.close();  
+                        }  
+                    } catch (Exception e) {  
+                        Log.e( "ftbt", "doInBackground", e);  
+                    }           
+                //}
                 }
             }
             return bm;
@@ -178,7 +217,8 @@ public class FutabaAdapter extends ArrayAdapter {
         //メインスレッドで実行する処理
         @Override
         protected void onPostExecute(Bitmap result) {
-            Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
+            //Log.d( "ftbt", "tag="+tag+" image.getTag="+image.getTag().toString() );
+            try{
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (tag.equals(image.getTag())) {
                 if(result == null){ //画像読み込み失敗時
@@ -189,7 +229,6 @@ public class FutabaAdapter extends ArrayAdapter {
                     return; 
                 }
                 image.setImageBitmap(result);
-
         if(true){ //クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
             image.setOnClickListener( new View.OnClickListener() {   
                 @Override
@@ -208,6 +247,10 @@ public class FutabaAdapter extends ArrayAdapter {
             );
         }
 
+            }
+
+            } catch (Exception e) {
+                Log.i( "ftbt", "message", e);
             }
         }
         

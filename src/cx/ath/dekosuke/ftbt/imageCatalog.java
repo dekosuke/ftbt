@@ -221,8 +221,8 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                         URL imgURL = new URL(urls[0]);
                         InputStream is = imgURL.openStream();
                         if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                        //bm = BitmapFactory.decodeStream(is); //メモリ足りない/大ファイルだとこれnullになりがち
-                        bm = MyDecodeStream(is);
+                        bm = BitmapFactory.decodeStream(is); //メモリ足りない/大ファイルだとこれnullになりがち
+                        //bm = MyDecodeStream(is);
                         if( bm == null ){
                             Log.d( "ftbt", "failed to get file "+urls[0] );
                             ImageCache.GC();
@@ -252,7 +252,11 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             // Tagが同じものが確認して、同じであれば画像を設定する
             if (image!=null && tag!=null & tag.equals(image.getTag())) {
                 //image.setImageBitmap(result);
-                image.doDraw(); //再描画
+                try{
+                    image.doDraw(); //再描画
+                } catch (Exception e) {
+                    Log.i("ftbt", "message", e);
+                }
             }
             Log.d( "ftbt", "thread "+id+"end." );
         }
