@@ -10,7 +10,6 @@ public class ImageResizer {
         int width = bmp.getWidth();
         int height = bmp.getHeight();
         int size=Math.max(width, height);
-        Log.d( "ftbt", "resize routine called" );
         Matrix matrix = new Matrix();
         int pixels[] = new int[width*height];
         bmp.getPixels(pixels, 0, width, 0, 0, width, height);
