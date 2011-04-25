@@ -99,7 +99,7 @@ public class imageCatalog extends Activity {
                     String imgFile = CircleList.get();
                     File file = new File(imgFile);
                     try{
-                        SDCard.saveFromURL(file.getName(), new URL(imgFile));
+                        SDCard.saveFromURL(file.getName(), new URL(imgFile), false);
                         Toast.makeText(v.getContext(), "画像"+file.getName()+"を保存しました", Toast.LENGTH_LONG).show();
                     }catch(Exception e){
                         Log.i( "ftbt", "message", e ); 

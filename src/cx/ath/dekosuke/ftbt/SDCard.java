@@ -11,16 +11,24 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.InputStream;
+import java.io.IOException;
 
 import java.net.URL;
 
+import android.graphics.BitmapFactory;
+
 //File Saver
 public class SDCard {  
-      
-    public static void saveBin(String name, byte[] bytes) { 
+
+    public static void saveFromBiteArray(String name, byte[] bytes, boolean isCache) {
         String sdcard_dir = Environment.
-            getExternalStorageDirectory().getPath(); 
-        String filename = sdcard_dir + "/ftbt/" + name;
+            getExternalStorageDirectory().getPath();
+        String filename;
+        if(!isCache){ 
+            filename = sdcard_dir + "/ふたばと/" + name;
+        }else{
+            filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+        }
         File file = new File(filename);
         file.getParentFile().mkdir();
         try {
@@ -29,16 +37,19 @@ public class SDCard {
         } catch (Exception e) {
             Log.d( "ftbt", "failed to write file"+name );
         }
-        //Environment.getDataDirectory().getPath(); // /dataなど
-        //Environment.getDownloadCacheDirectory().getPath(); // cacheなど
     }
-
-    public static void saveFromURL(String name, URL url){
+ 
+    public static void saveFromURL(String name, URL url, boolean isCache){
        try {
             InputStream is  = url.openStream();
             String sdcard_dir = Environment.
-                         getExternalStorageDirectory().getPath(); 
-            String filename = sdcard_dir + "/ftbt/" + name;
+                         getExternalStorageDirectory().getPath();
+            String filename;
+            if(!isCache){ 
+                filename = sdcard_dir + "/ふたばと/" + name;
+            }else{
+                filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+            }
              //OutputStream os = new FileOutputStream(filename);
             File file = new File(filename);
             file.getParentFile().mkdir();
@@ -56,22 +67,30 @@ public class SDCard {
             Log.d( "ftbt", "failed to write file"+name );
         }
     }
-/*
-    public static byte[] getImageBytes(hoge,
-                                 String imageFormat)  throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        BufferedOutputStream os = new BufferedOutputStream(bos);
-        image.flush();
-        ImageIO.write(image, imageFormat, os);
-        os.flush();
-        os.close();
-        return bos.toByteArray();
-    }
-
-    public static void saveImage(String name, BufferdImage image, String imageFormat){
-        byte[] bytes = getImageBytes(image, imageFormat);
-        saveBin(name, bytes);
-    }
-*/
     
+    public static String loadTextCache(String name) throws IOException {
+        String sdcard_dir = Environment.
+                         getExternalStorageDirectory().getPath();
+        String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+        File file = new File(filename);
+        return FileToString.fileToString(file);
+    } 
+
+    public static Bitmap loadBitmapCache(String name){
+        String sdcard_dir = Environment.
+                         getExternalStorageDirectory().getPath();
+        String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+        File file = new File(filename);
+        //読み込み用のオプションオブジェクトを生成
+        //BitmapFactory.Options options = new BitmapFactory.Options();
+        return BitmapFactory.decodeFile(filename);
+    } 
+
+    public static boolean cacheExist(String name){
+        String sdcard_dir = Environment.
+                         getExternalStorageDirectory().getPath();
+        String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+        File file = new File(filename);
+        return file.exists();
+    }
 } 

@@ -52,9 +52,20 @@ public class FutabaThreadParser {
                 Pattern.compile("<a.*?target.*?href=\"(.+?)\"", Pattern.DOTALL);
             Pattern thumbPattern = 
                 Pattern.compile("<img.*?src=\"(.+?)\"", Pattern.DOTALL);
-            byte[] data = HttpClient.getByteArrayFromURL(urlStr);  
+            String allData = "";
+            try{
+                byte[] data = HttpClient.getByteArrayFromURL(urlStr); 
+                allData = new String(data, "Shift-JIS");
+                SDCard.saveFromBiteArray(FutabaCrypt.createDigest(urlStr), data, true); //キャッシュに保存
+            }catch(Exception e){ //ネットワークつながってないときとか
+                Log.d("ftbt", "failed to get catalog html");
+                if(SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))){
+                    Log.d("ftbt", "getting html from cache");
+                    allData = SDCard.loadTextCache(FutabaCrypt.createDigest(urlStr));
+                }
+            }
             //parser.setInput(new StringReader(new String(data, "UTF-8")));  
-            Matcher mc = honbunPattern.matcher(new String(data, "Shift-JIS"));
+            Matcher mc = honbunPattern.matcher(allData);
             mc.find();
             mc.find(); //2つ目
             String honbun = mc.group(0);

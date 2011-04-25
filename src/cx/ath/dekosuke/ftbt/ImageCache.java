@@ -46,7 +46,7 @@ public class ImageCache {
     }
 
     public static void GC(){
-        int num = cache.size()/2; 
+        int num = cache.size()/2;
         Log.d( "ftbt", "gc num="+num );
         while(num>0){
             Iterator it = cache.keySet().iterator();
