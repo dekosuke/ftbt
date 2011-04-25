@@ -142,29 +142,16 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 
         @Override
         protected Bitmap doInBackground(String... urls) {
-            Bitmap bm = ImageCache.getImage(urls[0]);
-            if (bm == null){ //does not exist on cache
-                try{
-                    if( id+15 < FutabaCatalogAdapter.LastTaskID ){ cancel(true);return null; }
-                    URL imgURL = new URL(urls[0]);
-                    InputStream is = imgURL.openStream();
-                    if( id+15 < FutabaCatalogAdapter.LastTaskID ){ cancel(true);return null; }
-                    bm = BitmapFactory.decodeStream(is);
-                    if( id+15 < FutabaCatalogAdapter.LastTaskID ){ cancel(true);return null; }
-                    float s_x = Math.max(1.0f, 
-                        (float) bm.getWidth()  / (float)Math.min(width, height) );
-                    float s_y = Math.max(1.0f,
-                        (float) bm.getHeight() / (float)Math.min(width, height) );
-                    float scale = Math.max(s_x, s_y);
-                    int new_x = (int)( bm.getWidth()  / scale );
-                    int new_y = (int)( bm.getHeight() / scale );
-                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, false);
-                    ImageCache.setImage(urls[0], bm);
-                } catch (Exception e) {
-                    Log.d( "ftbt", e.toString() );
+            Bitmap bm = null;
+            try{
+                bm = ImageCache.getImage(urls[0]);
+                if (bm == null){ //does not exist on cache
+                    ImageCache.setImage(urls[0]);
+                    bm = ImageCache.getImage(urls[0]);
                 }
-
- 
+                bm = ImageResizer.ResizeWideToSquare(bm);  
+            } catch (Exception e) {
+                Log.d( "ftbt", e.toString() );
             }
             return bm;
         }

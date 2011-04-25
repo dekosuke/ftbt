@@ -160,6 +160,12 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
         String imgFile = CircleList.get();
         setTag(imgFile);
         
+        Context context = getContext();
+        WindowManager wm = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
+        Display display = wm.getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        
         try{
             canvas.drawColor(0,PorterDuff.Mode.CLEAR ); 
             Bitmap bmp = ImageCache.getImage(imgFile);
@@ -168,6 +174,16 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                 ImageGetTask task = new ImageGetTask(this);
                 task.execute(imgFile); 
             }else{
+
+                float s_x = Math.max(1.0f, 
+                  (float) bmp.getWidth()  / (float)width );
+                float s_y = Math.max(1.0f,
+                  (float) bmp.getHeight() / (float)height );
+                float scale = Math.max(s_x, s_y);
+                int new_x = (int)( bmp.getWidth()  / scale );
+                int new_y = (int)( bmp.getHeight() / scale );
+                bmp = Bitmap.createScaledBitmap(bmp, new_x, new_y, true);
+ 
                 Paint p = new Paint();
                 canvas.drawBitmap(bmp, 0, 0, p);
             }
@@ -209,36 +225,12 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             Bitmap bm=null;
             try{
                 Log.d( "ftbt", "getting"+urls[0]);
-                Context context = getContext();
-                WindowManager wm = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
-                Display display = wm.getDefaultDisplay();
-                int width = display.getWidth();
-                int height = display.getHeight();
- 
+
                 if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
                 bm = ImageCache.getImage(urls[0]);
                 if (bm == null){ //does not exist on cache
-                        URL imgURL = new URL(urls[0]);
-                        InputStream is = imgURL.openStream();
-                        if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                        bm = BitmapFactory.decodeStream(is); //メモリ足りない/大ファイルだとこれnullになりがち
-                        //bm = MyDecodeStream(is);
-                        if( bm == null ){
-                            Log.d( "ftbt", "failed to get file "+urls[0] );
-                            ImageCache.GC();
-                            return null;
-                        }
-                        if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                        float s_x = Math.max(1.0f, 
-                            (float) bm.getWidth()  / (float)width );
-                        float s_y = Math.max(1.0f,
-                            (float) bm.getHeight() / (float)height );
-                        float scale = Math.max(s_x, s_y);
-                        int new_x = (int)( bm.getWidth()  / scale );
-                        int new_y = (int)( bm.getHeight() / scale );
-                        bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
-                        if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
-                        ImageCache.setImage(urls[0], bm);
+                    ImageCache.setImage(urls[0]);
+                    bm = ImageCache.getImage(urls[0]);
                 }
             } catch (Exception e) {
                 Log.i( "ftbt", "message", e );

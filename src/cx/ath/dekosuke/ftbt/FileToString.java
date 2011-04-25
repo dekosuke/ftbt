@@ -5,14 +5,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import android.util.Log;
 
 public class FileToString {
   // ファイル内容をを文字列化するメソッドです。
-  public static String fileToString(File file) throws IOException {
+  public static String fileToString(File file, String encoding) throws IOException {
     BufferedReader br = null;
     try {
       // ファイルを読み込むバッファドリーダを作成します。
-      br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+      br = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
       // 読み込んだ文字列を保持するストリングバッファを用意します。
       StringBuffer sb = new StringBuffer();
       // ファイルから読み込んだ一文字を保存する変数です。
@@ -27,10 +28,5 @@ public class FileToString {
       // リーダを閉じます。
       br.close();
     }
-  }
-  // fileToString メソッドをテストします。
-  public static void main(String[] args) throws IOException {
-    String s = fileToString(new File("/JavaMaster/bin/samples/file/test.txt"));
-    System.out.println(s);
   }
 }

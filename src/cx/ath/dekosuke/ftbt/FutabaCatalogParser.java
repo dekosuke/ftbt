@@ -75,37 +75,37 @@ public class FutabaCatalogParser {
             nameValuePair.add(new BasicNameValuePair("cy", "5"));
             nameValuePair.add(new BasicNameValuePair("cl", "100"));
 
-            // ログイン処理
+            urlStr = urlStr+"?mode=cat"; //カタログです
+            String data = null;
+            //cookie取得->カタログ取得と2度HTTPアクセスしている
             try {
                 httppost.setEntity(new UrlEncodedFormEntity(nameValuePair));
                 HttpResponse response = httpClient.execute(httppost);
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 response.getEntity().writeTo(byteArrayOutputStream);
-            } catch (Exception e) {
-                Log.d( "ftbt", "httppost error" );
-            }
-
-            HttpGet httpget = new HttpGet( urlStr+"?mode=cat" );
-            HttpResponse httpResponse = null;
-            try {
+                HttpGet httpget = new HttpGet( urlStr );
+                HttpResponse httpResponse = null;
                 httpResponse = httpClient.execute(httpget);
-            } catch (Exception e) {
-                Log.d( "ftbt", "httpget error");
-            }
-
-            int status = httpResponse.getStatusLine().getStatusCode();
-            String data = null;
-            if (HttpStatus.SC_OK == status) {
-                try {
+                int status = httpResponse.getStatusLine().getStatusCode();
+                if (HttpStatus.SC_OK == status) {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     httpResponse.getEntity().writeTo(outputStream);
+                    SDCard.saveBin(FutabaCrypt.createDigest(urlStr),
+                         outputStream.toByteArray(), true); //キャッシュに保存
                     data = outputStream.toString("SHIFT-JIS");
                     //parse(outputStream.toString());
-                } catch (Exception e) {
-                     Log.d( "ftbt", "error in creating bytestream");
+                } else {
+                    Log.d( "ftbt", "NON-OK Status" + status);
+                    throw new Exception("HTTP BAD RESULT");
                 }
-            } else {
-                Log.d( "ftbt", "NON-OK Status" + status);
+            }catch(Exception e){ //カタログ取得に失敗、キャッシュから
+                Log.d("ftbt", "message", e );
+                if(SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))){
+                    Log.d("ftbt", "getting html from cache"+FutabaCrypt.createDigest(urlStr));
+                    data = SDCard.loadTextCache(FutabaCrypt.createDigest(urlStr));
+                }else{
+                    Log.d("ftbt", "cache "+FutabaCrypt.createDigest(urlStr)+"not found");
+                }
             }
 
             Matcher mc = honbunPattern.matcher(data);

@@ -163,32 +163,15 @@ public class FutabaAdapter extends ArrayAdapter {
 
         @Override
         protected Bitmap doInBackground(String... urls) {
-            Bitmap bm = ImageCache.getImage(urls[0]+"_sml");
+            Bitmap bm = ImageCache.getImage(urls[0]);
             HttpURLConnection con=null;
             InputStream is = null;
             Log.d( "ftbt", "futabaAdapter thread start" );
             if (bm == null){ //does not exist on cache
                 //synchronized (FutabaAdapter.lock){
                 try{
-                    if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    URL imgURL = new URL(urls[0]);
-                    con = (HttpURLConnection) imgURL.openConnection(); 
-                    con.connect();
-                    is = con.getInputStream();  
-                    //InputStream is = imgURL.openStream();
-                    if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    bm = BitmapFactory.decodeStream(is);
-                    //bm = MyDecodeStream(is);
-                    if(bm==null){ //メモリ不足とか
-                        ImageCache.GC();
-                        return null;
-                    }/*
-                    if( id+10 < FutabaAdapter.LastTaskID ){ cancel(true);return null; }
-                    int new_x = FutabaAdapter.getSmlImageWidth(bm, width, height);
-                    int new_y = FutabaAdapter.getSmlImageHeight(bm, width, height);
-                    bm = Bitmap.createScaledBitmap(bm, new_x, new_y, true);
-                    */
-                    ImageCache.setImage(urls[0]+"_sml", bm);
+                    ImageCache.setImage(urls[0]);
+                    bm = ImageCache.getImage(urls[0]);
                 } catch (Exception e) {
                     Log.i( "ftbt", "message", e );
                     Log.d( "ftbt", "fail with "+urls[0] ); 

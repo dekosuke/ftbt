@@ -14,22 +14,6 @@ public class ImageCache {
     private static int sizeSum=0;
       
     public static Bitmap getImage(String url) {
-        /*
-        try{
-            if (cache.containsKey(key)) {  
-                Log.d("ftbt", "cache hit!");  
-                Bitmap bmp = cache.get(key);  
-                if(bmp == null){
-                    Log.d("ftbt", "cache contents null");  
-                    return null;
-                }
-                return bmp;
-            }
-        }catch(Exception e){   
-            Log.i("ftbt", "failure in image cache get", e);
-        }  
-        return null;  
-        */
         String urlHash = FutabaCrypt.createDigest(url);
         //本当はキーを画像名ではなくスレッド名含むURLにすべき
         try{
@@ -42,21 +26,7 @@ public class ImageCache {
         return null;
     }  
       
-    public static void setImage(String url, Bitmap image) {
-        /* 
-        try{
-            if(sizeSum > SIZE_SUM_MAX){
-                Log.d( "ftbt", "delete some cache" );
-                GC();
-            }
-            cache.put(key, image);
-            File file = new File(key);
-            //SDCard.saveFromURL(file.getName(), new URL(key));
-            sizeSum+=image.getWidth()*image.getHeight();
-        }catch(Exception e){
-            Log.i("ftbt", "failure in image cache set", e);
-        }
-        */
+    public static void setImage(String url) {
         String urlHash = FutabaCrypt.createDigest(url);
         try{
             SDCard.saveFromURL(urlHash, new URL(url), true);
@@ -66,17 +36,6 @@ public class ImageCache {
     }
 
     public static void GC(){
-        /*
-        int num = cache.size()/2;
-        Log.d( "ftbt", "gc num="+num );
-        while(num>0){
-            Iterator it = cache.keySet().iterator();
-            String key = (String)it.next();
-            cache.remove(key);
-            Log.d( "ftbt", "removed cache of "+key );
-            num--;
-        }
-        sizeSum/=2;
-        */
+        //currently do nothing
     }
 } 
