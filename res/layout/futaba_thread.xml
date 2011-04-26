@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    >
-<ListView android:id="@+id/threadlistview"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="top"
-     />
+    > 
+<RelativeLayout android:layout_width="fill_parent"
+android:layout_height="wrap_content" android:id="@+id/top_control_bar">
+</RelativeLayout>
 
 <LinearLayout
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true">
+    android:layout_alignParentBottom="true"
+    android:id="@+id/bottom_control_bar"
+    >
     <Button android:text="reload"
         android:id="@+id/reload_btn"
         android:layout_width="fill_parent"
@@ -23,6 +23,12 @@
     </Button>
 </LinearLayout>
 
+<ListView android:id="@+id/threadlistview"
+    android:layout_width="fill_parent"
+    android:layout_height="0dip"
+    android:layout_below="@id/top_control_bar" 
+    android:layout_above="@id/bottom_control_bar"
+     />
 </RelativeLayout>
 
 
