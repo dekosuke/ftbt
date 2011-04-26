@@ -111,6 +111,10 @@ public class catalog extends Activity
         waitDialog.dismiss();
    }
 
+    public void onClickReloadBtn(View v) {
+        Log.d( "ftbt", "catalog onclick-reload" );
+        setWait();
+    }
  
     public void onClick(View v) {
         Log.d( "ftbt", "catalog onclick" );

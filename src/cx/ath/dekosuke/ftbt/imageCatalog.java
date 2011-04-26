@@ -54,10 +54,13 @@ public class imageCatalog extends Activity implements Runnable {
     private ProgressDialog waitDialog;
     private Thread thread;
 
+    Toast toast;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        toast = Toast.makeText(this, "[]", Toast.LENGTH_SHORT);
         setWait();       
     } 
 
@@ -145,7 +148,9 @@ public class imageCatalog extends Activity implements Runnable {
                     File file = new File(imgFile);
                     try{
                         SDCard.saveFromURL(file.getName(), new URL(imgFile), false);
-                        Toast.makeText(v.getContext(), "画像"+file.getName()+"を保存しました", Toast.LENGTH_LONG).show();
+                        toast.cancel();
+                        toast = Toast.makeText(v.getContext(), "画像"+file.getName()+"を保存しました", Toast.LENGTH_SHORT);
+                        toast.show();
                     }catch(Exception e){
                         Log.i( "ftbt", "message", e ); 
                     }

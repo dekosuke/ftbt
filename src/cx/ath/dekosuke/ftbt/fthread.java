@@ -26,33 +26,84 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.DefaultedHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import android.app.ProgressDialog;
+import java.lang.Thread;
+import android.os.Handler;
+import android.os.Message;
+
+import android.widget.ListView;
+import android.view.View;
+import cx.ath.dekosuke.ftbt.R.id;
+
+
 //スレッド表示アクティビティ
-public class fthread extends ListActivity {
+public class fthread extends Activity implements Runnable {
 
     public ArrayList<FutabaStatus> statuses = null;  //レス一覧
     private FutabaAdapter adapter = null;
+    public String threadURL = null;
 
+    private ProgressDialog waitDialog;
+    private Thread thread;
+ 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
-        try{ 
-            Intent intent = getIntent();
-            String threadURL = 
+        
+        Intent intent = getIntent();
+        threadURL = 
                  (String) intent.getSerializableExtra("baseUrl")+
                  (String) intent.getSerializableExtra("threadNum");
-            Log.d( "ftbt", "threadURL:"+threadURL );
+        setWait();
+    }
+
+    public void setWait(){
+        waitDialog = new ProgressDialog(this);
+        waitDialog.setMessage("ネットワーク接続中...");
+        waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //waitDialog.setCancelable(true);
+        waitDialog.show();
+ 
+        thread = new Thread(this);
+        thread.start();
+    }
+
+    public void run(){
+       handler.sendEmptyMessage(0);
+    }
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg){
+            // HandlerクラスではActivityを継承してないため
+            // 別の親クラスのメソッドにて処理を行うようにした。
+        try{
+            loading();
+        }catch(Exception e){
+            Log.d("ftbt", "message", e);
+        }
+     }
+    };
+
+    private void loading(){
+        try{ 
             statuses = new ArrayList<FutabaStatus>();
             FutabaThreadParser parser = new FutabaThreadParser(threadURL);
             parser.parse();
             statuses = parser.getStatuses(); 
             Log.d( "ftbt", "parse end" );
 
-            adapter = new FutabaAdapter(this, R.layout.futaba_row, statuses);
-            setListAdapter(adapter);
+            setContentView(R.layout.futaba_thread);
+
+            ListView listView = (ListView) findViewById(id.threadlistview);
+            // アダプターを設定します
+            adapter = new FutabaAdapter(this, 
+                R.layout.futaba_thread_row, statuses);
+            listView.setAdapter(adapter);
+
         }catch(Exception e){
             Log.i("ftbt", "message", e);
         }
+        waitDialog.dismiss();
     }
 
     //スレッドに存在するすべての画像のURLを配列にして返す
@@ -71,4 +122,10 @@ public class fthread extends ListActivity {
         }
         return list;
     }
+
+    public void onClickReloadBtn(View v) {
+        Log.d( "ftbt", "fthread onclick-reload" );
+        setWait();
+    }
+ 
 }

@@ -12,7 +12,7 @@
     android:onClick="onClickReloadBtn">
 </Button>
 
-<ListView android:id="@+id/cataloglistview"
+<ListView android:id="@+id/threadlistview"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
 
