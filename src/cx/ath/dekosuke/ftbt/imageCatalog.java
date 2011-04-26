@@ -33,10 +33,16 @@ import android.view.WindowManager;
 import android.content.Context;
 import android.view.Display;
 
+//Progress Dialog出すため
+import android.app.ProgressDialog;
+import java.lang.Thread;
+import android.os.Handler;
+import android.os.Message;
+
 //画像カタログ
 //指定された画像の登録および、隣の画像への移動
 //画像の円リストは別のデータ構造で。
-public class imageCatalog extends Activity {
+public class imageCatalog extends Activity implements Runnable {
   
     //画像を読み込む際にAsyncTaskを使うが、
     //新しいAsyncTaskが来たら古いAsyncTaskは諦めて終了する。
@@ -44,10 +50,46 @@ public class imageCatalog extends Activity {
     static int LastTaskID=-1;
     static Object lock = new Object();
 
+    //ProgressDialog関連
+    private ProgressDialog waitDialog;
+    private Thread thread;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
+
+        setWait();       
+    } 
+
+    public void setWait(){
+        waitDialog = new ProgressDialog(this);
+        waitDialog.setMessage("ネットワーク接続中...");
+        waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //waitDialog.setCancelable(true);
+        waitDialog.show();
+ 
+        thread = new Thread(this);
+        thread.start();
+    }
+
+    public void run(){
+       handler.sendEmptyMessage(0);
+    }
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg){
+            // HandlerクラスではActivityを継承してないため
+            // 別の親クラスのメソッドにて処理を行うようにした。
+        try{
+            loading();
+        }catch(Exception e){
+            Log.d("ftbt", "message", e);
+        }
+     }
+    };
+
+    private void loading(){
+ 
         Log.d( "ftbt", "imageCatalog.onCreate start" ); 
         Intent intent = getIntent();
         Log.d( "ftbt", "hoge" );
@@ -72,8 +114,11 @@ public class imageCatalog extends Activity {
         imageCatalogView view = new imageCatalogView(this);
         view.setOnTouchListener(new FlickTouchListener());
         setContentView(view);
-    } 
+        
+        waitDialog.dismiss();
+   }
 
+ 
     private float lastTouchX;
     private float currentX;
     private float lastTouchY;
