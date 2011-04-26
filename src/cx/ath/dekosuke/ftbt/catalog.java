@@ -35,8 +35,12 @@ import java.lang.Thread;
 import android.os.Handler;
 import android.os.Message;
 
+import android.widget.Button;
+
+import cx.ath.dekosuke.ftbt.R.id;
+
 //板カタログ表示アクティビティ
-public class catalog extends ListActivity 
+public class catalog extends Activity 
         implements OnClickListener, Runnable{
 
     private ArrayList<FutabaThread> fthreads = null;
@@ -46,6 +50,7 @@ public class catalog extends ListActivity
     private String catalogURL;
     private ProgressDialog waitDialog;
     private Thread thread;
+    private Button buttonReload;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,29 +93,28 @@ public class catalog extends ListActivity
         Intent intent = getIntent();
         baseUrl = (String) intent.getSerializableExtra("baseUrl");
         catalogURL = baseUrl + "futaba.php";
+        buttonReload = new Button(this);
+        buttonReload.setText("Reload");
+        buttonReload.setOnClickListener(this);
         parser = new FutabaCatalogParser(catalogURL);
         parser.parse(getApplicationContext());
         fthreads = parser.getThreads();
+
+        setContentView(R.layout.futaba_catalog);
+
+        ListView listView = (ListView) findViewById(id.cataloglistview);
+        // アダプターを設定します
         adapter = new FutabaCatalogAdapter(this, R.layout.futaba_catalog_row, fthreads);
-        Log.d( "ftbt", "adapter created" );
-        setListAdapter(adapter);
-        Log.d( "ftbt", "setlitadapter end" );
+        listView.setAdapter(adapter);
+
+
         waitDialog.dismiss();
    }
 
  
     public void onClick(View v) {
         Log.d( "ftbt", "catalog onclick" );
-        transSettingToThread();
+        //v.reload();
     }
 
-    // スレッド画面に遷移
-    public void transSettingToThread() {
-        Intent intent = new Intent();
-        
-        //TODO:IntentでActivityにデータを渡す
-        intent.setClassName(getPackageName(), 
-            getClass().getPackage().getName()+".fthread");
-        startActivity(intent);
-    }
 }
