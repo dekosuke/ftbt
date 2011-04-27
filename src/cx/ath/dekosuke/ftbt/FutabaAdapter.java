@@ -214,7 +214,6 @@ public class FutabaAdapter extends ArrayAdapter {
                 image.setImageBitmap(result);
         if(true){ //クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
             image.setOnClickListener( new View.OnClickListener() {   
-                @Override
                 public void onClick(View v) {
                     Log.d ( "ftbt", "intent calling thread activity" );
                     Intent intent = new Intent();

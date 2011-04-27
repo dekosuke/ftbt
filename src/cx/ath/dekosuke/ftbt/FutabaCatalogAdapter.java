@@ -75,7 +75,6 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 
         if(true){
             view.setOnClickListener( new View.OnClickListener() {    
-                @Override
                 public void onClick(View v) {
                     Log.d ( "ftbt", "intent calling thread activity" );
                     Intent intent = new Intent();

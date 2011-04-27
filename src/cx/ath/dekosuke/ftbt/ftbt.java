@@ -87,7 +87,6 @@ public class ftbt extends Activity implements Runnable
 
         // リストビューのアイテムがクリックされた時に呼び出されるコールバックリスナーを登録します
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
             public void onItemClick(AdapterView<?> parent, View view,
                     int position, long id) {
                 ListView listView = (ListView) parent;

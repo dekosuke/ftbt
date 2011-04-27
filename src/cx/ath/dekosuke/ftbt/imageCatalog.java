@@ -127,8 +127,6 @@ public class imageCatalog extends Activity implements Runnable {
     private float lastTouchY;
     private float currentY;
     private class FlickTouchListener implements View.OnTouchListener {
-
-        @Override
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
 
@@ -191,16 +189,6 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
     }
 
-    @Override
-    public void surfaceChanged (SurfaceHolder holder, int format, int width, int height) {
-        // SurfaceViewが変化（画面の大きさ，ピクセルフォーマット）した時のイベントの処理を記述
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        doDraw();
-    }
-
     public void doDraw() {
         SurfaceHolder holder = getHolder();
         // SurfaceViewが作成された時の処理（初期画面の描画等）を記述
@@ -224,7 +212,7 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
                 ImageGetTask task = new ImageGetTask(this);
                 task.execute(imgFile); 
             }else{
-
+            	  Log.d("ftbt", "draw image");
                 float s_x = Math.max(1.0f, 
                   (float) bmp.getWidth()  / (float)width );
                 float s_y = Math.max(1.0f,
@@ -245,11 +233,6 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
         // この間にグラフィック描画のコードを記述する。
 
         holder.unlockCanvasAndPost(canvas);
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        // SurfaceViewが廃棄されたる時の処理を記述
     }
 
     //画像取得用スレッド
@@ -275,8 +258,6 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             Bitmap bm=null;
             try{
                 Log.d( "ftbt", "getting"+urls[0]);
-
-                if( id != imageCatalog.LastTaskID ){ cancel(true);return null; }
                 bm = ImageCache.getImage(urls[0]);
                 if (bm == null){ //does not exist on cache
                     ImageCache.setImage(urls[0]);
@@ -335,6 +316,23 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
             return bitmap;
         }
     }
+
+	public void surfaceChanged(SurfaceHolder holder, int format, int width,
+			int height) {
+		// TODO Auto-generated method stub
+		doDraw();
+	}
+
+	public void surfaceCreated(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		doDraw();
+		
+	}
+
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 //円状のリスト。カタログに載っているファイルのリスト。
