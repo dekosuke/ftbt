@@ -11,10 +11,10 @@
         android:layout_height="fill_parent">  
           
         <TextView android:id="@+id/title" android:layout_width="wrap_content"
-         android:layout_height="fill_parent" android:textSize="12sp" 
+         android:layout_height="fill_parent" android:textSize="14sp" 
          android:textColor="#cc1105" layout_weight="1"/>
         <TextView android:id="@+id/name" android:layout_width="wrap_content" 
-         android:layout_height="fill_parent" android:textSize="12sp" 
+         android:layout_height="fill_parent" android:textSize="14sp" 
          android:textColor="#117743" layout_weight="1" />
           
     </LinearLayout>  
@@ -33,7 +33,7 @@
         android:layout_height="fill_parent">  
        <TextView android:layout_width="fill_parent"  
             android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/maintext"  
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="#800000"
             android:ellipsize="marquee" />  
     </LinearLayout>  
