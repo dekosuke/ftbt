@@ -51,7 +51,7 @@ public class imageCatalog extends Activity implements Runnable {
 	static Object lock = new Object();
 
 	// ProgressDialog関連
-	private ProgressDialog waitDialog;
+	public ProgressDialog waitDialog;
 	private Thread thread;
 
 	Toast toast;
@@ -120,8 +120,6 @@ public class imageCatalog extends Activity implements Runnable {
 		imageCatalogView view = new imageCatalogView(this);
 		view.setOnTouchListener(new FlickTouchListener());
 		setContentView(view);
-
-		waitDialog.dismiss();
 	}
 
 	private float lastTouchX;
@@ -231,6 +229,9 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
 
 				Paint p = new Paint();
 				canvas.drawBitmap(bmp, 0, 0, p);
+
+				imageCatalog activity = (imageCatalog)context;
+				activity.waitDialog.dismiss();
 			}
 		} catch (Exception e) {
 			// Log.i("ftbt", "message", new Throwable());

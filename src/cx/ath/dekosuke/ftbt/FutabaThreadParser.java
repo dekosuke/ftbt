@@ -49,7 +49,9 @@ public class FutabaThreadParser {
 			Pattern resPattern = Pattern.compile("<table.*?>(.+?)</table>",
 					Pattern.DOTALL);
 			Pattern textPattern = Pattern.compile(
-					"<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
+					"<input[^>]+><font[^>]+><b>(.*?)</b></font>"+
+					".*?<font[^>]+><b>(.*?) ?</b></font>"+
+					"(.*?) (No.[0-9]+).+?<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
 					"<a.*?target.*?href=\"(.+?)\"", Pattern.DOTALL);
 			Pattern thumbPattern = Pattern.compile(
@@ -80,7 +82,7 @@ public class FutabaThreadParser {
 			FutabaStatus statusTop = new FutabaStatus();
 			Matcher mcImg = thumbPattern.matcher(honbun);
 			mcImg.find();
-			statusTop.setImgURL(mcImg.group(1));
+			statusTop.imgURL = mcImg.group(1);
 			// Log.d("ftbt", "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 			statusTop.width = Integer.parseInt(mcImg.group(2));
 			statusTop.height = Integer.parseInt(mcImg.group(3));
@@ -89,9 +91,13 @@ public class FutabaThreadParser {
 			statusTop.bigImgURL = mcBigImg.group(1);
 			Matcher mcText = textPattern.matcher(honbun);
 			mcText.find();
-			String text = mcText.group(1);
+			statusTop.title=mcText.group(1);
+			statusTop.name =mcText.group(2);
+			statusTop.datestr =mcText.group(3);
+			statusTop.idstr =mcText.group(4);
+			String text = mcText.group(5);
 			text = normalize(text);
-			statusTop.setText(text);
+			statusTop.text = text;
 			statuses.add(statusTop);
 
 			// Log.d( "ftbt", honbun );
@@ -101,12 +107,16 @@ public class FutabaThreadParser {
 				// Log.d( "ftbt", mcRes.group(1) );
 				mcText.find();
 				FutabaStatus status = new FutabaStatus();
-				text = mcText.group(1);
+				status.title=mcText.group(1);
+				status.name =mcText.group(2); //メールアドレスが入っていることあり
+				status.datestr =mcText.group(3);
+				status.idstr =mcText.group(4);
+				text = mcText.group(5);
 				text = normalize(text);
-				status.setText(text);
+				status.text = text;
 				mcImg = thumbPattern.matcher(mcRes.group(1));
 				if (mcImg.find()) {
-					status.setImgURL(mcImg.group(1));
+					status.imgURL = mcImg.group(1);
 					status.width = Integer.parseInt(mcImg.group(2));
 					status.height = Integer.parseInt(mcImg.group(3));
 					// Log.d("ftbt",
@@ -154,8 +164,8 @@ public class FutabaThreadParser {
 					if (name.equalsIgnoreCase(TABLETAG)) {
 						// スレッド追加
 						FutabaStatus status = new FutabaStatus();
-						status.setText(text);
-						status.setImgURL(imgURL);
+						status.text = text;
+						status.imgURL = imgURL;
 						statuses.add(status);
 						return;
 					}

@@ -63,7 +63,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 
 		// 表示すべきデータの取得
 		FutabaThread item = (FutabaThread) items.get(position);
-		final String threadNum = item.getThreadNum();
+		final String threadNum = item.threadNum;
 
 		if (view == null) {
 			// 受け取ったビューがnullなら新しくビューを生成
@@ -101,10 +101,10 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 
 			// 画像をセット
 			try {
-				if (item.getImgURL() != null) {
-					iv.setTag(item.getImgURL());
+				if (item.imgURL != null) {
+					iv.setTag(item.imgURL);
 					ImageGetTask task = new ImageGetTask(iv);
-					task.execute(item.getImgURL());
+					task.execute(item.imgURL);
 					// Log.d( "ftbt", "image "+item.getImgURL()+"set" );
 				} else {
 					// Bitmap bm = null;
@@ -117,7 +117,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 
 			// テキストをビューにセット
 			if (text != null) {
-				text.setText(item.getText());
+				text.setText(item.text);
 			}
 		}
 		return view;

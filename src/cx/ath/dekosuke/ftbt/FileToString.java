@@ -24,6 +24,7 @@ public class FileToString {
 			while ((c = br.read()) != -1) {
 				sb.append((char) c);
 			}
+			
 			// バッファの内容を文字列化して返します。
 			return sb.toString();
 		} finally {

@@ -76,15 +76,17 @@ public class FutabaAdapter extends ArrayAdapter {
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
 			if (item != null) {
-				TextView screenName = (TextView) view
-						.findViewById(R.id.toptext);
-				screenName.setTypeface(Typeface.DEFAULT_BOLD);
-
+				TextView title = (TextView) view
+						.findViewById(R.id.title);
+				title.setText(item.title+" ");// item.getImgURL());
+				TextView name = (TextView) view
+				.findViewById(R.id.name);
+				name.setText(item.name);// item.getImgURL());
+				
 				// スクリーンネームをビューにセット
-				TextView text = (TextView) view.findViewById(R.id.bottomtext);
-				if (screenName != null) {
-					screenName.setText("無題 Name としあき");// item.getImgURL());
-				}
+				TextView text = (TextView) view.findViewById(R.id.maintext);
+				TextView bottomtext = (TextView) view.findViewById(R.id.bottomtext);
+				bottomtext.setText(item.datestr+" "+item.idstr);
 
 				Bitmap bm = null;
 				ImageView iv = (ImageView) view.findViewById(R.id.image);
@@ -92,14 +94,14 @@ public class FutabaAdapter extends ArrayAdapter {
 
 				// 画像をセット
 				try {
-					if (item.getImgURL() != null) {
+					if (item.imgURL != null) {
 						iv.setTag(item.bigImgURL);
 						bm = Bitmap.createBitmap(item.width, item.height,
 								Bitmap.Config.ALPHA_8);
 						iv.setImageBitmap(bm);
 						ImageGetTask task = new ImageGetTask(iv);
-						task.execute(item.getImgURL());
-						screenName.setText("(画像あり)");
+						task.execute(item.imgURL);
+						//title.setText("(画像あり)");
 					} else { // 画像なし
 						/*
 						 * Log.d("ftbt", "w="+item.width+" h="+item.height ); bm
@@ -113,7 +115,7 @@ public class FutabaAdapter extends ArrayAdapter {
 
 				// テキストをビューにセット
 				if (text != null) {
-					text.setText(item.getText());
+					text.setText(item.text);
 				}
 			}
 
@@ -210,7 +212,7 @@ public class FutabaAdapter extends ArrayAdapter {
 				if (tag.equals(image.getTag())) {
 					if (result == null) { // 画像読み込み失敗時
 						TextView screenName = (TextView) image
-								.findViewById(R.id.toptext);
+								.findViewById(R.id.title);
 						if (screenName != null) {
 							screenName.setText("(画像読み込み失敗)");// item.getImgURL());
 						}

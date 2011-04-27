@@ -22,7 +22,7 @@
        <TextView android:layout_width="fill_parent"  
             android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/url"  
             android:textSize="12sp"
-            android:textColor="#800000"
+            android:textColor="#117743"
             android:ellipsize="marquee" />  
     </LinearLayout>  
 </LinearLayout>  

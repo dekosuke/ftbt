@@ -127,14 +127,14 @@ public class FutabaCatalogParser {
 				FutabaThread thread = new FutabaThread();
 				String text = mcText.group(1);
 				text = tagPattern.matcher(text).replaceAll(""); // タグ除去
-				thread.setText(text);
+				thread.text=text;
 				Matcher mcThreadNum = threadNumPattern.matcher(mcRes.group(1));
 				mcThreadNum.find();
 				String threadNum = mcThreadNum.group(1);
-				thread.setThreadNum(threadNum);
+				thread.threadNum = threadNum;
 				Matcher mcImg = imgPattern.matcher(mcRes.group(1));
 				if (mcImg.find()) {
-					thread.setImgURL(mcImg.group(1));
+					thread.imgURL = mcImg.group(1);
 				}
 				// Log.d( "ftbt", text );
 				fthreads.add(thread);
