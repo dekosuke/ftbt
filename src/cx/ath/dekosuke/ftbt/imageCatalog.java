@@ -43,279 +43,286 @@ import android.os.Message;
 //指定された画像の登録および、隣の画像への移動
 //画像の円リストは別のデータ構造で。
 public class imageCatalog extends Activity implements Runnable {
-  
-    //画像を読み込む際にAsyncTaskを使うが、
-    //新しいAsyncTaskが来たら古いAsyncTaskは諦めて終了する。
-    //ここに登録されてないIDのタスクはキャンセル
-    static int LastTaskID=-1;
-    static Object lock = new Object();
 
-    //ProgressDialog関連
-    private ProgressDialog waitDialog;
-    private Thread thread;
+	// 画像を読み込む際にAsyncTaskを使うが、
+	// 新しいAsyncTaskが来たら古いAsyncTaskは諦めて終了する。
+	// ここに登録されてないIDのタスクはキャンセル
+	static int LastTaskID = -1;
+	static Object lock = new Object();
 
-    Toast toast;
+	// ProgressDialog関連
+	private ProgressDialog waitDialog;
+	private Thread thread;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	Toast toast;
 
-        toast = Toast.makeText(this, "[]", Toast.LENGTH_SHORT);
-        setWait();       
-    } 
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 
-    public void setWait(){
-        waitDialog = new ProgressDialog(this);
-        waitDialog.setMessage("ネットワーク接続中...");
-        waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        //waitDialog.setCancelable(true);
-        waitDialog.show();
- 
-        thread = new Thread(this);
-        thread.start();
-    }
+		toast = Toast.makeText(this, "[]", Toast.LENGTH_SHORT);
+		setWait();
+	}
 
-    public void run(){
-       handler.sendEmptyMessage(0);
-    }
+	public void setWait() {
+		waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
 
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg){
-            // HandlerクラスではActivityを継承してないため
-            // 別の親クラスのメソッドにて処理を行うようにした。
-        try{
-            loading();
-        }catch(Exception e){
-            Log.d("ftbt", "message", e);
-        }
-     }
-    };
+		thread = new Thread(this);
+		thread.start();
+	}
 
-    private void loading(){
- 
-        Log.d( "ftbt", "imageCatalog.onCreate start" ); 
-        Intent intent = getIntent();
-        Log.d( "ftbt", "hoge" );
-        ArrayList<String> imgURLs = (ArrayList<String>) intent.getSerializableExtra("imgURLs");        
+	public void run() {
+		handler.sendEmptyMessage(0);
+	}
 
-        Log.d( "ftbt", "hoge1" );
-        String myImageURL = (String) intent.getSerializableExtra("myImgURL");
-        Log.d( "ftbt", "hoge2" );
- 
-        //ここでIntentによる追加情報からCircleListを構築する
-        CircleList.clear();
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			// HandlerクラスではActivityを継承してないため
+			// 別の親クラスのメソッドにて処理を行うようにした。
+			try {
+				loading();
+			} catch (Exception e) {
+				Log.d("ftbt", "message", e);
+			}
+		}
+	};
 
-        //これスタティックにするのはどうかという感じがする
-        for(int i=0;i<imgURLs.size();i++){
-            String imgURL = imgURLs.get(i);
-            CircleList.add(imgURL);
-            if(imgURL.equals(myImageURL)){ CircleList.moveToLast(); }
-        }
-        //CircleList.add(myImageURL);
-        //CircleList.move(1);
+	private void loading() {
 
-        imageCatalogView view = new imageCatalogView(this);
-        view.setOnTouchListener(new FlickTouchListener());
-        setContentView(view);
-        
-        waitDialog.dismiss();
-   }
+		Log.d("ftbt", "imageCatalog.onCreate start");
+		Intent intent = getIntent();
+		Log.d("ftbt", "hoge");
+		ArrayList<String> imgURLs = (ArrayList<String>) intent
+				.getSerializableExtra("imgURLs");
 
- 
-    private float lastTouchX;
-    private float currentX;
-    private float lastTouchY;
-    private float currentY;
-    private class FlickTouchListener implements View.OnTouchListener {
-        public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
+		Log.d("ftbt", "hoge1");
+		String myImageURL = (String) intent.getSerializableExtra("myImgURL");
+		Log.d("ftbt", "hoge2");
 
-            case MotionEvent.ACTION_DOWN:
-                lastTouchX = event.getX();
-                lastTouchY = event.getY();
-                break;
+		// ここでIntentによる追加情報からCircleListを構築する
+		CircleList.clear();
 
-            case MotionEvent.ACTION_UP:
-                currentX = event.getX();
-                currentY = event.getY();
-                float moveX = currentX-lastTouchX;
-                float moveY = currentY-lastTouchY;
-                if(moveY>5.0f && moveY*moveY>moveX*moveX){
-                    //画像を保存する
-                    String imgFile = CircleList.get();
-                    File file = new File(imgFile);
-                    try{
-                        SDCard.saveFromURL(file.getName(), new URL(imgFile), false);
-                        toast.cancel();
-                        toast = Toast.makeText(v.getContext(), "画像"+file.getName()+"を保存しました", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }catch(Exception e){
-                        Log.i( "ftbt", "message", e ); 
-                    }
-                }else if (moveX > 5.0f) {
-                    //前に戻る動作
-                    CircleList.move(-1);
-                    Log.d("ftbt", "motion prev "+CircleList.pos());
-                    ((imageCatalogView)v).doDraw();
-                }else if (moveX < -5.0f) {
-                    //次に移動する動作
-                    CircleList.move(1);
-                    Log.d("ftbt", "motion next "+CircleList.pos());
-                    ((imageCatalogView)v).doDraw();
-                }
-                break;
+		// これスタティックにするのはどうかという感じがする
+		for (int i = 0; i < imgURLs.size(); i++) {
+			String imgURL = imgURLs.get(i);
+			CircleList.add(imgURL);
+			if (imgURL.equals(myImageURL)) {
+				CircleList.moveToLast();
+			}
+		}
+		// CircleList.add(myImageURL);
+		// CircleList.move(1);
 
-            case MotionEvent.ACTION_CANCEL:
-                currentX = event.getX();
-                if (lastTouchX < currentX) {
-                    //前に戻る動作
-                }
-                if (lastTouchX > currentX) {
-                     //次に移動する動作
-                }
-                break;
-            }
-            return true;
-        }
-    }
+		imageCatalogView view = new imageCatalogView(this);
+		view.setOnTouchListener(new FlickTouchListener());
+		setContentView(view);
+
+		waitDialog.dismiss();
+	}
+
+	private float lastTouchX;
+	private float currentX;
+	private float lastTouchY;
+	private float currentY;
+
+	private class FlickTouchListener implements View.OnTouchListener {
+		public boolean onTouch(View v, MotionEvent event) {
+			switch (event.getAction()) {
+
+			case MotionEvent.ACTION_DOWN:
+				lastTouchX = event.getX();
+				lastTouchY = event.getY();
+				break;
+
+			case MotionEvent.ACTION_UP:
+				currentX = event.getX();
+				currentY = event.getY();
+				float moveX = currentX - lastTouchX;
+				float moveY = currentY - lastTouchY;
+				if (moveY > 5.0f && moveY * moveY > moveX * moveX) {
+					// 画像を保存する
+					String imgFile = CircleList.get();
+					File file = new File(imgFile);
+					try {
+						SDCard.saveFromURL(file.getName(), new URL(imgFile),
+								false);
+						toast.cancel();
+						toast = Toast.makeText(v.getContext(),
+								"画像" + file.getName() + "を保存しました",
+								Toast.LENGTH_SHORT);
+						toast.show();
+					} catch (Exception e) {
+						Log.i("ftbt", "message", e);
+					}
+				} else if (moveX > 5.0f) {
+					// 前に戻る動作
+					CircleList.move(-1);
+					Log.d("ftbt", "motion prev " + CircleList.pos());
+					((imageCatalogView) v).doDraw();
+				} else if (moveX < -5.0f) {
+					// 次に移動する動作
+					CircleList.move(1);
+					Log.d("ftbt", "motion next " + CircleList.pos());
+					((imageCatalogView) v).doDraw();
+				}
+				break;
+
+			case MotionEvent.ACTION_CANCEL:
+				currentX = event.getX();
+				if (lastTouchX < currentX) {
+					// 前に戻る動作
+				}
+				if (lastTouchX > currentX) {
+					// 次に移動する動作
+				}
+				break;
+			}
+			return true;
+		}
+	}
 
 }
 
 class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
 
-    public imageCatalogView(Context context) {
-        super(context);
-        
-        getHolder().addCallback(this);
-    }
+	public imageCatalogView(Context context) {
+		super(context);
 
-    public void doDraw() {
-        SurfaceHolder holder = getHolder();
-        // SurfaceViewが作成された時の処理（初期画面の描画等）を記述
-        Canvas canvas = holder.lockCanvas();
+		getHolder().addCallback(this);
+	}
 
-        // この間にグラフィック描画のコードを記述する。
-        String imgFile = CircleList.get();
-        setTag(imgFile);
-        
-        Context context = getContext();
-        WindowManager wm = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE));
-        Display display = wm.getDefaultDisplay();
-        int width = display.getWidth();
-        int height = display.getHeight();
-        
-        try{
-            canvas.drawColor(0,PorterDuff.Mode.CLEAR ); 
-            Bitmap bmp = ImageCache.getImage(imgFile);
-            if(bmp == null){ //キャッシュない
-                //ImageCache.asyncSetImage(imgFile, imgFile);
-                ImageGetTask task = new ImageGetTask(this);
-                task.execute(imgFile); 
-            }else{
-            	  Log.d("ftbt", "draw image");
-                float s_x = Math.max(1.0f, 
-                  (float) bmp.getWidth()  / (float)width );
-                float s_y = Math.max(1.0f,
-                  (float) bmp.getHeight() / (float)height );
-                float scale = Math.max(s_x, s_y);
-                int new_x = (int)( bmp.getWidth()  / scale );
-                int new_y = (int)( bmp.getHeight() / scale );
-                bmp = Bitmap.createScaledBitmap(bmp, new_x, new_y, true);
- 
-                Paint p = new Paint();
-                canvas.drawBitmap(bmp, 0, 0, p);
-            }
-        }catch (Exception e){
-            //Log.i("ftbt", "message", new Throwable());
-            Log.i("ftbt", "message", e);
-        }
+	public void doDraw() {
+		SurfaceHolder holder = getHolder();
+		// SurfaceViewが作成された時の処理（初期画面の描画等）を記述
+		Canvas canvas = holder.lockCanvas();
 
-        // この間にグラフィック描画のコードを記述する。
+		// この間にグラフィック描画のコードを記述する。
+		String imgFile = CircleList.get();
+		setTag(imgFile);
 
-        holder.unlockCanvasAndPost(canvas);
-    }
+		Context context = getContext();
+		WindowManager wm = ((WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE));
+		Display display = wm.getDefaultDisplay();
+		int width = display.getWidth();
+		int height = display.getHeight();
 
-    //画像取得用スレッド
-    class ImageGetTask extends AsyncTask<String,Void,Bitmap> {
-        private imageCatalogView image;
-        private String tag;
-        private int id;
-        
-        public ImageGetTask(imageCatalogView _image) {
-            image = _image;
-            tag = image.getTag().toString();
-            //ID登録
-            synchronized (imageCatalog.lock){
-               imageCatalog.LastTaskID+=1;
-               id=imageCatalog.LastTaskID;
-            }
-            Log.d( "ftbt", "thread id"+id+" created." );
-        }
+		try {
+			canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+			Bitmap bmp = ImageCache.getImage(imgFile);
+			if (bmp == null) { // キャッシュない
+				// ImageCache.asyncSetImage(imgFile, imgFile);
+				ImageGetTask task = new ImageGetTask(this);
+				task.execute(imgFile);
+			} else {
+				Log.d("ftbt", "draw image");
+				float s_x = Math.max(1.0f, (float) bmp.getWidth()
+						/ (float) width);
+				float s_y = Math.max(1.0f, (float) bmp.getHeight()
+						/ (float) height);
+				float scale = Math.max(s_x, s_y);
+				int new_x = (int) (bmp.getWidth() / scale);
+				int new_y = (int) (bmp.getHeight() / scale);
+				bmp = Bitmap.createScaledBitmap(bmp, new_x, new_y, true);
 
-        @Override
-        protected Bitmap doInBackground(String... urls) {
+				Paint p = new Paint();
+				canvas.drawBitmap(bmp, 0, 0, p);
+			}
+		} catch (Exception e) {
+			// Log.i("ftbt", "message", new Throwable());
+			Log.i("ftbt", "message", e);
+		}
 
-            Bitmap bm=null;
-            try{
-                Log.d( "ftbt", "getting"+urls[0]);
-                bm = ImageCache.getImage(urls[0]);
-                if (bm == null){ //does not exist on cache
-                    ImageCache.setImage(urls[0]);
-                    bm = ImageCache.getImage(urls[0]);
-                }
-            } catch (Exception e) {
-                Log.i( "ftbt", "message", e );
-            } 
-            return bm;
-        }
+		// この間にグラフィック描画のコードを記述する。
 
-        //メインスレッドで実行する処理
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            // Tagが同じものが確認して、同じであれば画像を設定する
-            if (image!=null && tag!=null & tag.equals(image.getTag())) {
-                //image.setImageBitmap(result);
-                try{
-                    image.doDraw(); //再描画
-                } catch (Exception e) {
-                    Log.i("ftbt", "message", e);
-                }
-            }
-            Log.d( "ftbt", "thread "+id+"end." );
-        }
+		holder.unlockCanvasAndPost(canvas);
+	}
 
-        @Override
-        protected void onCancelled() {
-            Log.d( "ftbt", "スレッドキャンセル id="+id );
-        }
+	// 画像取得用スレッド
+	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
+		private imageCatalogView image;
+		private String tag;
+		private int id;
 
-        private Bitmap MyDecodeStream(InputStream in){
-            final int IO_BUFFER_SIZE = 4*1024;
-            Bitmap bitmap = null;
-            BufferedOutputStream out = null;
-            try {
+		public ImageGetTask(imageCatalogView _image) {
+			image = _image;
+			tag = image.getTag().toString();
+			// ID登録
+			synchronized (imageCatalog.lock) {
+				imageCatalog.LastTaskID += 1;
+				id = imageCatalog.LastTaskID;
+			}
+			Log.d("ftbt", "thread id" + id + " created.");
+		}
 
-                in = new BufferedInputStream(in, IO_BUFFER_SIZE);
+		@Override
+		protected Bitmap doInBackground(String... urls) {
 
-                final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-                out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
-                byte[] b = new byte[IO_BUFFER_SIZE];
-                int read;
-                while ((read = in.read(b)) != -1) {
-                    out.write(b, 0, read);
-                }
-                //               streamCopy(in, out);
-                out.flush();
+			Bitmap bm = null;
+			try {
+				Log.d("ftbt", "getting" + urls[0]);
+				bm = ImageCache.getImage(urls[0]);
+				if (bm == null) { // does not exist on cache
+					ImageCache.setImage(urls[0]);
+					bm = ImageCache.getImage(urls[0]);
+				}
+			} catch (Exception e) {
+				Log.i("ftbt", "message", e);
+			}
+			return bm;
+		}
 
-                final byte[] data = dataStream.toByteArray();
-                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+		// メインスレッドで実行する処理
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			// Tagが同じものが確認して、同じであれば画像を設定する
+			if (image != null && tag != null & tag.equals(image.getTag())) {
+				// image.setImageBitmap(result);
+				try {
+					image.doDraw(); // 再描画
+				} catch (Exception e) {
+					Log.i("ftbt", "message", e);
+				}
+			}
+			Log.d("ftbt", "thread " + id + "end.");
+		}
 
-            } catch (Exception e){
-                Log.i( "ftbt", "message", e);
-            }        
-            return bitmap;
-        }
-    }
+		@Override
+		protected void onCancelled() {
+			Log.d("ftbt", "スレッドキャンセル id=" + id);
+		}
+
+		private Bitmap MyDecodeStream(InputStream in) {
+			final int IO_BUFFER_SIZE = 4 * 1024;
+			Bitmap bitmap = null;
+			BufferedOutputStream out = null;
+			try {
+
+				in = new BufferedInputStream(in, IO_BUFFER_SIZE);
+
+				final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+				out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
+				byte[] b = new byte[IO_BUFFER_SIZE];
+				int read;
+				while ((read = in.read(b)) != -1) {
+					out.write(b, 0, read);
+				}
+				// streamCopy(in, out);
+				out.flush();
+
+				final byte[] data = dataStream.toByteArray();
+				bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+			} catch (Exception e) {
+				Log.i("ftbt", "message", e);
+			}
+			return bitmap;
+		}
+	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
@@ -326,49 +333,58 @@ class imageCatalogView extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
 		doDraw();
-		
+
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
 
-//円状のリスト。カタログに載っているファイルのリスト。
-class CircleList {  
-    private static ArrayList<String> list = new ArrayList<String>();  
-    private static int pointer=-1; //基本的に-1になるときは0件のときのみ。
-  
-    public static void add(String str) {
-        list.add(str);
-        if(pointer==-1){ pointer=0; }
-    }
+// 円状のリスト。カタログに載っているファイルのリスト。
+class CircleList {
+	private static ArrayList<String> list = new ArrayList<String>();
+	private static int pointer = -1; // 基本的に-1になるときは0件のときのみ。
 
-    public static String get(){
-        return list.get(pointer);
-    }
+	public static void add(String str) {
+		list.add(str);
+		if (pointer == -1) {
+			pointer = 0;
+		}
+	}
 
-    public static void set(int i){ pointer=i; }
+	public static String get() {
+		return list.get(pointer);
+	}
 
-    public static void move(int i){
-        pointer+=i;
-        pointer = (pointer+list.size()) % list.size();
-    }
+	public static void set(int i) {
+		pointer = i;
+	}
 
-    public static void moveToZero(){ pointer = 0; }  
-    public static void moveToLast(){ pointer = list.size()-1; }  
-    
-    public static int pos(){
-        return pointer;
-    }
+	public static void move(int i) {
+		pointer += i;
+		pointer = (pointer + list.size()) % list.size();
+	}
 
-    public static int size(){
-        return list.size();
-    }
-    
-    public static void clear(){
-        list = new ArrayList<String>();
-        pointer = -1;
-    }
+	public static void moveToZero() {
+		pointer = 0;
+	}
+
+	public static void moveToLast() {
+		pointer = list.size() - 1;
+	}
+
+	public static int pos() {
+		return pointer;
+	}
+
+	public static int size() {
+		return list.size();
+	}
+
+	public static void clear() {
+		list = new ArrayList<String>();
+		pointer = -1;
+	}
 }
