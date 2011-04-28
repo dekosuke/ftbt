@@ -31,6 +31,8 @@ public class FutabaCatalogParser {
 	private String urlStr;
 	private String title;
 	private String titleImgURL;
+	public boolean network_ok;
+	public boolean cache_ok;
 
 	private ArrayList<FutabaThread> fthreads;
 
@@ -38,6 +40,8 @@ public class FutabaCatalogParser {
 		this.urlStr = urlStr;
 		title = "(title)";
 		fthreads = new ArrayList<FutabaThread>();
+		network_ok = true;
+		cache_ok = true;
 	}
 
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
@@ -103,6 +107,7 @@ public class FutabaCatalogParser {
 				}
 			} catch (Exception e) { // カタログ取得に失敗、キャッシュから
 				Log.d("ftbt", "message", e);
+				network_ok = false;
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
 					Log.d("ftbt",
 							"getting html from cache"
@@ -112,6 +117,7 @@ public class FutabaCatalogParser {
 				} else {
 					Log.d("ftbt", "cache " + FutabaCrypt.createDigest(urlStr)
 							+ "not found");
+					cache_ok = false;
 				}
 			}
 

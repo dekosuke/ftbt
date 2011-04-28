@@ -7,6 +7,7 @@ import android.view.WindowManager;
 import android.content.Intent;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.view.View.OnClickListener;
 
 import android.content.Intent;
@@ -97,6 +98,10 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 		buttonReload.setOnClickListener(this);
 		parser = new FutabaCatalogParser(catalogURL);
 		parser.parse(getApplicationContext());
+		Log.d("ftbt", " "+parser.network_ok+" "+parser.cache_ok);
+		if(!parser.network_ok && parser.cache_ok){
+			Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。", Toast.LENGTH_LONG).show();
+		}
 		fthreads = parser.getThreads();
 
 		setContentView(R.layout.futaba_catalog);

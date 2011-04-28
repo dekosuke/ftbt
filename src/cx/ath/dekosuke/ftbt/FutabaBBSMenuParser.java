@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.net.URL;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -15,10 +16,14 @@ public class FutabaBBSMenuParser {
 
 	private ArrayList<FutabaBBS> BBSs;
 	private String urlStr;
+	public boolean network_ok;
+	public boolean cache_ok;
 
 	public FutabaBBSMenuParser(String urlStr) {
 		this.urlStr = urlStr;
 		BBSs = new ArrayList<FutabaBBS>();
+		network_ok = true;
+		cache_ok = true;
 	}
 
 	// スレッドの形式:
@@ -39,10 +44,13 @@ public class FutabaBBSMenuParser {
 						.loadTextCache(FutabaCrypt.createDigest(urlStr));
 			} catch (Exception e) { // ネットワークつながってないときとか
 				Log.d("ftbt", "failed to get catalog html");
+				network_ok = false;
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
 					Log.d("ftbt", "getting html from cache");
 					allData = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(urlStr));
+				} else { // キャッシュもない
+					cache_ok = false;
 				}
 			}
 			Matcher mcBBS = BBSPattern.matcher(allData);
@@ -51,7 +59,6 @@ public class FutabaBBSMenuParser {
 				bbs.url = mcBBS.group(1);
 				bbs.name = mcBBS.group(2);
 				BBSs.add(bbs);
-				Log.d("ftbt", "url=" + bbs.url);
 			}
 		} catch (Exception e) {
 			Log.i("ftbt", "failure in FutabaBBSMenuParser", e);

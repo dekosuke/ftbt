@@ -132,7 +132,7 @@ public class SDCard {
 				deleteDir(f);
 				Log.d("ftbt", "deleted directory "+f.getName());
 			}else{
-				Log.d("ftbt", "sizeSum="+f.length());
+				Log.d("ftbt", "size="+f.length());
 				sizeSum += f.length();
 				if(sizeSum > num*1000000){ //強制ファイル削除
 					f.delete();
