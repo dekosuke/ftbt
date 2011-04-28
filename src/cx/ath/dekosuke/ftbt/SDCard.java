@@ -1,5 +1,9 @@
 package cx.ath.dekosuke.ftbt;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -93,4 +97,79 @@ public class SDCard {
 		File file = new File(filename);
 		return file.exists();
 	}
+
+	//ファイル新しい順ソート
+	static Comparator comparator = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			File f1 = (File) o1;
+			File f2 = (File) o2;
+
+			return (int) (f2.lastModified() - f1.lastModified());
+		}
+	};
+
+	// numMBになるまでキャッシュフォルダのファイルを（古い順に）削除
+	// http://osima.jp/blog/howto_java_lastmodified/ 古い順にファイルソート
+	//まだ未検証
+	public static void limitCache(int num) {
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		File cache_dir = new File(sdcard_dir + "/cx.ath.dekosuke.ftbt/");
+		File[] files = cache_dir.listFiles();
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < files.length; i++) {
+			list.add(files[i]);
+		}
+
+		Collections.sort(list, comparator);
+
+		//順番に新しいファイルから加える─＞既定サイズになったときにそれ以降のファイルをすべて削除
+		//ディレクトリはすべて削除　で。
+		int sizeSum = 0;
+		for (int i = 0; i < list.size(); i++) {
+			File f = (File) list.get(i);
+			Log.d("ftbt", f.getName() + "," + toCalendarString(f));
+			if(f.isDirectory()){ //強制ディレクトリ削除
+				deleteDir(f);
+				Log.d("ftbt", "deleted directory "+f.getName());
+			}else{
+				Log.d("ftbt", "sizeSum="+f.length());
+				sizeSum += f.length();
+				if(sizeSum > num*1000000){ //強制ファイル削除
+					f.delete();
+					Log.d("ftbt", "deleted file "+f.getName());
+				}
+			}
+		}
+	}
+
+	static private void deleteDir(File f){
+	    if( f.exists()==false ){
+	        return ;
+	    }
+
+	    if(f.isFile()){
+	        f.delete();
+	    }
+
+	    if(f.isDirectory()){
+	        File[] files=f.listFiles();
+	        for(int i=0; i<files.length; i++){
+	            deleteDir( files[i] );
+	        }
+	        f.delete();
+	    }
+	}
+
+
+    static private String toCalendarString(File f){
+
+        Calendar cal=Calendar.getInstance();
+        cal.setTimeInMillis( f.lastModified() );
+
+        int y=cal.get(Calendar.YEAR);
+        int m=cal.get(Calendar.MONTH);
+        int day=cal.get(Calendar.DAY_OF_MONTH);
+
+        return String.valueOf(y)+"-"+String.valueOf(m+1)+"-"+String.valueOf(day);
+    }
 }
