@@ -31,10 +31,13 @@ public class ftbt extends TabActivity {
 
 		//お気に入りスレッドリスト
 		favoriteBBSs=new ArrayList<FutabaBBS>();
+		favoriteBBSs=FavoriteSettings.getFavorites(this);
+		/*
 		FutabaBBS touhouBBS = new FutabaBBS();
 		touhouBBS.name = "東方";
 		touhouBBS.url="http://may.2chan.net/40/";
 		favoriteBBSs.add(touhouBBS);
+		*/
 		
 		try{
 			// タブシートの設定
