@@ -72,14 +72,22 @@ public class ftbt_tab extends Activity implements Runnable {
 	private void loading() {
 		setContentView(R.layout.main);
 
-		FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
-				"http://www.2chan.net/bbsmenu.html");
-		parser.parse();
-		if(!parser.network_ok && parser.cache_ok){
-			Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。", Toast.LENGTH_LONG).show();
-		}
+		Intent intent = getIntent();
+		String mode = (String) intent.getSerializableExtra("mode");
 
-		ArrayList<FutabaBBS> BBSs = parser.getBBSs();
+		ArrayList<FutabaBBS> BBSs = new ArrayList<FutabaBBS>();
+		if(mode.equals("all")){
+			FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
+					"http://www.2chan.net/bbsmenu.html");
+			parser.parse();
+			if(!parser.network_ok && parser.cache_ok){
+				Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。", Toast.LENGTH_LONG).show();
+			}
+	
+			BBSs = parser.getBBSs();
+		}else{ //fav
+			BBSs = (ArrayList<FutabaBBS>) intent.getSerializableExtra("favThreads");
+		}
 		adapter = new FutabaTopAdapter(this, R.layout.futaba_bbs_row, BBSs);
 		// アイテムを追加します
 		ListView listView = (ListView) findViewById(id.listview);
@@ -87,19 +95,6 @@ public class ftbt_tab extends Activity implements Runnable {
 		listView.setAdapter(adapter);
 
 		Log.d("ftbt", "start");
-
-		// リストビューのアイテムがクリックされた時に呼び出されるコールバックリスナーを登録します
-		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				ListView listView = (ListView) parent;
-				// クリックされたアイテムを取得します
-				FutabaBBS item = (FutabaBBS) listView
-						.getItemAtPosition(position);
-				// Toast.makeText(ftbt.this, item, Toast.LENGTH_LONG).show();
-				transSetting(item);
-			}
-		});
 
 		waitDialog.dismiss();
 	}

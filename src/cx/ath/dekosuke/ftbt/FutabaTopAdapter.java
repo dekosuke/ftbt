@@ -2,7 +2,12 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.graphics.Typeface;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -64,14 +69,32 @@ public class FutabaTopAdapter extends ArrayAdapter {
 			}
 
 			// 表示すべきデータの取得
-			FutabaBBS item = (FutabaBBS) items.get(position);
+			final FutabaBBS item = (FutabaBBS) items.get(position);
 			if (item != null) {
 				TextView url = (TextView) view.findViewById(R.id.url);
 				url.setText(item.url);
 				TextView name = (TextView) view.findViewById(R.id.name);
 				name.setText(item.name);
-			}
-
+				Button buttonFavorite = (Button) view.findViewById(R.id.favorite_btn);
+				buttonFavorite.setText("Fav!");
+				buttonFavorite.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						ftbt_tab activity = (ftbt_tab)getContext();
+						Toast.makeText(activity, "Favがクリックされました", Toast.LENGTH_SHORT).show();
+					}
+				});			
+				
+				//非ボタン部分
+				LinearLayout ll_main = (LinearLayout)view.findViewById(R.id.ll_main);
+				ll_main.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						Log.d("ftbt", "onclick_bbs");
+						ftbt_tab activity = (ftbt_tab)getContext();
+						activity.transSetting(item);
+					}
+				});			
+			}		
+			
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}

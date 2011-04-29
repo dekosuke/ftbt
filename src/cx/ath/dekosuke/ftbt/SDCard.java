@@ -127,12 +127,12 @@ public class SDCard {
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
-			Log.d("ftbt", f.getName() + "," + toCalendarString(f));
+			//Log.d("ftbt", f.getName() + "," + toCalendarString(f));
 			if(f.isDirectory()){ //強制ディレクトリ削除
 				deleteDir(f);
 				Log.d("ftbt", "deleted directory "+f.getName());
 			}else{
-				Log.d("ftbt", "size="+f.length());
+				//Log.d("ftbt", "size="+f.length());
 				sizeSum += f.length();
 				if(sizeSum > num*1000000){ //強制ファイル削除
 					f.delete();
