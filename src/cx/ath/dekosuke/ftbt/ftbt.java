@@ -15,6 +15,9 @@ import cx.ath.dekosuke.ftbt.R.id;
 //タブ式トップページ
 
 public class ftbt extends TabActivity {
+	
+	public ArrayList<FutabaBBS> favoriteBBSs;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -25,6 +28,14 @@ public class ftbt extends TabActivity {
 		LayoutInflater.from(this).inflate(R.layout.tabmain,
 				tabs.getTabContentView(), true);
 		Intent intent;
+
+		//お気に入りスレッドリスト
+		favoriteBBSs=new ArrayList<FutabaBBS>();
+		FutabaBBS touhouBBS = new FutabaBBS();
+		touhouBBS.name = "東方";
+		touhouBBS.url="http://may.2chan.net/40/";
+		favoriteBBSs.add(touhouBBS);
+		
 		try{
 			// タブシートの設定
 			intent = new Intent().setClassName(getPackageName(), getClass().getPackage().getName() + ".ftbt_tab");
@@ -36,12 +47,7 @@ public class ftbt extends TabActivity {
 		
 			intent = new Intent().setClassName(getPackageName(), getClass().getPackage().getName() + ".ftbt_tab");
 			intent.putExtra("mode", "fav");
-			ArrayList<FutabaBBS> favThreads=new ArrayList<FutabaBBS>();
-			FutabaBBS touhouBBS = new FutabaBBS();
-			touhouBBS.name = "東方";
-			touhouBBS.url="http://may.2chan.net/40/";
-			favThreads.add(touhouBBS);
-			intent.putExtra("favThreads", favThreads);
+			intent.putExtra("favoriteBBSs", favoriteBBSs);
 			TabSpec tab02 = tabs.newTabSpec("TabSheet2");
 			tab02.setIndicator("お気に入り");
 			tab02.setContent(R.id.sheet02_id);

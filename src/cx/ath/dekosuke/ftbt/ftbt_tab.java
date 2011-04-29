@@ -29,11 +29,15 @@ public class ftbt_tab extends Activity implements Runnable {
 	private Thread thread;
 
 	private FutabaTopAdapter adapter = null;
+	String mode;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		Intent intent = getIntent();
+		mode = (String) intent.getSerializableExtra("mode");
 		
 		//キャッシュを削除する(重いので明示+確認すべし)
 		SDCard.limitCache(100);
@@ -73,7 +77,6 @@ public class ftbt_tab extends Activity implements Runnable {
 		setContentView(R.layout.main);
 
 		Intent intent = getIntent();
-		String mode = (String) intent.getSerializableExtra("mode");
 
 		ArrayList<FutabaBBS> BBSs = new ArrayList<FutabaBBS>();
 		if(mode.equals("all")){
@@ -86,7 +89,7 @@ public class ftbt_tab extends Activity implements Runnable {
 	
 			BBSs = parser.getBBSs();
 		}else{ //fav
-			BBSs = (ArrayList<FutabaBBS>) intent.getSerializableExtra("favThreads");
+			BBSs = (ArrayList<FutabaBBS>) intent.getSerializableExtra("favoriteBBSs");
 		}
 		adapter = new FutabaTopAdapter(this, R.layout.futaba_bbs_row, BBSs);
 		// アイテムを追加します

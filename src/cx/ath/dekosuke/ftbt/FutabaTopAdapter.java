@@ -75,11 +75,23 @@ public class FutabaTopAdapter extends ArrayAdapter {
 				url.setText(item.url);
 				TextView name = (TextView) view.findViewById(R.id.name);
 				name.setText(item.name);
-				Button buttonFavorite = (Button) view.findViewById(R.id.favorite_btn);
-				buttonFavorite.setText("Fav!");
+				final Button buttonFavorite = (Button) view.findViewById(R.id.favorite_btn);
+				final ftbt_tab activity = (ftbt_tab)getContext();
+				if(activity.mode.equals("all")){
+					buttonFavorite.setText("Fav!");
+				}else{
+					buttonFavorite.setText("Unfav");					
+				}
+
 				buttonFavorite.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
-						ftbt_tab activity = (ftbt_tab)getContext();
+						if(activity.mode.equals("all")){
+							ftbt ftbt_top = (ftbt)activity.getParent();
+							ftbt_top.favoriteBBSs.add(item);
+						}else{
+							ftbt ftbt_top = (ftbt)activity.getParent();
+							ftbt_top.favoriteBBSs.remove(item);							
+						}
 						Toast.makeText(activity, "Favがクリックされました", Toast.LENGTH_SHORT).show();
 					}
 				});			
