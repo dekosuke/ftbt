@@ -9,33 +9,29 @@ import android.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.io.IOException;
+import android.util.Log;
 
 //お気に入りスレッドの設定
-public class FavoriteSettings extends PreferenceActivity { // PreferenceActivityの継承
+public class FavoriteSettings {
 	private static final String OPT_FAVORITES = "favorites";
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.favoritesettings);
-	}
-
-	public static ArrayList<FutabaBBS> getFavorites(Context context) { // ID用ゲッタの定義
-		String serializeStr = PreferenceManager.getDefaultSharedPreferences(
-				context).getString(OPT_FAVORITES, "");
-		String[] bbss_array = serializeStr.split(" ");
-		ArrayList<FutabaBBS> bbss = new ArrayList<FutabaBBS>();
-		for (int i =  0; i < bbss_array.length; i++) {
-			bbss.add(new FutabaBBS(bbss_array[i]));
-		}
+	public static ArrayList<FutabaBBS> getFavorites(Context context) 
+        throws IOException {
+    	ArrayList<FutabaBBS> bbss = new ArrayList<FutabaBBS>();
+        try{
+	    	if( SDCard.cacheExist(OPT_FAVORITES)){
+                bbss = (ArrayList<FutabaBBS>) SDCard.getSerialized(OPT_FAVORITES).readObject();
+            }
+        }catch(Exception e){
+            Log.i("ftbt", "message", e);
+        }
 		return bbss;
 	}
 
 	public static void setFavorites(Context context,
-			ArrayList<FutabaBBS> futabaBBSs) { // PASSWORD用ゲッタの定義
-		SharedPreferences sp = PreferenceManager
-				.getDefaultSharedPreferences(context);
-		Editor ed = sp.edit();
+			ArrayList<FutabaBBS> futabaBBSs) throws IOException { // PASSWORD用ゲッタの定義
+        /*
 		String serializeStr = "";
 		Iterator iterator = futabaBBSs.iterator();
 		// あまり効率のよさそうではない直列化
@@ -45,7 +41,9 @@ public class FavoriteSettings extends PreferenceActivity { // PreferenceActivity
 				serializeStr += " ";
 			}
 		}
-		ed.putString("account", serializeStr); // ここにシリアライズした中身を入れる
-		ed.commit();
+        Log.d("ftbt", "write serializeStr=|"+serializeStr+"|");
+        SDCard.saveString(OPT_FAVORITES, serializeStr, true);
+        */
+        SDCard.setSerialized(OPT_FAVORITES, futabaBBSs);
 	}
 }

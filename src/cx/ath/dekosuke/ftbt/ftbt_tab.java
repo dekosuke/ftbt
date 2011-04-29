@@ -40,7 +40,7 @@ public class ftbt_tab extends Activity implements Runnable {
 		mode = (String) intent.getSerializableExtra("mode");
 		
 		//キャッシュを削除する(重いので明示+確認すべし)
-		SDCard.limitCache(100);
+		SDCard.limitCache(1);
 
 		setWait();
 

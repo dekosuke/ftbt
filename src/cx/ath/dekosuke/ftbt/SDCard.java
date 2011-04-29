@@ -16,6 +16,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 
 import java.net.URL;
 
@@ -34,6 +37,7 @@ public class SDCard {
 		}
 		Log.d("ftbt", "length=" + bytes.length);
 		File file = new File(filename);
+        Log.d("ftbt", filename );
 		file.getParentFile().mkdir();
 		try {
 			BufferedOutputStream fos = new BufferedOutputStream(
@@ -45,8 +49,8 @@ public class SDCard {
 		// Environment.getDataDirectory().getPath(); // /dataなど
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
 	}
-
-	public static void saveFromURL(String name, URL url, boolean isCache) {
+	
+    public static void saveFromURL(String name, URL url, boolean isCache) {
 		try {
 			InputStream is = url.openStream();
 			String sdcard_dir = Environment.getExternalStorageDirectory()
@@ -171,5 +175,22 @@ public class SDCard {
         int day=cal.get(Calendar.DAY_OF_MONTH);
 
         return String.valueOf(y)+"-"+String.valueOf(m+1)+"-"+String.valueOf(day);
+    }
+
+    static public ObjectInputStream getSerialized(String name) throws IOException{
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+        FileInputStream inFile = new FileInputStream(filename);
+        ObjectInputStream inObject = new ObjectInputStream(inFile);
+        return inObject;
+    }
+
+    static public void setSerialized(String name, 
+                                    Object object) throws IOException {
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+        FileOutputStream outFile = new FileOutputStream(filename);
+        ObjectOutputStream outObject = new ObjectOutputStream(outFile);
+        outObject.writeObject(object); 
     }
 }

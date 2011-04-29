@@ -87,10 +87,11 @@ public class FutabaTopAdapter extends ArrayAdapter {
 					public void onClick(View v) {
 						if(activity.mode.equals("all")){
 							ftbt ftbt_top = (ftbt)activity.getParent();
-							ftbt_top.favoriteBBSs.add(item);
+							//ftbt_top.favoriteBBSs.add(item);
+                            ftbt_top.addFavoriteBBSs(item);
 						}else{
 							ftbt ftbt_top = (ftbt)activity.getParent();
-							ftbt_top.favoriteBBSs.remove(item);							
+                            ftbt_top.removeFavoriteBBSs(item);
 						}
 						Toast.makeText(activity, "Favがクリックされました", Toast.LENGTH_SHORT).show();
 					}

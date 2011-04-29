@@ -29,17 +29,11 @@ public class ftbt extends TabActivity {
 				tabs.getTabContentView(), true);
 		Intent intent;
 
-		//お気に入りスレッドリスト
-		favoriteBBSs=new ArrayList<FutabaBBS>();
-		favoriteBBSs=FavoriteSettings.getFavorites(this);
-		/*
-		FutabaBBS touhouBBS = new FutabaBBS();
-		touhouBBS.name = "東方";
-		touhouBBS.url="http://may.2chan.net/40/";
-		favoriteBBSs.add(touhouBBS);
-		*/
-		
+    
 		try{
+			//お気に入りスレッドリスト
+	    	favoriteBBSs=new ArrayList<FutabaBBS>();
+		    favoriteBBSs=FavoriteSettings.getFavorites(this);
 			// タブシートの設定
 			intent = new Intent().setClassName(getPackageName(), getClass().getPackage().getName() + ".ftbt_tab");
 			intent.putExtra("mode", "all");
@@ -62,4 +56,23 @@ public class ftbt extends TabActivity {
 			Log.i("ftbt", "message", e);
 		}
 	}
+
+    public void addFavoriteBBSs(FutabaBBS bbs){
+        try{
+            favoriteBBSs.add(bbs);
+            FavoriteSettings.setFavorites(this, favoriteBBSs); //xmlに保存
+            Log.d("ftbt", "add "+bbs.toString());
+        }catch(Exception e){
+            Log.i("ftbt", "message", e);
+        }
+    }
+    public void removeFavoriteBBSs(FutabaBBS bbs){
+        try{
+            favoriteBBSs.remove(bbs);
+            FavoriteSettings.setFavorites(this, favoriteBBSs); //xmlに保存
+            Log.d("ftbt", "remove "+bbs.toString());
+        }catch(Exception e){
+            Log.i("ftbt", "message", e);
+        }
+    }
 }
