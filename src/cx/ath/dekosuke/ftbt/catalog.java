@@ -56,6 +56,7 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Log.d("ftbt", "catalog start");
 		setWait();
 
 	}
@@ -72,6 +73,11 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 	}
 
 	public void run() {
+		try{ //細かい時間を置いて、ダイアログを確実に表示させる
+			Thread.sleep(100);
+		}catch(InterruptedException e){
+			 //スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		}
 		handler.sendEmptyMessage(0);
 	}
 
@@ -98,9 +104,10 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 		buttonReload.setOnClickListener(this);
 		parser = new FutabaCatalogParser(catalogURL);
 		parser.parse(getApplicationContext());
-		Log.d("ftbt", " "+parser.network_ok+" "+parser.cache_ok);
-		if(!parser.network_ok && parser.cache_ok){
-			Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。", Toast.LENGTH_LONG).show();
+		Log.d("ftbt", " " + parser.network_ok + " " + parser.cache_ok);
+		if (!parser.network_ok && parser.cache_ok) {
+			Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
+					Toast.LENGTH_LONG).show();
 		}
 		fthreads = parser.getThreads();
 

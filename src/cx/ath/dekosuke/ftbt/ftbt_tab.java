@@ -58,6 +58,11 @@ public class ftbt_tab extends Activity implements Runnable {
 	}
 
 	public void run() {
+		try{ //細かい時間を置いて、ダイアログを確実に表示させる
+			Thread.sleep(100);
+		}catch(InterruptedException e){
+			 //スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		}
 		handler.sendEmptyMessage(0);
 	}
 
