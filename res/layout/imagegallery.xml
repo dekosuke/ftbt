@@ -7,6 +7,6 @@ xmlns:android="http://schemas.android.com/apk/res/android" >
     android:id="@+id/gallery"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:spacing="100px"
+    android:spacing="50px"
 />
 </LinearLayout>
