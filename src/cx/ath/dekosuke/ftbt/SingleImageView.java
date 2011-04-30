@@ -43,6 +43,7 @@ class SingleImageView extends ImageView implements OnTouchListener {
 		super(context, attrs, defStyle);
 		matrix = new Matrix();
 		matrix.setScale(1, 1);
+		//setClickable(true); //これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
 		setOnTouchListener(this);
 	}
 
