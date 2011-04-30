@@ -52,7 +52,7 @@ import android.os.Message;
 //画像カタログ
 //指定された画像の登録および、隣の画像への移動
 //画像の円リストは別のデータ構造で。
-public class imageCatalog extends Activity implements Runnable {
+public class SingleImage extends Activity implements Runnable {
 
 	// 画像を読み込む際にAsyncTaskを使うが、
 	// 新しいAsyncTaskが来たら古いAsyncTaskは諦めて終了する。
@@ -132,7 +132,7 @@ public class imageCatalog extends Activity implements Runnable {
 		// CircleList.add(myImageURL);
 		// CircleList.move(1);
 
-		imageCatalogView view = new imageCatalogView(this);
+		SingleImageView view = new SingleImageView(this);
 		view.setCurrentImage();
 		final int FP = ViewGroup.LayoutParams.FILL_PARENT;
 		view.setLayoutParams( new LinearLayout.LayoutParams(FP, FP) );

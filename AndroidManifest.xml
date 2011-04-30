@@ -28,7 +28,7 @@
             <intent-filter>
             </intent-filter>
         </activity>
-        <activity android:name="imageCatalog"
+        <activity android:name="ImageCatalog"
                   android:label="@string/app_name">
             <intent-filter>
             </intent-filter>

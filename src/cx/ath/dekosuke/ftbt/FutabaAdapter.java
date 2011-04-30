@@ -222,19 +222,23 @@ public class FutabaAdapter extends ArrayAdapter {
 					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
 						image.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
-								Log.d("ftbt", "intent calling thread activity");
-								Intent intent = new Intent();
-								fthread activity = (fthread) getContext();
-								// Log.d ( "ftbt", threadNum );
-								// これスレッドごとに作られているのが結構ひどい気がする
-								intent.putExtra("imgURLs",
-										activity.getImageURLs());
-								intent.putExtra("myImgURL", tag);
-								intent.setClassName(activity.getPackageName(),
-										activity.getClass().getPackage()
-												.getName()
-												+ ".imageCatalog");
-								activity.startActivity(intent); // Never called!
+								try{
+									Log.d("ftbt", "intent calling thread activity");
+									Intent intent = new Intent();
+									fthread activity = (fthread) getContext();
+									// Log.d ( "ftbt", threadNum );
+									// これスレッドごとに作られているのが結構ひどい気がする
+									intent.putExtra("imgURLs",
+											activity.getImageURLs());
+									intent.putExtra("myImgURL", tag);
+									intent.setClassName(activity.getPackageName(),
+											activity.getClass().getPackage()
+													.getName()
+													+ ".ImageCatalog");
+									activity.startActivity(intent); // Never called!
+								}catch(Exception e){
+									Log.i("ftbt", "message", e);
+								}
 							}
 						});
 					}
@@ -246,36 +250,6 @@ public class FutabaAdapter extends ArrayAdapter {
 			}
 		}
 
-		private Bitmap MyDecodeStream(InputStream in) {
-			final int IO_BUFFER_SIZE = 4 * 1024;
-			Bitmap bitmap = null;
-			BufferedOutputStream out = null;
-			try {
 
-				in = new BufferedInputStream(in, IO_BUFFER_SIZE);
-
-				final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-				out = new BufferedOutputStream(dataStream, IO_BUFFER_SIZE);
-				byte[] b = new byte[IO_BUFFER_SIZE];
-				int read;
-				while ((read = in.read(b)) != -1) {
-					out.write(b, 0, read);
-				}
-				// streamCopy(in, out);
-				out.flush();
-
-				final byte[] data = dataStream.toByteArray();
-				bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-
-			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
-			}
-			return bitmap;
-		}
-
-		private void streamCopy(InputStream in, OutputStream out)
-				throws IOException {
-
-		}
 	}
 }

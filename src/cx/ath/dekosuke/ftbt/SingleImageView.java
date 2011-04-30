@@ -14,7 +14,7 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
 
-class imageCatalogView extends ImageView implements OnTouchListener {
+class SingleImageView extends ImageView implements OnTouchListener {
 
 	private static final int NONE = 0;
 	private static final int DRAG = 1;
@@ -30,15 +30,15 @@ class imageCatalogView extends ImageView implements OnTouchListener {
 	/** Zoom開始時の二点間距離 */
 	private float initLength = 1;
 
-	public imageCatalogView(Context context) {
+	public SingleImageView(Context context) {
 		this(context, null, 0);
 	}
 
-	public imageCatalogView(Context context, AttributeSet attrs) {
+	public SingleImageView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public imageCatalogView(Context context, AttributeSet attrs, int defStyle) {
+	public SingleImageView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		matrix = new Matrix();
 		matrix.setScale(1, 1);
@@ -120,17 +120,17 @@ class imageCatalogView extends ImageView implements OnTouchListener {
 	
 	// 画像取得用スレッド
 	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
-		private imageCatalogView image;
+		private SingleImageView image;
 		private String tag;
 		private int id;
 
-		public ImageGetTask(imageCatalogView _image) {
+		public ImageGetTask(SingleImageView _image) {
 			image = _image;
 			tag = image.getTag().toString();
 			// ID登録
-			synchronized (imageCatalog.lock) {
-				imageCatalog.LastTaskID += 1;
-				id = imageCatalog.LastTaskID;
+			synchronized (SingleImage.lock) {
+				SingleImage.LastTaskID += 1;
+				id = SingleImage.LastTaskID;
 			}
 			Log.d("ftbt", "thread id" + id + " created.");
 		}
@@ -159,7 +159,7 @@ class imageCatalogView extends ImageView implements OnTouchListener {
 			if (image != null && tag != null & tag.equals(image.getTag())) {
 				// image.setImageBitmap(result);
 				try {
-					imageCatalog activity = (imageCatalog)getContext();
+					SingleImage activity = (SingleImage)getContext();
 					activity.waitDialog.dismiss();
 					//再描画
 					setImageBitmap(result);
