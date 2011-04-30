@@ -133,7 +133,7 @@ public class SingleImage extends Activity implements Runnable {
 		// CircleList.move(1);
 
 		SingleImageView view = new SingleImageView(this);
-		view.setCurrentImage();
+		//view.setCurrentImage();
 		final int FP = ViewGroup.LayoutParams.FILL_PARENT;
 		view.setLayoutParams( new LinearLayout.LayoutParams(FP, FP) );
 		view.setClickable(true);

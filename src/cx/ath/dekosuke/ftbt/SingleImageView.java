@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 class SingleImageView extends ImageView implements OnTouchListener {
@@ -46,6 +47,7 @@ class SingleImageView extends ImageView implements OnTouchListener {
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
+		Toast.makeText(getContext(), "touch detected", Toast.LENGTH_SHORT).show();
 		ImageView view = (ImageView) v;
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
@@ -110,70 +112,4 @@ class SingleImageView extends ImageView implements OnTouchListener {
 		return p;
 	}	
 	
-	void setCurrentImage(){
-		String imgURL = CircleList.get();
-		setTag(imgURL);
-		ImageGetTask task = new ImageGetTask(this);
-		task.execute(imgURL);
-
-	}
-	
-	// 画像取得用スレッド
-	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
-		private SingleImageView image;
-		private String tag;
-		private int id;
-
-		public ImageGetTask(SingleImageView _image) {
-			image = _image;
-			tag = image.getTag().toString();
-			// ID登録
-			synchronized (SingleImage.lock) {
-				SingleImage.LastTaskID += 1;
-				id = SingleImage.LastTaskID;
-			}
-			Log.d("ftbt", "thread id" + id + " created.");
-		}
-
-		@Override
-		protected Bitmap doInBackground(String... urls) {
-
-			Bitmap bm = null;
-			try {
-				Log.d("ftbt", "getting" + urls[0]);
-				bm = ImageCache.getImage(urls[0]);
-				if (bm == null) { // does not exist on cache
-					ImageCache.setImage(urls[0]);
-					bm = ImageCache.getImage(urls[0]);
-				}
-			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
-			}
-			return bm;
-		}
-
-		// メインスレッドで実行する処理
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			// Tagが同じものが確認して、同じであれば画像を設定する
-			if (image != null && tag != null & tag.equals(image.getTag())) {
-				// image.setImageBitmap(result);
-				try {
-					SingleImage activity = (SingleImage)getContext();
-					activity.waitDialog.dismiss();
-					//再描画
-					setImageBitmap(result);
-				} catch (Exception e) {
-					Log.i("ftbt", "message", e);
-				}
-			}
-			Log.d("ftbt", "thread " + id + "end.");
-		}
-
-		@Override
-		protected void onCancelled() {
-			Log.d("ftbt", "スレッドキャンセル id=" + id);
-		}
-
-	}
 }
