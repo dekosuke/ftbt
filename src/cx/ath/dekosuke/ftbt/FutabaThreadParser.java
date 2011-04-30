@@ -27,6 +27,9 @@ public class FutabaThreadParser {
 	private String title;
 	private String titleImgURL;
 
+	public boolean network_ok;
+	public boolean cache_ok;
+
 	private ArrayList<FutabaStatus> statuses;
 
 	private static Pattern tagPattern = Pattern
@@ -41,7 +44,6 @@ public class FutabaThreadParser {
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
 	// スレッドの形式:
 	public void parse() {
-		XmlPullParser parser = Xml.newPullParser();
 		try {
 			// 正規表現でパーズ範囲を絞り込む
 			Pattern honbunPattern = Pattern.compile("<form.+?>.+?</form>",
@@ -66,11 +68,13 @@ public class FutabaThreadParser {
 				allData = SDCard
 						.loadTextCache(FutabaCrypt.createDigest(urlStr));
 			} catch (Exception e) { // ネットワークつながってないときとか
+				network_ok = false;
 				Log.d("ftbt", "failed to get catalog html");
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
 					Log.d("ftbt", "getting html from cache");
 					allData = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(urlStr));
+					cache_ok = true;
 				}
 			}
 			// parser.setInput(new StringReader(new String(data, "UTF-8")));
