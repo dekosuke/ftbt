@@ -50,7 +50,7 @@ class SingleImageView extends ImageView implements OnTouchListener {
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
-		Toast.makeText(getContext(), "touch detected", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getContext(), "touch detected", Toast.LENGTH_SHORT).show();
 		ImageView view = (ImageView) v;
 		ImageCatalog activity = (ImageCatalog)getContext();
 		/*
@@ -81,12 +81,12 @@ class SingleImageView extends ImageView implements OnTouchListener {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			Log.d("ftbt", "fling");
+			//Log.d("ftbt", "fling");
 			//activity.gallery.onScroll(e_temp, event, 100f, 100f); //これは動いた
 			switch (mode) {
 			case DRAG:
 				matrix.set(moveMatrix);
-				matrix.postTranslate(event.getX() - point.x, event.getY() - point.y);
+				//matrix.postTranslate(event.getX() - point.x, event.getY() - point.y);
 				view.setImageMatrix(matrix);
 				break;
 			case ZOOM:
@@ -96,8 +96,9 @@ class SingleImageView extends ImageView implements OnTouchListener {
 					if (true) {
 						matrix.set(moveMatrix);
 						float scale = filter(matrix,currentLength / initLength);
+						Log.d("ftbt", "matrix update"+matrix.toString());
 						matrix.postScale(scale, scale, middle.x, middle.y);
-						view.setImageMatrix(matrix);	
+						view.setImageMatrix(matrix);
 					}
 					break;
 				}

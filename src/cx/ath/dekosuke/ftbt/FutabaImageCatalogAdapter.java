@@ -103,7 +103,7 @@ public class FutabaImageCatalogAdapter extends BaseAdapter {
 				bm = ImageCache.getImage(item);
 			}
 			iv.setImageBitmap(bm);
-			iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+			//iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
 			//iv.setLayoutParams(new Gallery.LayoutParams(
 			//			LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)); 
 
