@@ -21,7 +21,7 @@ public class ImageCatalog extends Activity {
 
 	FutabaImageCatalogAdapter adapter;
 	
-	Gallery gallery;
+	ImageCatalogGallery gallery;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class ImageCatalog extends Activity {
 		try {
 			setContentView(R.layout.imagegallery);
 
-			gallery = (Gallery) findViewById(R.id.gallery);
+			gallery = (ImageCatalogGallery) findViewById(R.id.gallery);
 		//	linearLayout.addView(gallery, createParam(WC, FP));
 
 			/*

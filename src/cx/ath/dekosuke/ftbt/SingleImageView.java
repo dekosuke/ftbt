@@ -30,6 +30,8 @@ class SingleImageView extends ImageView implements OnTouchListener {
 	private Matrix moveMatrix = new Matrix();
 	/** Zoom開始時の二点間距離 */
 	private float initLength = 1;
+	//fling用テンポラリ
+	private MotionEvent e_temp;
 
 	public SingleImageView(Context context) {
 		this(context, null, 0);
@@ -43,18 +45,26 @@ class SingleImageView extends ImageView implements OnTouchListener {
 		super(context, attrs, defStyle);
 		matrix = new Matrix();
 		matrix.setScale(1, 1);
-		//setClickable(true); //これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
+		setClickable(true); //これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
 		setOnTouchListener(this);
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
 		Toast.makeText(getContext(), "touch detected", Toast.LENGTH_SHORT).show();
 		ImageView view = (ImageView) v;
+		ImageCatalog activity = (ImageCatalog)getContext();
+		/*
+		if( activity.gallery.onTouchEvent(event) ){
+			return true;
+		}*/
+		//activity.gallery.onFling(null, null, 1000f, 0f);
+		//Log.d("ftbt", "fling "+activity.gallery.onFling(null, null, 100f, 100f) );
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 			Log.d("ftbt", "mode=DRAG");
 			mode = DRAG;
 			point.set(event.getX(), event.getY());
+			e_temp = event;
 			moveMatrix.set(matrix);
 			break;
 		case MotionEvent.ACTION_POINTER_2_UP:
@@ -71,6 +81,8 @@ class SingleImageView extends ImageView implements OnTouchListener {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
+			Log.d("ftbt", "fling");
+			//activity.gallery.onScroll(e_temp, event, 100f, 100f); //これは動いた
 			switch (mode) {
 			case DRAG:
 				matrix.set(moveMatrix);
