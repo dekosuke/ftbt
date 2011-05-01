@@ -2,6 +2,8 @@ package cx.ath.dekosuke.ftbt;
 
 import java.io.Serializable;
 
+import android.util.Log;
+
 //板の情報を持つクラス
 public class FutabaBBS implements Serializable{
 	/**
@@ -23,4 +25,10 @@ public class FutabaBBS implements Serializable{
 	public String toString(){ //適当文字列化
 		return url+":::"+name;
 	}
+	
+	public boolean equals(Object obj){
+		FutabaBBS rhs = (FutabaBBS)obj;
+		return (url.equals(rhs.url)) && (name.equals(rhs.name));
+	}
+	
 }

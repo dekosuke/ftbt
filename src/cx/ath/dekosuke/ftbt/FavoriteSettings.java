@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.io.IOException;
 import android.util.Log;
 
-//お気に入りスレッドの設定
+//お気に入り板リストの設定
 public class FavoriteSettings {
 	private static final String OPT_FAVORITES = "favorites";
 
