@@ -1,34 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"  
 	android:id="@+id/imagebox" 
     android:background="#F0E0D6"
     android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
     >  
+
+<RelativeLayout android:layout_width="fill_parent"
+android:layout_height="wrap_content" android:id="@+id/top_blank">
+</RelativeLayout>
 
    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">  
+        android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+        android:id="@+id/buttons"
+        >  
           
       <Button android:text="Prev"
         android:id="@+id/prev_btn"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        >
+        android:layout_width="100dip">
+    	</Button>
+      <Button android:text="Next"
+        android:id="@+id/next_btn"
+        android:layout_height="wrap_content"
+         android:layout_gravity="center"
+       android:layout_width="100dip">
     	</Button>
       <Button android:text="Download"
         android:id="@+id/down_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-       >
-    	</Button>
-      <Button android:text="Next"
-        android:id="@+id/next_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-       >
+         android:layout_gravity="right"
+       android:layout_weight="1">
     	</Button>
     
     </LinearLayout>  
@@ -37,5 +44,8 @@
 	android:id="@+id/image" 
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
+    android:layout_below="@id/top_blank" 
+    android:layout_above="@id/buttons"
 /> 
-</LinearLayout>
+
+</RelativeLayout>
