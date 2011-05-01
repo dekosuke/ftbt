@@ -35,12 +35,18 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 	private float initLength = 1;
 	// fling用テンポラリ
 	private MotionEvent e_temp;
+	private MotionEvent prevEvent;
 	// x方向移動成分
 	private float mx = 0f;
 
-	// 読み込んだ画像のサイズ
-	private int bx;
-	private int by;
+	// 画面サイズ
+	private int width = 100;
+	private int height = 100;
+	// 読み込んだ画像
+	private Bitmap bm = null;
+	// bx, byはbitmapのサイズそのものでなく、matrixのscale後のサイズ
+	private float bx;
+	private float by;
 
 	public ImageCatalogSingleView(Context context) {
 		this(context, null, 0);
@@ -58,6 +64,13 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		bx = by = 0;
 		setClickable(true); // これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
 		setOnTouchListener(this);
+
+		// 画面サイズの取得
+		WindowManager wm = ((WindowManager) getContext().getSystemService(
+				Context.WINDOW_SERVICE));
+		Display display = wm.getDefaultDisplay();
+		width = display.getWidth();
+		height = display.getHeight();
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
@@ -93,8 +106,20 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 			}
 			break;
 		case MotionEvent.ACTION_MOVE:
-			// Log.d("ftbt", "fling");
+			Log.d("ftbt", "move ex=" + event.getX() + " ey=" + event.getY());
 			// activity.gallery.onScroll(e_temp, event, 100f, 100f); //これは動いた
+			// 持ち上がり時にひどい値が来るのでスキップ
+			if (prevEvent == null) {
+				prevEvent = event;
+				break;
+			}
+			if ((Math.abs(event.getX() - prevEvent.getX()) + Math.abs(event
+					.getY() - prevEvent.getY())) > 50.0f) {
+				point.x = event.getX();
+				point.y = event.getY();
+				prevEvent = event;
+				break;
+			}
 			switch (mode) {
 			case DRAG:
 				matrix.set(moveMatrix);
@@ -111,14 +136,15 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 				view.setImageMatrix(matrix);
 				break;
 			case ZOOM:
-				if (false && mode == ZOOM) { // ちょっとdisable
+				if (mode == ZOOM) { // ちょっとdisable
 					float currentLength = getLength(event);
 					middle = getMiddle(event, middle);
 					if (true) {
 						matrix.set(moveMatrix);
 						float scale = filter(matrix, currentLength / initLength);
-						Log.d("ftbt", "matrix update" + matrix.toString());
-						matrix.postScale(scale, scale, middle.x, middle.y);
+						// matrix.postScale(scale, scale, middle.x, middle.y);
+						zoomImage((float) Math.max(scale, 0.8), middle.x,
+								middle.y);
 						view.setImageMatrix(matrix);
 					}
 					break;
@@ -147,30 +173,13 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		Log.d("ftbt", "rect=" + r.toString());
 		if (bx > width && Math.abs(dx) > 1f) {
 			// スクロール可能なサイズ。このサイズ以上スクロールした場合はgalleryにスクロールを渡す
-			int dwx = (bx - width) / 2;
+			float dwx = (bx - width) / 2;
 			// mx成分取得
 			float[] values = new float[9];
 			matrix.getValues(values);
 			float mx = values[Matrix.MTRANS_X] + dwx;
 			float mxt = mx + dx;
-			if ((r.left) * (r.left) > 1f) { // viewの間にある
-				Log.d("ftbt", "case3");
-				if ((-dx) > r.left) {
-					activity.gallery.onScroll(e_temp, event, r.left, 0f);
-					// matrix.postTranslate(dx+r.left, 0f);
-				} else {
-					activity.gallery.onScroll(e_temp, event, -dx, 0f);
-				}
-			} else if ((r.right - width) * (r.right - width) > 1f) {
-				Log.d("ftbt", "case4");
-				if (dx > width - r.right) {
-					activity.gallery.onScroll(e_temp, event,
-							-(width - r.right), 0f);
-					// matrix.postTranslate(dx-(width-r.right), 0f);
-				} else {
-					activity.gallery.onScroll(e_temp, event, -dx, 0f);
-				}
-			} else if (mxt >= dwx) {
+			if (mxt >= dwx) {
 				Log.d("ftbt", "case1");
 				// matrix.postTranslate(dwx-mx, 0f);
 				values[Matrix.MTRANS_X] = 0f;
@@ -187,6 +196,23 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 				// activity.gallery.onScroll(e_temp, event, +(mx+dwx), 0f);
 				activity.gallery.onScroll(e_temp, event, 10f, 0f);
 				mx = -dwx;
+			} else if ((r.left) * (r.left) > 1f) { // viewの間にある
+				Log.d("ftbt", "case3");
+				if ((-dx) > r.left) {
+					activity.gallery.onScroll(e_temp, event, r.left, 0f);
+					matrix.postTranslate(dx+r.left, 0f);
+				} else {
+					activity.gallery.onScroll(e_temp, event, -dx, 0f);
+				}
+			} else if ((r.right - width) * (r.right - width) > 1f) {
+				Log.d("ftbt", "case4");
+				if (dx > width - r.right) {
+					activity.gallery.onScroll(e_temp, event,
+							-(width - r.right), 0f);
+					matrix.postTranslate(dx-(width-r.right), 0f);
+				} else {
+					activity.gallery.onScroll(e_temp, event, -dx, 0f);
+				}
 			} else {
 				Log.d("ftbt", "case5");
 				matrix.postTranslate(dx, 0f);
@@ -197,10 +223,62 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		}
 	}
 
+	// 画像の拡大縮小
+	public void zoomImage(float scale, float mx, float my) {
+		matrix.set(moveMatrix);
+		Log.d("ftbt", "matrix update" + matrix.toString());
+
+		// 現在のスケール取得
+		float[] values = new float[9];
+		matrix.getValues(values);
+		float currentScale = values[Matrix.MSCALE_X];
+		float postScale = currentScale * scale;
+
+		bx = bm.getWidth() * postScale;
+		by = bm.getHeight() * postScale;
+
+		matrix.postScale(scale, scale, mx, my);
+		/*
+		 * Rect r = new Rect(); this.getGlobalVisibleRect(r); if ((r.left) *
+		 * (r.left) > 1f) { //左が空いているなら左寄せ //デフォルトで左寄せ拡大 //mx = (mx - prex_bx/2)
+		 * * () }else{ //右が開いているなら右寄せ float currentX = values[Matrix.MTRANS_X];
+		 * float nextX = (bx - width); values[Matrix.MTRANS_X] = -nextX;
+		 * //mx+=nextX-currentX; }
+		 */
+		float dbx = bm.getWidth() * (postScale - currentScale);
+		// 中央寄せ
+		/*
+		 * values[Matrix.MTRANS_X] = -dbx / 2; mx += dbx / 2;
+		 */
+
+		// matrix.setValues(values);
+		// matrix.postTranslate(-dbx / 2, 0f);
+		setImageMatrix(matrix);
+	}
+
+	public void zoomImageToWindow() {
+		// 画面サイズの取得
+		WindowManager wm = ((WindowManager) getContext().getSystemService(
+				Context.WINDOW_SERVICE));
+		Display display = wm.getDefaultDisplay();
+		int width = display.getWidth();
+		int height = display.getHeight();
+
+		if (bm.getWidth() < width && bm.getHeight() < height) {
+			return;
+		} else {
+			float scale = Math.min((float) width / (float) bm.getWidth(),
+					(float) height / (float) bm.getHeight());
+			Log.d("ftbt", "scale=" + scale);
+			matrix.setScale(scale, scale);
+			bx = bm.getWidth() * scale;
+			by = bm.getHeight() * scale;
+		}
+	}
+
 	public void setImageBitmap(Bitmap bm) {
 		super.setImageBitmap(bm);
-		bx = bm.getWidth();
-		by = bm.getHeight();
+		this.bm = bm;
 
 		// 画面サイズの取得
 		WindowManager wm = ((WindowManager) getContext().getSystemService(
@@ -209,8 +287,10 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		int width = display.getWidth();
 		int height = display.getHeight();
 
-		// 中央配置
+		// フィット+中央配置
 		matrix.set(moveMatrix);
+		zoomImageToWindow();
+		Log.d("ftbt", "bx=" + bx + " by=" + by);
 		matrix.postTranslate(-(bx - width) / 2, -(by - height) / 2);
 		setImageMatrix(matrix);
 	}
