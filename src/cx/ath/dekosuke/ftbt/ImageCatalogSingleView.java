@@ -8,8 +8,10 @@ import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -89,7 +91,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 			case DRAG:
 				matrix.set(moveMatrix);
 				//activity.gallery.onScroll(e_temp, event, - (event.getX() - point.x), 0f); //これは動いた
-				float mxt=event.getX() - point.x;
+				/*
 				matrix.postTranslate(mxt, 0f);
 				mx+=mxt;
 				Log.d("ftbt", "mxt="+mxt);
@@ -98,11 +100,13 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 					matrix.postTranslate(200-mxt, 0f);
 					mx+=-200-mxt;
 				}
+				*/
+				moveX(event);
 				matrix.postTranslate(0f, event.getY() - point.y);
 				view.setImageMatrix(matrix);
 				break;
 			case ZOOM:
-				if (mode == ZOOM) {
+				if (false && mode == ZOOM) { //ちょっとdisable
 					float currentLength = getLength(event);
 					middle = getMiddle(event, middle);
 					if (true) {
@@ -118,6 +122,32 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 			}
 		}
 		return false;
+	}
+	
+	//x軸方向の移動。画像移動matrix->一定以上はみ出たらgalleryのonscroll
+	private void moveX(MotionEvent event){
+		// 画面サイズの取得
+		WindowManager wm = ((WindowManager) getContext()
+				.getSystemService(Context.WINDOW_SERVICE));
+		Display display = wm.getDefaultDisplay();
+		int width = display.getWidth();
+		int height = display.getHeight();		
+		float dx=event.getX() - point.x;
+		Log.d("ftbt", "width="+width+" mx="+mx+" dx="+dx);
+		float mxt = mx+dx;
+		ImageCatalog activity = (ImageCatalog)getContext();
+		if(mxt > (width/2)){
+			matrix.postTranslate(width/2-mx, 0f);		
+			activity.gallery.onScroll(e_temp, event, +(mx-width/2), 0f);
+			mx=width/2;
+		}else if(mxt < -(width/2)){
+			matrix.postTranslate(-width/2-mx, 0f);			
+			activity.gallery.onScroll(e_temp, event, +(mx+width/2), 0f);
+			mx=-width/2;			
+		}else{
+			matrix.postTranslate(dx, 0f);
+			mx+=dx;			
+		}
 	}
 	
 	//拡大縮小制限用
