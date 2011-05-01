@@ -22,16 +22,25 @@ public class ImageCatalogGallery extends Gallery implements OnTouchListener {
 	public ImageCatalogGallery(Context context, AttributeSet attrSet) {
 		super(context, attrSet);
 	}
+	
+	public void onClick(View v){
+		//do nothing
+	}
+	
+	public boolean onDown(MotionEvent e){
+		return true;
+	}
 
 	public boolean onTouch(View v, MotionEvent event) {
 		//FutabaImageCatalogAdapter adapter = (FutabaImageCatalogAdapter)getAdapter();
 		//adapter.get
-		return super.onTouchEvent(event);
+		return false; //握りつぶし
+		//return super.onTouchEvent(event);
 	}
 	
 	public boolean onFling(MotionEvent e1, MotionEvent e2,
 							float velocityX, float velocityY){
-		return false;
-		//return super.onFling(e1, e2, velocityX, velocityY);
+		return super.onFling(e1, e2, velocityX, velocityY);
 	}
+	
 }

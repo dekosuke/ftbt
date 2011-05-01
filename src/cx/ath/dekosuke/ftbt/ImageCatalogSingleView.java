@@ -223,6 +223,11 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		}
 	}
 
+	public boolean onFling(MotionEvent e1, MotionEvent e2,
+			float velocityX, float velocityY){
+		ImageCatalog activity = (ImageCatalog) getContext();
+		return activity.gallery.onFling(e1, e2, velocityX, velocityY);
+	}
 	// 画像の拡大縮小
 	public void zoomImage(float scale, float mx, float my) {
 		matrix.set(moveMatrix);
@@ -253,6 +258,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 
 		// matrix.setValues(values);
 		// matrix.postTranslate(-dbx / 2, 0f);
+		mx = 0;
 		setImageMatrix(matrix);
 	}
 
