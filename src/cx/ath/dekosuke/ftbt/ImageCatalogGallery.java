@@ -31,6 +31,7 @@ public class ImageCatalogGallery extends Gallery implements OnTouchListener {
 	
 	public boolean onFling(MotionEvent e1, MotionEvent e2,
 							float velocityX, float velocityY){
-		return super.onFling(e1, e2, velocityX, velocityY);
+		return false;
+		//return super.onFling(e1, e2, velocityX, velocityY);
 	}
 }
