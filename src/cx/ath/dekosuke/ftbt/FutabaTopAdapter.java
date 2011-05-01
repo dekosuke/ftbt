@@ -83,6 +83,7 @@ public class FutabaTopAdapter extends ArrayAdapter {
 					buttonFavorite.setText("Unfav");					
 				}
 
+				final ViewGroup view_parent = parent;
 				buttonFavorite.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						if(activity.mode.equals("all")){
@@ -93,6 +94,8 @@ public class FutabaTopAdapter extends ArrayAdapter {
 							ftbt ftbt_top = (ftbt)activity.getParent();
                             ftbt_top.removeFavoriteBBSs(item);
 						}
+						view_parent.invalidate();
+						notifyDataSetChanged();
 						Toast.makeText(activity, "Favがクリックされました", Toast.LENGTH_SHORT).show();
 					}
 				});			

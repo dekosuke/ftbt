@@ -37,7 +37,7 @@ public class SDCard {
 		}
 		Log.d("ftbt", "length=" + bytes.length);
 		File file = new File(filename);
-        Log.d("ftbt", filename );
+		Log.d("ftbt", filename);
 		file.getParentFile().mkdir();
 		try {
 			BufferedOutputStream fos = new BufferedOutputStream(
@@ -49,8 +49,8 @@ public class SDCard {
 		// Environment.getDataDirectory().getPath(); // /dataなど
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
 	}
-	
-    public static void saveFromURL(String name, URL url, boolean isCache) {
+
+	public static void saveFromURL(String name, URL url, boolean isCache) {
 		try {
 			InputStream is = url.openStream();
 			String sdcard_dir = Environment.getExternalStorageDirectory()
@@ -102,7 +102,7 @@ public class SDCard {
 		return file.exists();
 	}
 
-	//ファイル新しい順ソート
+	// ファイル新しい順ソート
 	static Comparator comparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			File f1 = (File) o1;
@@ -114,7 +114,7 @@ public class SDCard {
 
 	// numMBになるまでキャッシュフォルダのファイルを（古い順に）削除
 	// http://osima.jp/blog/howto_java_lastmodified/ 古い順にファイルソート
-	//まだ未検証
+	// まだ未検証
 	public static void limitCache(int num) {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
 		File cache_dir = new File(sdcard_dir + "/cx.ath.dekosuke.ftbt/");
@@ -126,71 +126,83 @@ public class SDCard {
 
 		Collections.sort(list, comparator);
 
-		//順番に新しいファイルから加える─＞既定サイズになったときにそれ以降のファイルをすべて削除
-		//ディレクトリはすべて削除　で。
+		// 順番に新しいファイルから加える─＞既定サイズになったときにそれ以降のファイルをすべて削除
+		// ディレクトリはすべて削除　で。
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
-			//Log.d("ftbt", f.getName() + "," + toCalendarString(f));
-			if(f.isDirectory()){ //強制ディレクトリ削除
-				deleteDir(f);
-				Log.d("ftbt", "deleted directory "+f.getName());
-			}else{
-				//Log.d("ftbt", "size="+f.length());
+			// Log.d("ftbt", f.getName() + "," + toCalendarString(f));
+			if (f.isDirectory()) { // 強制ディレクトリ削除
+				// deleteDir(f);
+				// Log.d("ftbt", "deleted directory "+f.getName());
+			} else {
+				// Log.d("ftbt", "size="+f.length());
 				sizeSum += f.length();
-				if(sizeSum > num*1000000){ //強制ファイル削除
+				if (sizeSum > num * 1000000) { // 強制ファイル削除
 					f.delete();
-					Log.d("ftbt", "deleted file "+f.getName());
+					Log.d("ftbt", "deleted file " + f.getName());
 				}
 			}
 		}
 	}
 
-	static private void deleteDir(File f){
-	    if( f.exists()==false ){
-	        return ;
-	    }
+	static private void deleteDir(File f) {
+		if (f.exists() == false) {
+			return;
+		}
 
-	    if(f.isFile()){
-	        f.delete();
-	    }
+		if (f.isFile()) {
+			f.delete();
+		}
 
-	    if(f.isDirectory()){
-	        File[] files=f.listFiles();
-	        for(int i=0; i<files.length; i++){
-	            deleteDir( files[i] );
-	        }
-	        f.delete();
-	    }
+		if (f.isDirectory()) {
+			File[] files = f.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				deleteDir(files[i]);
+			}
+			f.delete();
+		}
 	}
 
+	static private String toCalendarString(File f) {
 
-    static private String toCalendarString(File f){
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(f.lastModified());
 
-        Calendar cal=Calendar.getInstance();
-        cal.setTimeInMillis( f.lastModified() );
+		int y = cal.get(Calendar.YEAR);
+		int m = cal.get(Calendar.MONTH);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        int y=cal.get(Calendar.YEAR);
-        int m=cal.get(Calendar.MONTH);
-        int day=cal.get(Calendar.DAY_OF_MONTH);
-
-        return String.valueOf(y)+"-"+String.valueOf(m+1)+"-"+String.valueOf(day);
-    }
-
-    static public ObjectInputStream getSerialized(String name) throws IOException{
+		return String.valueOf(y) + "-" + String.valueOf(m + 1) + "-"
+				+ String.valueOf(day);
+	}
+	
+	public static boolean existSeriarized(String name) {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
-        FileInputStream inFile = new FileInputStream(filename);
-        ObjectInputStream inObject = new ObjectInputStream(inFile);
-        return inObject;
-    }
+		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
+		File file = new File(filename);
+		return file.exists();
+	}	
 
-    static public void setSerialized(String name, 
-                                    Object object) throws IOException {
+	static public ObjectInputStream getSerialized(String name)
+			throws IOException {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
-        FileOutputStream outFile = new FileOutputStream(filename);
-        ObjectOutputStream outObject = new ObjectOutputStream(outFile);
-        outObject.writeObject(object); 
-    }
+		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
+		File file = new File(filename);
+		file.getParentFile().mkdir();
+		FileInputStream inFile = new FileInputStream(filename);
+		ObjectInputStream inObject = new ObjectInputStream(inFile);
+		return inObject;
+	}
+
+	static public void setSerialized(String name, Object object)
+			throws IOException {
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
+		FileOutputStream outFile = new FileOutputStream(filename);
+		File file = new File(filename);
+		file.getParentFile().mkdir();
+		ObjectOutputStream outObject = new ObjectOutputStream(outFile);
+		outObject.writeObject(object);
+	}
 }

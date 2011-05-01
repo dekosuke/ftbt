@@ -20,7 +20,7 @@ public class FavoriteSettings {
         throws IOException {
     	ArrayList<FutabaBBS> bbss = new ArrayList<FutabaBBS>();
         try{
-	    	if( SDCard.cacheExist(OPT_FAVORITES)){
+	    	if( SDCard.existSeriarized(OPT_FAVORITES)){
                 bbss = (ArrayList<FutabaBBS>) SDCard.getSerialized(OPT_FAVORITES).readObject();
             }
         }catch(Exception e){

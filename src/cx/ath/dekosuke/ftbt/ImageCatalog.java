@@ -17,7 +17,6 @@ public class ImageCatalog extends Activity {
 	private final int FP = ViewGroup.LayoutParams.FILL_PARENT;
 	private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
 
-	private String[] data = { "Orange", "Apple", "Melon", "Lemon" };
 
 	FutabaImageCatalogAdapter adapter;
 	
