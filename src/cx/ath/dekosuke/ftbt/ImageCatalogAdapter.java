@@ -126,8 +126,8 @@ public class ImageCatalogAdapter extends BaseAdapter {
 
 				// 画像をセット
 				iv.setTag(item);
-				ImageGetTask task = new ImageGetTask(iv);
-				task.execute(item);
+				//ImageGetTask task = new ImageGetTask(iv);
+				//task.execute(item);
 			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);

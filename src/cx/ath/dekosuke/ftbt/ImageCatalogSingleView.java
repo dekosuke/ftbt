@@ -1,11 +1,14 @@
 package cx.ath.dekosuke.ftbt;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
@@ -18,15 +21,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import java.lang.Math;
 
-class ImageCatalogSingleView extends ImageView implements OnTouchListener {
+class ImageCatalogSingleView extends ImageView implements OnTouchListener,
+		Runnable {
 
 	private static final int NONE = 0;
 	private static final int DRAG = 1;
 	private static final int ZOOM = 2;
 	private Matrix matrix = new Matrix();
 	private int mode = NONE;
-	/** 画像移動用の位置 */
-	private PointF point = new PointF();
+
 	/** ズーム時の座標 */
 	private PointF middle = new PointF();
 	/** ドラッグ用マトリックス */
@@ -34,7 +37,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 	/** Zoom開始時の二点間距離 */
 	private float initLength = 1;
 	// fling用テンポラリ
-	private MotionEvent e_temp;
 	private MotionEvent prevEvent;
 	// x方向移動成分
 	private float mx = 0f;
@@ -47,6 +49,18 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 	// bx, byはbitmapのサイズそのものでなく、matrixのscale後のサイズ
 	private float bx;
 	private float by;
+
+	// ProgressDialog関連
+	public ProgressDialog waitDialog;
+	private Thread thread;
+
+	// マルチタッチのための２点座標
+	private boolean p1_pressed = false;
+	private boolean p2_pressed = false;
+	private PointF point = null;
+	private PointF p1 = new PointF();
+	private PointF p2 = new PointF();
+	private int point_side = 1;
 
 	public ImageCatalogSingleView(Context context) {
 		this(context, null, 0);
@@ -71,163 +85,137 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		Display display = wm.getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
+
+		// 拡大縮小可能に
+		this.setScaleType(ScaleType.MATRIX);
+		// 画像取得
+		setImage();
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
-		// Toast.makeText(getContext(), "touch detected",
-		// Toast.LENGTH_SHORT).show();
-		ImageView view = (ImageView) v;
-		ImageCatalog activity = (ImageCatalog) getContext();
-		/*
-		 * if( activity.gallery.onTouchEvent(event) ){ return true; }
-		 */
-		// activity.gallery.onFling(null, null, 1000f, 0f);
-		// Log.d("ftbt", "fling "+activity.gallery.onFling(null, null, 100f,
-		// 100f) );
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			Log.d("ftbt", "mode=DRAG");
-			mode = DRAG;
-			point.set(event.getX(), event.getY());
-			e_temp = event;
-			moveMatrix.set(matrix);
-			break;
-		case MotionEvent.ACTION_POINTER_2_UP:
-		case MotionEvent.ACTION_UP:
-			Log.d("ftbt", "mode=NONE");
-			mode = NONE;
-			break;
-		case MotionEvent.ACTION_POINTER_2_DOWN:
-			initLength = getLength(event);
-			if (true) {
-				Log.d("ftbt", "mode=ZOOM");
+		try {
+			// Toast.makeText(getContext(), "touch detected",
+			// Toast.LENGTH_SHORT).show();
+			ImageView view = (ImageView) v;
+			ImageCatalog activity = (ImageCatalog) getContext();
+			/*
+			 * if( activity.gallery.onTouchEvent(event) ){ return true; }
+			 */
+			// activity.gallery.onFling(null, null, 1000f, 0f);
+			// Log.d("ftbt", "fling "+activity.gallery.onFling(null, null, 100f,
+			// 100f) );
+			Log.d("ftbt", event.toString());
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+			case MotionEvent.ACTION_POINTER_1_DOWN:
+				Log.d("ftbt", "mode=DRAG");
+				mode = DRAG;
+				p1.set(event.getX(), event.getY());
 				moveMatrix.set(matrix);
-				mode = ZOOM;
-			}
-			break;
-		case MotionEvent.ACTION_MOVE:
-			Log.d("ftbt", "move ex=" + event.getX() + " ey=" + event.getY());
-			// activity.gallery.onScroll(e_temp, event, 100f, 100f); //これは動いた
-			// 持ち上がり時にひどい値が来るのでスキップ
-			if (prevEvent == null) {
-				prevEvent = event;
 				break;
-			}
-			if ((Math.abs(event.getX() - prevEvent.getX()) + Math.abs(event
-					.getY() - prevEvent.getY())) > 50.0f) {
-				point.x = event.getX();
-				point.y = event.getY();
-				prevEvent = event;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_POINTER_2_UP:
+				point = null;
+				Log.d("ftbt", "mode=NONE");
+				mode = NONE;
 				break;
-			}
-			switch (mode) {
-			case DRAG:
-				matrix.set(moveMatrix);
-				// activity.gallery.onScroll(e_temp, event, - (event.getX() -
-				// point.x), 0f); //これは動いた
+			case MotionEvent.ACTION_POINTER_2_DOWN:
+				p2.set(event.getX(), event.getY());
+				initLength = getLength(event);
+				if (true) {
+					Log.d("ftbt", "mode=ZOOM");
+					moveMatrix.set(matrix);
+					mode = ZOOM;
+				}
+				break;
+			case MotionEvent.ACTION_MOVE:
 				/*
-				 * matrix.postTranslate(mxt, 0f); mx+=mxt; Log.d("ftbt",
-				 * "mxt="+mxt); if(mxt<-200){ activity.gallery.onScroll(e_temp,
-				 * event, - (mxt+200), 0f); matrix.postTranslate(200-mxt, 0f);
-				 * mx+=-200-mxt; }
-				 */
-				moveX(event);
-				matrix.postTranslate(0f, event.getY() - point.y);
-				view.setImageMatrix(matrix);
-				break;
-			case ZOOM:
-				if (mode == ZOOM) { // ちょっとdisable
-					float currentLength = getLength(event);
-					middle = getMiddle(event, middle);
-					if (true) {
-						matrix.set(moveMatrix);
-						float scale = filter(matrix, currentLength / initLength);
-						// matrix.postScale(scale, scale, middle.x, middle.y);
-						zoomImage((float) Math.max(scale, 0.8), middle.x,
-								middle.y);
-						view.setImageMatrix(matrix);
+				if (p1 != null) {
+					Log.d("ftbt", "move p1=" + p1.x + " p1=" + p1.y);
+				}
+				if (p2 != null) {
+					Log.d("ftbt", "move p2=" + p2.x + " p2=" + p2.y);
+				}
+				*/
+				//Log.d("ftbt", "mode=" + mode);
+				float ex = event.getX();
+				float ey = event.getY();
+				float d1_sq = (p1.x - ex) * (p1.x - ex) + (p1.y - ey)
+						* (p1.y - ey);
+				float d2_sq = (p2.x - ex) * (p2.x - ex) + (p2.y - ey)
+						* (p2.y - ey);
+				int near_side;
+				if (d1_sq < d2_sq) { // near2d1
+					if (point == null) {
+						point = new PointF(ex, ey);
+						point_side = 1;
+					}
+					p1 = new PointF(ex, ey);
+					near_side = 1;
+				} else {
+					if (point == null) {
+						point = new PointF(ex, ey);
+						point_side = 2;
+					}
+					p2 = new PointF(ex, ey);
+					near_side = 2;
+				}
+				//Log.d("ftbt", "ex=" + event.getX() + " ry=" + event.getY()
+				//		+ " px=" + point.x + " py=" + point.y);
+				float d2 = (ex - point.x) * (ex - point.x) + (ey - point.y)
+						* (ey - point.y);
+				if (d2 > 50 * 50 && (point_side != near_side)) { // ポインタ入れ替わり対策
+					// 参考 http://cuaoar.jp/2010/05/flash-player-101-1.html
+					break;
+				}
+				if (d2 > 100 * 100) { // タッチミス対策
+					break;
+				}
+				//Log.d("ftbt", "move ex=" + event.getX() + " ey=" + event.getY());
+				// activity.gallery.onScroll(e_temp, event, 100f, 100f);
+				// //これは動いた
+
+				switch (mode) {
+				case DRAG:
+					matrix.set(moveMatrix);
+					// matrix.postTranslate(ex - point.x, ey - point.y);
+					move(ex - point.x, ey - point.y);
+					view.setImageMatrix(matrix);
+					break;
+				case ZOOM:
+					if (mode == ZOOM) { // ちょっとdisable
+						float currentLength = getLength(event);
+						middle = getMiddle(event, middle);
+						if (true) {
+							matrix.set(moveMatrix);
+							float scale = filter(matrix, currentLength
+									/ initLength);
+							// matrix.postScale(scale, scale, middle.x,
+							// middle.y);
+							zoomImage(scale, middle.x, middle.y);
+							view.setImageMatrix(matrix);
+						}
+						break;
 					}
 					break;
 				}
-				break;
 			}
+		} catch (Exception e) {
+			Log.i("ftbt", "message", e);
 		}
 		return false;
 	}
 
 	// x軸方向の移動。画像移動matrix->一定以上はみ出たらgalleryのonscroll
-	private void moveX(MotionEvent event) {
-		// 画面サイズの取得
-		WindowManager wm = ((WindowManager) getContext().getSystemService(
-				Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
-		int width = display.getWidth();
-		int height = display.getHeight();
-		float dx = event.getX() - point.x;
-		Log.d("ftbt", "bx=" + bx + " width=" + width + " mx=" + mx + " dx="
-				+ dx);
-		Log.d("ftbt", "matrix=" + matrix.toString());
-		ImageCatalog activity = (ImageCatalog) getContext();
-		Rect r = new Rect();
-		this.getGlobalVisibleRect(r);
-		Log.d("ftbt", "rect=" + r.toString());
-		if (bx > width && Math.abs(dx) > 1f) {
-			// スクロール可能なサイズ。このサイズ以上スクロールした場合はgalleryにスクロールを渡す
-			float dwx = (bx - width) / 2;
-			// mx成分取得
-			float[] values = new float[9];
-			matrix.getValues(values);
-			float mx = values[Matrix.MTRANS_X] + dwx;
-			float mxt = mx + dx;
-			if (mxt >= dwx) {
-				Log.d("ftbt", "case1");
-				// matrix.postTranslate(dwx-mx, 0f);
-				values[Matrix.MTRANS_X] = 0f;
-				matrix.setValues(values);
-				// activity.gallery.onScroll(e_temp, event, +(mx-dwx), 0f);
-				// activity.gallery.onScroll(e_temp, event, -dx, 0f);
-				activity.gallery.onScroll(e_temp, event, -10f, 0f);
-				mx = dwx;
-			} else if (mxt <= -dwx) {
-				Log.d("ftbt", "case2");
-				// matrix.postTranslate(-dwx-mx, 0f);
-				values[Matrix.MTRANS_X] = -(bx - width);
-				matrix.setValues(values);
-				// activity.gallery.onScroll(e_temp, event, +(mx+dwx), 0f);
-				activity.gallery.onScroll(e_temp, event, 10f, 0f);
-				mx = -dwx;
-			} else if ((r.left) * (r.left) > 1f) { // viewの間にある
-				Log.d("ftbt", "case3");
-				if ((-dx) > r.left) {
-					activity.gallery.onScroll(e_temp, event, r.left, 0f);
-					matrix.postTranslate(dx+r.left, 0f);
-				} else {
-					activity.gallery.onScroll(e_temp, event, -dx, 0f);
-				}
-			} else if ((r.right - width) * (r.right - width) > 1f) {
-				Log.d("ftbt", "case4");
-				if (dx > width - r.right) {
-					activity.gallery.onScroll(e_temp, event,
-							-(width - r.right), 0f);
-					matrix.postTranslate(dx-(width-r.right), 0f);
-				} else {
-					activity.gallery.onScroll(e_temp, event, -dx, 0f);
-				}
-			} else {
-				Log.d("ftbt", "case5");
-				matrix.postTranslate(dx, 0f);
-				// mx+=dx;
-			}
-		} else { // 画面内に表示できてる
-			activity.gallery.onScroll(e_temp, event, -dx, 0f);
-		}
+	private void move(float dx, float dy) {
+		// matrix.postTranslate(dx, 0f);
+		float[] values = new float[9];
+		matrix.getValues(values);
+		values[Matrix.MTRANS_X] += dx;
+		values[Matrix.MTRANS_Y] += dy;
+		matrix.setValues(values);
 	}
 
-	public boolean onFling(MotionEvent e1, MotionEvent e2,
-			float velocityX, float velocityY){
-		ImageCatalog activity = (ImageCatalog) getContext();
-		return activity.gallery.onFling(e1, e2, velocityX, velocityY);
-	}
 	// 画像の拡大縮小
 	public void zoomImage(float scale, float mx, float my) {
 		matrix.set(moveMatrix);
@@ -262,6 +250,12 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		setImageMatrix(matrix);
 	}
 
+	// ダブルタップ時に呼ばれる
+	public boolean onDoubleTap(MotionEvent e) {
+		Log.i("ftbt", "double tap");
+		return false;
+	}
+
 	public void zoomImageToWindow() {
 		// 画面サイズの取得
 		WindowManager wm = ((WindowManager) getContext().getSystemService(
@@ -271,7 +265,9 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		int height = display.getHeight();
 
 		if (bm.getWidth() < width && bm.getHeight() < height) {
-			return;
+			// matrix.reset();
+			bx = bm.getWidth();
+			by = bm.getHeight();
 		} else {
 			float scale = Math.min((float) width / (float) bm.getWidth(),
 					(float) height / (float) bm.getHeight());
@@ -280,6 +276,9 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 			bx = bm.getWidth() * scale;
 			by = bm.getHeight() * scale;
 		}
+
+		// 中央にセット
+		matrix.preTranslate(-(bx - width) / 2, -(by - height) / 2);
 	}
 
 	public void setImageBitmap(Bitmap bm) {
@@ -297,7 +296,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		matrix.set(moveMatrix);
 		zoomImageToWindow();
 		Log.d("ftbt", "bx=" + bx + " by=" + by);
-		matrix.postTranslate(-(bx - width) / 2, -(by - height) / 2);
 		setImageMatrix(matrix);
 	}
 
@@ -319,4 +317,117 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 		return p;
 	}
 
+	// 画像をオンライン取得
+	public void setImage() {
+		waitDialog = new ProgressDialog(getContext());
+		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
+
+		thread = new Thread(this);
+		thread.start();
+
+	}
+
+	public void run() {
+		try { // 細かい時間を置いて、ダイアログを確実に表示させる
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		}
+		handler.sendEmptyMessage(0);
+	}
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			// HandlerクラスではActivityを継承してないため
+			// 別の親クラスのメソッドにて処理を行うようにした。
+			try {
+				loading();
+			} catch (Exception e) {
+				Log.d("ftbt", "message", e);
+			}
+		}
+	};
+
+	private void loading() {
+		String imgFile = CircleList.get();
+		setTag(imgFile);
+		Bitmap bmp = ImageCache.getImage(imgFile);
+		if (bmp == null) { // キャッシュない
+			// ImageCache.asyncSetImage(imgFile, imgFile);
+			ImageGetTask task = new ImageGetTask(this);
+			task.execute(imgFile);
+		} else {
+			setImageBitmap(bmp);
+			dismissWaidDialog();
+		}
+	}
+
+	void dismissWaidDialog() {
+		waitDialog.dismiss();
+	}
+
+	// 画像を読み込む際にAsyncTaskを使うが、
+	// 新しいAsyncTaskが来たら古いAsyncTaskは諦めて終了する。
+	// ここに登録されてないIDのタスクはキャンセル
+	static int LastTaskID = -1;
+	static Object lock = new Object();
+
+	// 画像取得用スレッド
+	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
+		private ImageCatalogSingleView image;
+		private String tag;
+		private int id;
+
+		public ImageGetTask(ImageCatalogSingleView _image) {
+			image = _image;
+			tag = image.getTag().toString();
+			// ID登録
+			synchronized (ImageCatalogSingleView.lock) {
+				ImageCatalogSingleView.LastTaskID += 1;
+				id = ImageCatalogSingleView.LastTaskID;
+			}
+			Log.d("ftbt", "thread id" + id + " created.");
+		}
+
+		@Override
+		protected Bitmap doInBackground(String... urls) {
+
+			Bitmap bm = null;
+			try {
+				Log.d("ftbt", "getting" + urls[0]);
+				bm = ImageCache.getImage(urls[0]);
+				if (bm == null) { // does not exist on cache
+					ImageCache.setImage(urls[0]);
+					bm = ImageCache.getImage(urls[0]);
+				}
+			} catch (Exception e) {
+				Log.i("ftbt", "message", e);
+			}
+			return bm;
+		}
+
+		// メインスレッドで実行する処理
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			dismissWaidDialog();
+			// Tagが同じものが確認して、同じであれば画像を設定する
+			if (image != null && tag != null & tag.equals(image.getTag())) {
+				// image.setImageBitmap(result);
+				try {
+					image.setImageBitmap(result);
+				} catch (Exception e) {
+					Log.i("ftbt", "message", e);
+				}
+			}
+			Log.d("ftbt", "thread " + id + "end.");
+		}
+
+		@Override
+		protected void onCancelled() {
+			Log.d("ftbt", "スレッドキャンセル id=" + id);
+		}
+	}
 }
