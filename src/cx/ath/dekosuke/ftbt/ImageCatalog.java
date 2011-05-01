@@ -18,7 +18,7 @@ public class ImageCatalog extends Activity {
 	private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
 
 
-	FutabaImageCatalogAdapter adapter;
+	ImageCatalogAdapter adapter;
 	
 	ImageCatalogGallery gallery;
 
@@ -62,7 +62,7 @@ public class ImageCatalog extends Activity {
 				}
 			}
 
-			gallery.setAdapter(new FutabaImageCatalogAdapter(this, imgURLs));
+			gallery.setAdapter(new ImageCatalogAdapter(this, imgURLs));
 			adapter.notifyDataSetChanged();
 
 		} catch (Exception e) {

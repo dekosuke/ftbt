@@ -13,9 +13,9 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.Toast;
+import java.lang.Math;
 
-
-class SingleImageView extends ImageView implements OnTouchListener {
+class ImageCatalogSingleView extends ImageView implements OnTouchListener {
 
 	private static final int NONE = 0;
 	private static final int DRAG = 1;
@@ -32,16 +32,18 @@ class SingleImageView extends ImageView implements OnTouchListener {
 	private float initLength = 1;
 	//fling用テンポラリ
 	private MotionEvent e_temp;
+	//x方向移動成分
+	private float mx = 0f;
 
-	public SingleImageView(Context context) {
+	public ImageCatalogSingleView(Context context) {
 		this(context, null, 0);
 	}
 
-	public SingleImageView(Context context, AttributeSet attrs) {
+	public ImageCatalogSingleView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public SingleImageView(Context context, AttributeSet attrs, int defStyle) {
+	public ImageCatalogSingleView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		matrix = new Matrix();
 		matrix.setScale(1, 1);
@@ -86,7 +88,17 @@ class SingleImageView extends ImageView implements OnTouchListener {
 			switch (mode) {
 			case DRAG:
 				matrix.set(moveMatrix);
-				//matrix.postTranslate(event.getX() - point.x, event.getY() - point.y);
+				//activity.gallery.onScroll(e_temp, event, - (event.getX() - point.x), 0f); //これは動いた
+				float mxt=event.getX() - point.x;
+				matrix.postTranslate(mxt, 0f);
+				mx+=mxt;
+				Log.d("ftbt", "mxt="+mxt);
+				if(mxt<-200){
+					activity.gallery.onScroll(e_temp, event, - (mxt+200), 0f);
+					matrix.postTranslate(200-mxt, 0f);
+					mx+=-200-mxt;
+				}
+				matrix.postTranslate(0f, event.getY() - point.y);
 				view.setImageMatrix(matrix);
 				break;
 			case ZOOM:
@@ -110,7 +122,7 @@ class SingleImageView extends ImageView implements OnTouchListener {
 	
 	//拡大縮小制限用
 	private float filter(Matrix m, float s){
-		return s;
+		return (float) Math.max(s, 0.5);
 	}
 
 	private float getLength(MotionEvent e) {

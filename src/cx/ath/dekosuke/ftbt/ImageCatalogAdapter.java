@@ -37,7 +37,7 @@ import android.view.WindowManager;
 import android.content.Context;
 import android.view.Display;
 
-public class FutabaImageCatalogAdapter extends BaseAdapter {
+public class ImageCatalogAdapter extends BaseAdapter {
 
 	private ArrayList items;
 	private LayoutInflater inflater;
@@ -57,7 +57,7 @@ public class FutabaImageCatalogAdapter extends BaseAdapter {
         return position;
     }
     
-	public FutabaImageCatalogAdapter(Context context, ArrayList items) {
+	public ImageCatalogAdapter(Context context, ArrayList items) {
 		try {
 			this.items = items;
 			this.context = context;
@@ -93,8 +93,9 @@ public class FutabaImageCatalogAdapter extends BaseAdapter {
 
 			
 			Bitmap bm = null;
-			SingleImageView iv = (SingleImageView) view.findViewById(R.id.image);
-			//bm = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
+			ImageCatalogSingleView iv = (ImageCatalogSingleView) view.findViewById(R.id.image);
+			//LinearLayout imagebox = (LinearLayout) view.findViewById(R.id.imagebox);
+			//imagebox.setLayoutParams(createParam(Lay));
 			
 			//画像すべて即読み込み（パフォーマンス悪い）
 			bm = ImageCache.getImage(item);
@@ -102,7 +103,10 @@ public class FutabaImageCatalogAdapter extends BaseAdapter {
 				ImageCache.setImage(item);
 				bm = ImageCache.getImage(item);
 			}
+			//画像サイズをスクリーン全体にする
+			iv.setLayoutParams(createParam(width, height));
 			iv.setImageBitmap(bm);
+			//iv.setLayoutParams(createParam(bm.getWidth(), bm.getHeight()));
 			//iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
 			//iv.setLayoutParams(new Gallery.LayoutParams(
 			//			LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT)); 
@@ -130,6 +134,10 @@ public class FutabaImageCatalogAdapter extends BaseAdapter {
 		}
 		return view;
 	}
+	
+	private LinearLayout.LayoutParams createParam(int w, int h) {
+		return new LinearLayout.LayoutParams(w, h);
+	}	
 
 	static Object lock_id = new Object();
 	static int LastTaskID = -1;
