@@ -29,7 +29,12 @@ public class Post extends Activity {
 					.getSerializableExtra("threadNum");
 			urlStr = baseURL + "futaba.php";
 			Log.d("ftbt", "threadNum="+threadNum);
-			threadNum = threadNum.split("[.]")[0];
+			String[] temp = threadNum.split("[/]");
+			threadNum = temp[temp.length-1];
+			Log.d("ftbt", "threadNum="+threadNum);
+			temp = threadNum.split("[.]");
+			threadNum = temp[0];
+			Log.d("ftbt", "threadNum="+threadNum);
 
 			setContentView(R.layout.post);
 			Button postbutton = (Button) findViewById(id.postbutton);
