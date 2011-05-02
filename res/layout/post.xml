@@ -5,6 +5,13 @@
     <TableLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/tableLayout1">
     <TableRow>
         <TextView
+            android:text="おなまえ"
+            android:background="#fff"
+            android:layout_height="fill_parent"/>
+        <EditText android:text="" android:id="@+id/name" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content"></EditText>
+    </TableRow>
+    <TableRow>
+        <TextView
             android:text="E-mail"
             android:background="#fff"
             android:layout_height="fill_parent"/>
@@ -30,6 +37,6 @@
     
     
     </TableLayout>
-    <Button android:id="@+id/postbutton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Button"></Button>
+    <Button android:id="@+id/postbutton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Button" ></Button>
 
 </LinearLayout>

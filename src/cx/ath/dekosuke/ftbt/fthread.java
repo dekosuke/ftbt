@@ -42,6 +42,8 @@ public class fthread extends Activity implements Runnable {
 	public ArrayList<FutabaStatus> statuses = null; // レス一覧
 	private FutabaThreadAdapter adapter = null;
 	public String threadURL = null;
+	public String baseURL = null;
+	public String threadNum = null;
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
@@ -51,8 +53,9 @@ public class fthread extends Activity implements Runnable {
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
-		threadURL = (String) intent.getSerializableExtra("baseUrl")
-				+ (String) intent.getSerializableExtra("threadNum");
+		baseURL = (String) intent.getSerializableExtra("baseUrl");
+		threadNum = (String) intent.getSerializableExtra("threadNum");
+		threadURL = baseURL + threadNum;
 		setWait();
 	}
 
@@ -139,13 +142,13 @@ public class fthread extends Activity implements Runnable {
 		Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
-		// これスレッドごとに作られているのが結構ひどい気がする
-		intent.putExtra("threadURL", threadURL);
+		intent.putExtra("baseURL", baseURL);
+		intent.putExtra("threadNum", threadNum);
 		intent.setClassName(getPackageName(),
 				getClass().getPackage()
 						.getName()
 						+ ".Post");
-		startActivity(intent); // Never called!
+		startActivity(intent);
 	}
 
 }
