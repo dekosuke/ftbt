@@ -74,8 +74,12 @@ public class ImageCatalog extends Activity {
 						// 画像を保存する
 						String imgFile = CircleList.get();
 						File file = new File(imgFile);
+						//TODO:ここでキャッシュあるならそれから保存
+						ImageCache.saveImage(imgFile);
+						/*
 						SDCard.saveFromURL(file.getName(), new URL(imgFile),
 								false);
+						*/
 						if(toast!=null){
 							toast.cancel();
 						}

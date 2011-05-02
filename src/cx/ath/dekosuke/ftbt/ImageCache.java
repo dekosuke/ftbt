@@ -35,6 +35,25 @@ public class ImageCache {
 		}
 	}
 
+	public static void saveImage(String url) {
+		String urlHash = FutabaCrypt.createDigest(url);
+		File file = new File(url);
+		if (SDCard.cacheExist(urlHash)) {
+			try {
+				SDCard.copyCacheToFile(urlHash, file.getName());
+			} catch (Exception e) {
+				Log.i("ftbt", "message", e);
+			}
+		} else {
+			// キャッシュがない(通常あまりないはずだが・・)
+			//再読み込みしてください、みたいな例外を投げましょう
+			/*
+			 * setImage(url); //再帰 saveImage(url);
+			 */
+		}
+
+	}
+
 	public static void GC() {
 		// currently do nothing
 	}

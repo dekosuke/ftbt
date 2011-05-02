@@ -12,6 +12,7 @@ import android.os.Environment;
 import java.io.File;
 
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.InputStream;
@@ -102,6 +103,27 @@ public class SDCard {
 		return file.exists();
 	}
 
+	public static void copyCacheToFile(String urlhash, String url) throws IOException {
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		String srcfilename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + urlhash;
+		String dstfilename = sdcard_dir + "/ふたばと/" + url;
+		// ファイルコピーのフェーズ
+		InputStream input = null;
+		OutputStream output = null;
+		input = new FileInputStream(new File(srcfilename));
+		output = new FileOutputStream(new File(dstfilename));
+
+		int DEFAULT_BUFFER_SIZE = 1024 * 4;
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int n = 0;
+		while (-1 != (n = input.read(buffer))) {
+			output.write(buffer, 0, n);
+		}
+		input.close();
+		output.close();
+
+	}
+
 	// ファイル新しい順ソート
 	static Comparator comparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
@@ -176,13 +198,13 @@ public class SDCard {
 		return String.valueOf(y) + "-" + String.valueOf(m + 1) + "-"
 				+ String.valueOf(day);
 	}
-	
+
 	public static boolean existSeriarized(String name) {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
 		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
 		File file = new File(filename);
 		return file.exists();
-	}	
+	}
 
 	static public ObjectInputStream getSerialized(String name)
 			throws IOException {
