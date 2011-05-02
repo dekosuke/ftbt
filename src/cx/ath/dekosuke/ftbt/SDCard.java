@@ -27,14 +27,40 @@ import android.graphics.BitmapFactory;
 
 //File Saver
 public class SDCard {
-
-	public static void saveBin(String name, byte[] bytes, boolean isCache) {
+	
+	public static String getCacheDir(){
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		String cacheDir = sdcard_dir + "/cx.ath.dekosuke.ftbt/";
+		File file = new File(cacheDir);
+		file.mkdir(); //ディレクトリないときにつくる
+		return cacheDir;
+	}
+
+	public static String getSaveDir(){
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		String saveDir = sdcard_dir + "/ふたばと/";
+		File file = new File(saveDir);
+		file.mkdir(); //ディレクトリないときにつくる
+		return saveDir;
+	}
+
+	
+	public static String getSeriarizedDir(){
+		String cacheDir = getCacheDir();
+		String seriarizedDir = cacheDir + "bin/";
+		File file = new File(seriarizedDir);
+		file.mkdir(); //ディレクトリないときにつくる
+		return seriarizedDir;
+		
+	}
+	
+	
+	public static void saveBin(String name, byte[] bytes, boolean isCache) {
 		String filename;
 		if (!isCache) {
-			filename = sdcard_dir + "/ふたばと/" + name;
+			filename = getSaveDir() + name;
 		} else {
-			filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+			filename = getCacheDir() + name;
 		}
 		Log.d("ftbt", "length=" + bytes.length);
 		File file = new File(filename);
@@ -53,15 +79,14 @@ public class SDCard {
 
 	public static void saveFromURL(String name, URL url, boolean isCache) {
 		try {
-			InputStream is = url.openStream();
-			String sdcard_dir = Environment.getExternalStorageDirectory()
-					.getPath();
 			String filename;
 			if (!isCache) {
-				filename = sdcard_dir + "/ふたばと/" + name;
+				filename = getSaveDir() + name;
 			} else {
-				filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+				filename = getCacheDir() + name;
 			}
+
+			InputStream is = url.openStream();
 			// OutputStream os = new FileOutputStream(filename);
 			File file = new File(filename);
 			file.getParentFile().mkdir();
@@ -82,14 +107,14 @@ public class SDCard {
 
 	public static String loadTextCache(String name) throws IOException {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+		String filename = getCacheDir() + name;
 		File file = new File(filename);
 		return FileToString.fileToString(file, "Shift-JIS");
 	}
 
 	public static Bitmap loadBitmapCache(String name) {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+		String filename = getCacheDir() + name;
 		File file = new File(filename);
 		// 読み込み用のオプションオブジェクトを生成
 		// BitmapFactory.Options options = new BitmapFactory.Options();
@@ -98,15 +123,14 @@ public class SDCard {
 
 	public static boolean cacheExist(String name) {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + name;
+		String filename = getCacheDir() + name;
 		File file = new File(filename);
 		return file.exists();
 	}
 
 	public static void copyCacheToFile(String urlhash, String url) throws IOException {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String srcfilename = sdcard_dir + "/cx.ath.dekosuke.ftbt/" + urlhash;
-		String dstfilename = sdcard_dir + "/ふたばと/" + url;
+		String srcfilename = getCacheDir() + urlhash;
+		String dstfilename = getSaveDir() + url;
 		// ファイルコピーのフェーズ
 		InputStream input = null;
 		OutputStream output = null;
@@ -138,8 +162,7 @@ public class SDCard {
 	// http://osima.jp/blog/howto_java_lastmodified/ 古い順にファイルソート
 	// まだ未検証
 	public static void limitCache(int num) {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		File cache_dir = new File(sdcard_dir + "/cx.ath.dekosuke.ftbt/");
+		File cache_dir = new File(getCacheDir());
 		File[] files = cache_dir.listFiles();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < files.length; i++) {
@@ -200,16 +223,14 @@ public class SDCard {
 	}
 
 	public static boolean existSeriarized(String name) {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
+		String filename = getCacheDir() + "bin/" + name;
 		File file = new File(filename);
 		return file.exists();
 	}
 
 	static public ObjectInputStream getSerialized(String name)
 			throws IOException {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
+		String filename = getSeriarizedDir() + name;
 		File file = new File(filename);
 		file.getParentFile().mkdir();
 		FileInputStream inFile = new FileInputStream(filename);
@@ -219,8 +240,7 @@ public class SDCard {
 
 	static public void setSerialized(String name, Object object)
 			throws IOException {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String filename = sdcard_dir + "/cx.ath.dekosuke.ftbt/bin/" + name;
+		String filename = getSeriarizedDir() + name;
 		FileOutputStream outFile = new FileOutputStream(filename);
 		File file = new File(filename);
 		file.getParentFile().mkdir();
