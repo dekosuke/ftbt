@@ -62,14 +62,13 @@ public class FutabaCatalogParser {
 					Pattern.DOTALL);
 			Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
 
-			CookieSyncManager.createInstance(context);
-			CookieSyncManager.getInstance().startSync();
 			CookieManager.getInstance().setAcceptCookie(true);
 			CookieManager.getInstance().removeExpiredCookie();
 
 			// HttpClientの準備
 			DefaultHttpClient httpClient;
 			httpClient = new DefaultHttpClient();
+			FutabaCookieManager.loadCookie(httpClient); //クッキーのロード
 			httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
 					CookiePolicy.BROWSER_COMPATIBILITY);
 			httpClient.getParams()
@@ -93,6 +92,7 @@ public class FutabaCatalogParser {
 				HttpGet httpget = new HttpGet(urlStr);
 				HttpResponse httpResponse = null;
 				httpResponse = httpClient.execute(httpget);
+				FutabaCookieManager.saveCookie(httpClient); //クッキー保存
 				int status = httpResponse.getStatusLine().getStatusCode();
 				if (HttpStatus.SC_OK == status) {
 					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

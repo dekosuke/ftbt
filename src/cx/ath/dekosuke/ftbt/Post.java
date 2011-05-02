@@ -64,6 +64,8 @@ public class Post extends Activity {
 			// cookie関連
 			CookieSyncManager.createInstance(this);
 			CookieSyncManager.getInstance().startSync();
+			
+			FutabaCookieManager.PrintCookie();
 
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
@@ -129,6 +131,7 @@ public class Post extends Activity {
 			DefaultHttpClient httpClient;
 			httpClient = new DefaultHttpClient();
 			// httpClient.setHeader( "Connection", "Keep-Alive" );
+			FutabaCookieManager.loadCookie(httpClient);
 			httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
 					CookiePolicy.BROWSER_COMPATIBILITY);
 			httpClient.getParams()
@@ -180,6 +183,7 @@ public class Post extends Activity {
 			httppost.setEntity(new UrlEncodedFormEntity(nameValuePair));
 			httppost.addHeader("referer", threadURL);
 			HttpResponse response = httpClient.execute(httppost);
+			FutabaCookieManager.saveCookie(httpClient);
 			ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
 			response.getEntity().writeTo(byteArrayOutputStream2);
 			String retData2 = byteArrayOutputStream2.toString("Shift-JIS");
