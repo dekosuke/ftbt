@@ -139,7 +139,7 @@ public class fthread extends Activity implements Runnable {
 	}
 
 	public void onClickPostBtn(View v) {
-		Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
 		intent.putExtra("baseURL", baseURL);

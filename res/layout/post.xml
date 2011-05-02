@@ -15,7 +15,7 @@
             android:text="E-mail"
             android:background="#fff"
             android:layout_height="fill_parent"/>
-        <EditText android:text="sage " android:id="@+id/email" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content"></EditText>
+        <EditText android:text="" android:id="@+id/email" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content"></EditText>
     </TableRow>
     <TableRow android:layout_width="fill_parent" android:baselineAligned="false">
         <TextView

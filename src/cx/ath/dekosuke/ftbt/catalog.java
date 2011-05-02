@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.content.Intent;
+import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -57,8 +58,24 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 		super.onCreate(savedInstanceState);
 
 		Log.d("ftbt", "catalog start");
+
+		CookieSyncManager.createInstance(this);
+		CookieSyncManager.getInstance().startSync();
+		
 		setWait();
 
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		CookieSyncManager.getInstance().stopSync();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		CookieSyncManager.getInstance().sync();
 	}
 
 	public void setWait() {
@@ -73,10 +90,10 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 	}
 
 	public void run() {
-		try{ //細かい時間を置いて、ダイアログを確実に表示させる
+		try { // 細かい時間を置いて、ダイアログを確実に表示させる
 			Thread.sleep(100);
-		}catch(InterruptedException e){
-			 //スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		} catch (InterruptedException e) {
+			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
 		}
 		handler.sendEmptyMessage(0);
 	}
@@ -96,30 +113,36 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 	};
 
 	private void loading() {
-		Intent intent = getIntent();
-		baseUrl = (String) intent.getSerializableExtra("baseUrl");
-		catalogURL = baseUrl + "futaba.php";
-		buttonReload = new Button(this);
-		buttonReload.setText("Reload");
-		buttonReload.setOnClickListener(this);
-		parser = new FutabaCatalogParser(catalogURL);
-		parser.parse(getApplicationContext());
-		Log.d("ftbt", " " + parser.network_ok + " " + parser.cache_ok);
-		if (!parser.network_ok && parser.cache_ok) {
-			Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
-					Toast.LENGTH_LONG).show();
+		try {
+			Intent intent = getIntent();
+			baseUrl = (String) intent.getSerializableExtra("baseUrl");
+			catalogURL = baseUrl + "futaba.php";
+			buttonReload = new Button(this);
+			buttonReload.setText("Reload");
+			buttonReload.setOnClickListener(this);
+			parser = new FutabaCatalogParser(catalogURL);
+			parser.parse(getApplicationContext());
+			Log.d("ftbt", " " + parser.network_ok + " " + parser.cache_ok);
+			if (!parser.network_ok && parser.cache_ok) {
+				Toast.makeText(this,
+						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
+						Toast.LENGTH_LONG).show();
+			}
+			fthreads = parser.getThreads();
+
+			setContentView(R.layout.futaba_catalog);
+
+			ListView listView = (ListView) findViewById(id.cataloglistview);
+			// アダプターを設定します
+			adapter = new FutabaCatalogAdapter(this,
+					R.layout.futaba_catalog_row, fthreads);
+			listView.setAdapter(adapter);
+
+
+			waitDialog.dismiss();
+		} catch (Exception e) {
+			Log.i("ftbt", "message", e);
 		}
-		fthreads = parser.getThreads();
-
-		setContentView(R.layout.futaba_catalog);
-
-		ListView listView = (ListView) findViewById(id.cataloglistview);
-		// アダプターを設定します
-		adapter = new FutabaCatalogAdapter(this, R.layout.futaba_catalog_row,
-				fthreads);
-		listView.setAdapter(adapter);
-
-		waitDialog.dismiss();
 	}
 
 	public void onClickReloadBtn(View v) {
