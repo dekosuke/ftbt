@@ -9,17 +9,20 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
 </RelativeLayout>
 
 <LinearLayout
-    android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_alignParentBottom="true"
-    android:id="@+id/bottom_control_bar"
-    >
-    <Button android:text="reload"
+    android:id="@+id/bottom_control_bar" android:orientation="horizontal">
+    <Button android:text="リロード"
         android:id="@+id/reload_btn"
+        android:layout_height="wrap_content"
+        android:onClick="onClickReloadBtn" android:layout_width="fill_parent" android:layout_weight="1">
+    </Button>
+    <Button android:text="投稿する"
+        android:id="@+id/post_btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:onClick="onClickReloadBtn">
+        android:onClick="onClickPostBtn" android:layout_weight="2">
     </Button>
 </LinearLayout>
 

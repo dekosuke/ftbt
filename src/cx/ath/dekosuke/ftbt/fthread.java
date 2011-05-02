@@ -40,7 +40,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 public class fthread extends Activity implements Runnable {
 
 	public ArrayList<FutabaStatus> statuses = null; // レス一覧
-	private FutabaAdapter adapter = null;
+	private FutabaThreadAdapter adapter = null;
 	public String threadURL = null;
 
 	private ProgressDialog waitDialog;
@@ -103,7 +103,7 @@ public class fthread extends Activity implements Runnable {
 
 			ListView listView = (ListView) findViewById(id.threadlistview);
 			// アダプターを設定します
-			adapter = new FutabaAdapter(this, R.layout.futaba_thread_row,
+			adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 					statuses);
 			listView.setAdapter(adapter);
 
@@ -133,6 +133,19 @@ public class fthread extends Activity implements Runnable {
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "fthread onclick-reload");
 		setWait();
+	}
+
+	public void onClickPostBtn(View v) {
+		Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent();
+		// Log.d ( "ftbt", threadNum );
+		// これスレッドごとに作られているのが結構ひどい気がする
+		intent.putExtra("threadURL", threadURL);
+		intent.setClassName(getPackageName(),
+				getClass().getPackage()
+						.getName()
+						+ ".Post");
+		startActivity(intent); // Never called!
 	}
 
 }

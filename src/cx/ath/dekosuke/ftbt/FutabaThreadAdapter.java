@@ -35,7 +35,7 @@ import android.view.Display;
 
 import java.lang.Thread; //To call Thread.sleep
 
-public class FutabaAdapter extends ArrayAdapter {
+public class FutabaThreadAdapter extends ArrayAdapter {
 
 	private ArrayList items;
 	private LayoutInflater inflater;
@@ -44,7 +44,7 @@ public class FutabaAdapter extends ArrayAdapter {
 	private int width;
 	private int height;
 
-	public FutabaAdapter(Context context, int textViewResourceId,
+	public FutabaThreadAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
@@ -160,9 +160,9 @@ public class FutabaAdapter extends ArrayAdapter {
 				Log.d("ftbt", "imageview is null!!!");
 			}
 			tag = image.getTag().toString();
-			synchronized (FutabaAdapter.lock_id) {
-				FutabaAdapter.LastTaskID += 1;
-				id = FutabaAdapter.LastTaskID;
+			synchronized (FutabaThreadAdapter.lock_id) {
+				FutabaThreadAdapter.LastTaskID += 1;
+				id = FutabaThreadAdapter.LastTaskID;
 			}
 		}
 

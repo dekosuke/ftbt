@@ -38,9 +38,19 @@ public class ftbt_tab extends Activity implements Runnable {
 
 		Intent intent = getIntent();
 		mode = (String) intent.getSerializableExtra("mode");
-		
-		//キャッシュを削除する(重いので明示+確認すべし)
-		SDCard.limitCache(10);
+
+		// キャッシュを削除する(重いので明示+確認すべし)
+		waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("キャッシュの整理中・・・");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		SDCard.limitCache(30);
+		waitDialog.dismiss();
 
 		setWait();
 
@@ -58,10 +68,10 @@ public class ftbt_tab extends Activity implements Runnable {
 	}
 
 	public void run() {
-		try{ //細かい時間を置いて、ダイアログを確実に表示させる
+		try { // 細かい時間を置いて、ダイアログを確実に表示させる
 			Thread.sleep(100);
-		}catch(InterruptedException e){
-			 //スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		} catch (InterruptedException e) {
+			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
 		}
 		handler.sendEmptyMessage(0);
 	}
@@ -84,17 +94,20 @@ public class ftbt_tab extends Activity implements Runnable {
 		Intent intent = getIntent();
 
 		ArrayList<FutabaBBS> BBSs = new ArrayList<FutabaBBS>();
-		if(mode.equals("all")){
+		if (mode.equals("all")) {
 			FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
 					"http://www.2chan.net/bbsmenu.html");
 			parser.parse();
-			if(!parser.network_ok && parser.cache_ok){
-				Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。", Toast.LENGTH_LONG).show();
+			if (!parser.network_ok && parser.cache_ok) {
+				Toast.makeText(this,
+						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
+						Toast.LENGTH_LONG).show();
 			}
-	
+
 			BBSs = parser.getBBSs();
-		}else{ //fav
-			BBSs = (ArrayList<FutabaBBS>) intent.getSerializableExtra("favoriteBBSs");
+		} else { // fav
+			BBSs = (ArrayList<FutabaBBS>) intent
+					.getSerializableExtra("favoriteBBSs");
 		}
 		adapter = new FutabaTopAdapter(this, R.layout.futaba_bbs_row, BBSs);
 		// アイテムを追加します

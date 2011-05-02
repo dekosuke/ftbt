@@ -168,7 +168,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 					// 参考 http://cuaoar.jp/2010/05/flash-player-101-1.html
 					break;
 				}
-				if (d2 > 100 * 100) { // タッチミス対策
+				if (d2 > 150 * 150 && mode==ZOOM) { // 誤作動対策
 					break;
 				}
 				//Log.d("ftbt", "move ex=" + event.getX() + " ey=" + event.getY());
@@ -179,7 +179,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 				case DRAG:
 					matrix.set(moveMatrix);
 					// matrix.postTranslate(ex - point.x, ey - point.y);
-					move(ex - point.x, ey - point.y);
+					move(1.0f*(ex - point.x), 1.3f*(ey - point.y));
 					view.setImageMatrix(matrix);
 					break;
 				case ZOOM:
@@ -192,7 +192,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 									/ initLength);
 							// matrix.postScale(scale, scale, middle.x,
 							// middle.y);
-							zoomImage(scale, middle.x, middle.y);
+							zoomImage((float)Math.pow(scale, 1.3f), middle.x, middle.y);
 							view.setImageMatrix(matrix);
 						}
 						break;
