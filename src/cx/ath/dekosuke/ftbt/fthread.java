@@ -3,6 +3,8 @@ package cx.ath.dekosuke.ftbt;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.WindowManager;
 import android.content.Intent;
 
@@ -71,10 +73,10 @@ public class fthread extends Activity implements Runnable {
 	}
 
 	public void run() {
-		try{ //細かい時間を置いて、ダイアログを確実に表示させる
+		try { // 細かい時間を置いて、ダイアログを確実に表示させる
 			Thread.sleep(100);
-		}catch(InterruptedException e){
-			 //スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		} catch (InterruptedException e) {
+			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
 		}
 		handler.sendEmptyMessage(0);
 	}
@@ -96,8 +98,10 @@ public class fthread extends Activity implements Runnable {
 			statuses = new ArrayList<FutabaStatus>();
 			FutabaThreadParser parser = new FutabaThreadParser(threadURL);
 			parser.parse();
-			if(!parser.network_ok && parser.cache_ok){
-				Toast.makeText(this, "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。", Toast.LENGTH_LONG).show();
+			if (!parser.network_ok && parser.cache_ok) {
+				Toast.makeText(this,
+						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
+						Toast.LENGTH_LONG).show();
 			}
 			statuses = parser.getStatuses();
 			Log.d("ftbt", "parse end");
@@ -139,16 +143,21 @@ public class fthread extends Activity implements Runnable {
 	}
 
 	public void onClickPostBtn(View v) {
-		//Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
 		intent.putExtra("baseURL", baseURL);
 		intent.putExtra("threadNum", threadNum);
-		intent.setClassName(getPackageName(),
-				getClass().getPackage()
-						.getName()
-						+ ".Post");
+		intent.setClassName(getPackageName(), getClass().getPackage().getName()
+				+ ".Post");
 		startActivity(intent);
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+	}
 }
