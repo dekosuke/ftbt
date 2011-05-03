@@ -7,39 +7,46 @@
         android:icon="@drawable/icon"
         >
         <activity android:name="ftbt"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name="ftbt_tab"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
             </intent-filter>
         </activity>
         <activity android:name="catalog"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
             </intent-filter>
         </activity>
          <activity android:name="fthread"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
             </intent-filter>
         </activity>
         <activity android:name="ImageCatalog"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
             </intent-filter>
         </activity>
         <activity android:name="Post"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
             </intent-filter>
         </activity>
         <activity android:name="PrefSetting"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <intent-filter>
             </intent-filter>
         </activity>
