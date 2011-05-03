@@ -12,6 +12,7 @@ public class FutabaThread {
 	public int id;
 	public String imgURL;
 	public String threadNum;
+	public String resNum;
 
 	// 投稿時刻private date
 	// 画像private
@@ -23,5 +24,6 @@ public class FutabaThread {
 		text = "";
 		mailTo = "";
 		id = 0;
+		resNum="";
 	}
 }

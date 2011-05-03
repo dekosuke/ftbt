@@ -96,8 +96,17 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 		iv.setImageBitmap(bm);
 
 		if (item != null) {
-			// スクリーンネームをビューにセット
+			// テキストをビューにセット
 			TextView text = (TextView) view.findViewById(R.id.bottomtext);
+			if (item.text != null) {
+				text.setText(item.text);
+			}
+			TextView resNum = (TextView) view.findViewById(R.id.resnum);
+			resNum.setText(item.resNum+"レス");
+
+			//とりあえず空画像を作成
+			bm = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
+			iv.setImageBitmap(bm);
 
 			// 画像をセット
 			try {
@@ -115,10 +124,6 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 				Log.d("ftbt", e.toString());
 			}
 
-			// テキストをビューにセット
-			if (text != null) {
-				text.setText(item.text);
-			}
 		}
 		return view;
 	}

@@ -8,10 +8,22 @@
         android:layout_height="fill_parent" android:layout_marginRight="6dip"  
           />  
     <LinearLayout android:orientation="vertical"  
-        android:layout_width="0dip" android:layout_weight="1"  
+        android:layout_width="fill_parent" android:layout_weight="1"  
         android:layout_height="fill_parent">  
+	    <LinearLayout android:orientation="horizontal"  
+	        android:layout_width="fill_parent" android:layout_weight="2"  
+	        android:layout_height="fill_parent">  
+	        <TextView android:layout_width="fill_parent"  
+	            android:layout_height="fill_parent" android:layout_weight="1"
+	            android:layout_gravity="right"
+	            android:gravity="right"
+	            android:id="@+id/resnum"  
+	            android:textSize="12sp"
+	            android:textColor="#117743"
+	            />  
+	    </LinearLayout>  
         <TextView android:layout_width="fill_parent"  
-            android:layout_height="0dip" android:layout_weight="1" android:id="@+id/bottomtext"  
+            android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/bottomtext"  
             android:textSize="14sp"
             android:ellipsize="marquee"
             android:textColor="#800000"
