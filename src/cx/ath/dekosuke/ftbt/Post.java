@@ -256,6 +256,17 @@ public class Post extends Activity implements Runnable {
 			}
 
 			HttpPost httppost = new HttpPost(urlStr);
+			//添付画像
+			if(false)
+			{
+				//multipartにはライブラリ追加が必要そう
+				//http://www.softwarepassion.com/android-series-get-post-and-multipart-post-requests/
+				//http://yakinikunotare.boo.jp/orebase/index.php?Android%A1%CA%B3%AB%C8%AF%A1%CB%2F%A5%CD%A5%C3%A5%C8%A5%EF%A1%BC%A5%AF%A4%F2%BB%C8%A4%C3%A4%C6%A5%D5%A5%A1%A5%A4%A5%EB%A4%F2%A5%A2%A5%C3%A5%D7%A5%ED%A1%BC%A5%C9%A4%B9%A4%EB
+				//MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);  
+				//reqEntity.addPart("myFile", bin);
+				//FileBody fileBody = new FileBody(file);
+				//entity.addPart("upfile", fileBody);
+			}
 			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(7);
 			nameValuePair.add(new BasicNameValuePair("email", email));
 			nameValuePair.add(new BasicNameValuePair("name", name));
