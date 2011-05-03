@@ -56,9 +56,9 @@ public class FutabaThreadParser {
 					".*?<font[^>]+><b>(.*?) ?</b></font>"+
 					"(.*?) (No.[0-9]+).+?<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
-					"<a.*?target.*?href=\"(.+?)\"", Pattern.DOTALL);
+					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')", Pattern.DOTALL);
 			Pattern thumbPattern = Pattern.compile(
-					"<img.*?src=\"(.+?)\".+?width=([0-9]+).+?height=([0-9]+)",
+					"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
 					Pattern.DOTALL);
 			String allData = "";
 			try {
