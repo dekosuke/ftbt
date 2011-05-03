@@ -125,7 +125,7 @@ public class fthread extends Activity implements Runnable {
 	public ArrayList<String> getImageURLs() {
 		Iterator iterator = statuses.iterator();
 		int i = 0;
-		ArrayList list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<String>();
 		// ループ
 		while (iterator.hasNext()) {
 			FutabaStatus status = (FutabaStatus) iterator.next();
