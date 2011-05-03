@@ -22,9 +22,6 @@ import android.widget.Toast;
 
 public class ImageCatalog extends Activity {
 
-	private final int FP = ViewGroup.LayoutParams.FILL_PARENT;
-	private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
-
 	Toast toast = null;
 
 	@Override

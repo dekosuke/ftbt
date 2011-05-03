@@ -320,7 +320,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	// 画像をオンライン取得
 	public void setImage() {
 		waitDialog = new ProgressDialog(getContext());
-		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setMessage("ロード中...");
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();
@@ -400,7 +400,11 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 				Log.d("ftbt", "getting" + urls[0]);
 				bm = ImageCache.getImage(urls[0]);
 				if (bm == null) { // does not exist on cache
-					ImageCache.setImage(urls[0]);
+					boolean network_result = ImageCache.setImage(urls[0]);
+					if(!network_result){ //画像をhttpで取ってくるのに失敗
+						Toast.makeText(getContext(), "画像の取得に失敗しました。\nネットワークがつながっていないか、" +
+								"画像ファイルが存在しない可能性があります", Toast.LENGTH_SHORT).show();
+					}
 					bm = ImageCache.getImage(urls[0]);
 				}
 			} catch (Exception e) {

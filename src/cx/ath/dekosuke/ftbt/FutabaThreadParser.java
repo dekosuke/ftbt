@@ -68,6 +68,7 @@ public class FutabaThreadParser {
 						urlStr), true); // キャッシュに保存
 				allData = SDCard
 						.loadTextCache(FutabaCrypt.createDigest(urlStr));
+				network_ok = true;
 			} catch (Exception e) { // ネットワークつながってないときとか
 				network_ok = false;
 				Log.d("ftbt", "failed to get catalog html");

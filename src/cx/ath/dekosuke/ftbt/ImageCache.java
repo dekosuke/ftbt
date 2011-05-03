@@ -26,13 +26,15 @@ public class ImageCache {
 		return null;
 	}
 
-	public static void setImage(String url) {
+	public static boolean setImage(String url) {
 		String urlHash = FutabaCrypt.createDigest(url);
 		try {
 			SDCard.saveFromURL(urlHash, new URL(url), true);
+			return true;
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+			Log.d("ftbt", "message", e);
 		}
+		return false;
 	}
 
 	public static void saveImage(String url) {

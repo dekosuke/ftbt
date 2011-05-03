@@ -105,6 +105,7 @@ public class FutabaCatalogParser {
 					Log.d("ftbt", "NON-OK Status" + status);
 					throw new Exception("HTTP BAD RESULT");
 				}
+				network_ok = true;
 			} catch (Exception e) { // カタログ取得に失敗、キャッシュから
 				Log.d("ftbt", "message", e);
 				network_ok = false;
