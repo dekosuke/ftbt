@@ -98,12 +98,17 @@ public class ftbt_tab extends Activity implements Runnable {
 			FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
 					"http://www.2chan.net/bbsmenu.html");
 			parser.parse();
-			if (!parser.network_ok && parser.cache_ok) {
-				Toast.makeText(this,
-						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
+			if (!parser.network_ok) {
+				if(parser.cache_ok){
+					Toast.makeText(this,
+						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 						Toast.LENGTH_LONG).show();
+				}else{
+					Toast.makeText(this,
+							"ネットワークに繋がっていません",
+							Toast.LENGTH_LONG).show();
+				}
 			}
-
 			BBSs = parser.getBBSs();
 		} else { // fav
 			BBSs = (ArrayList<FutabaBBS>) intent

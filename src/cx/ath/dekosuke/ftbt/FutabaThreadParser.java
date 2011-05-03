@@ -81,7 +81,6 @@ public class FutabaThreadParser {
 				}
 			}
 			// parser.setInput(new StringReader(new String(data, "UTF-8")));
-			Log.d("ftbt", allData);
 			Matcher mc = honbunPattern.matcher(allData);
 			mc.find();
 			mc.find(); // 2つ目
