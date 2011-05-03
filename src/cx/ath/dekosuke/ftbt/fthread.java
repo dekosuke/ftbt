@@ -166,7 +166,10 @@ public class fthread extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.settings:
-			Toast.makeText(this, "settings", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent();
+			intent.setClassName(getPackageName(), getClass().getPackage()
+					.getName() + ".PrefSetting");
+			startActivity(intent);
 			return true;
 		case R.id.about:
 			Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
