@@ -53,7 +53,7 @@ public class FutabaCatalogParser {
 					Pattern.DOTALL);
 			Pattern resPattern = Pattern.compile("<td.*?>(.+?)</td>",
 					Pattern.DOTALL);
-			Pattern textPattern = Pattern.compile("<small.*?>(.+?)</small>",
+			Pattern textPattern = Pattern.compile("<small.*?>(.+?)</small>.+?<font[^>]+>(.+?)</font>",
 					Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
 					"<img.*?src=(?:\"|')(.+?)(?:\"|')", Pattern.DOTALL);
@@ -79,7 +79,7 @@ public class FutabaCatalogParser {
 			nameValuePair.add(new BasicNameValuePair("mode", "catset"));
 			nameValuePair.add(new BasicNameValuePair("cx", "10"));
 			nameValuePair.add(new BasicNameValuePair("cy", "5"));
-			nameValuePair.add(new BasicNameValuePair("cl", "100"));
+			nameValuePair.add(new BasicNameValuePair("cl", "50"));
 
 			urlStr = urlStr + "?mode=cat"; // カタログです
 			String data = null;
@@ -132,8 +132,10 @@ public class FutabaCatalogParser {
 				mcText.find();
 				FutabaThread thread = new FutabaThread();
 				String text = mcText.group(1);
+				String resNum = mcText.group(2);
 				text = tagPattern.matcher(text).replaceAll(""); // タグ除去
 				thread.text=text;
+				thread.resNum=resNum;
 				Matcher mcThreadNum = threadNumPattern.matcher(mcRes.group(1));
 				mcThreadNum.find();
 				String threadNum = mcThreadNum.group(1);

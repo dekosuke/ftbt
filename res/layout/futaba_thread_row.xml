@@ -34,6 +34,7 @@
        <TextView android:layout_width="fill_parent"  
             android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/maintext"  
             android:textSize="14sp"
+            android:autoLink="web"
             android:textColor="#800000"
             android:ellipsize="marquee" />  
     </LinearLayout>  
