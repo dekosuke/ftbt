@@ -39,6 +39,9 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 	// 画面サイズ
 	private int width;
 	private int height;
+	
+	//現在の選択(リロード時に戻る)
+	public int currentPosition = 0;
 
 	public FutabaCatalogAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
@@ -60,6 +63,8 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// ビューを受け取る
 		View view = convertView;
+		
+		currentPosition = position;
 
 		// 表示すべきデータの取得
 		FutabaThread item = (FutabaThread) items.get(position);

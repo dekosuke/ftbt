@@ -52,6 +52,9 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 	private Button buttonReload;
+	private ListView listView;
+
+	int position = 0; //現在位置(リロード時復帰用)
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -138,12 +141,14 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 
 			setContentView(R.layout.futaba_catalog);
 
-			ListView listView = (ListView) findViewById(id.cataloglistview);
+			listView = (ListView) findViewById(id.cataloglistview);
 			// アダプターを設定します
 			adapter = new FutabaCatalogAdapter(this,
 					R.layout.futaba_catalog_row, fthreads);
 			listView.setAdapter(adapter);
-
+			if(position!=0){
+				listView.setSelection(position);
+			}
 
 			waitDialog.dismiss();
 		} catch (Exception e) {
@@ -153,6 +158,7 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "catalog onclick-reload");
+		position = adapter.currentPosition;
 		setWait();
 	}
 

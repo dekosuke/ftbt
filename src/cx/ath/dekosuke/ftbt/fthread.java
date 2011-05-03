@@ -50,6 +50,10 @@ public class fthread extends Activity implements Runnable {
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
+	
+	private ListView listView;
+	
+	int position = 0; //現在位置(リロード時復帰用)
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -115,11 +119,14 @@ public class fthread extends Activity implements Runnable {
 
 			setContentView(R.layout.futaba_thread);
 
-			ListView listView = (ListView) findViewById(id.threadlistview);
+			listView = (ListView) findViewById(id.threadlistview);
 			// アダプターを設定します
 			adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 					statuses);
 			listView.setAdapter(adapter);
+			if(position!=0){
+				listView.setSelection(position);
+			}
 
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
@@ -146,6 +153,8 @@ public class fthread extends Activity implements Runnable {
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "fthread onclick-reload");
+		position = adapter.currentPosition; //現在位置（リロードで復帰）
+		Log.d("ftbt", "position="+position);
 		setWait();
 	}
 

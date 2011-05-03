@@ -43,6 +43,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	// 画面サイズ
 	private int width;
 	private int height;
+	
+	//現在の選択(リロード時に戻る)
+	public int currentPosition = 0;
 
 	public FutabaThreadAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
@@ -72,7 +75,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				// 背景画像をセットする
 				// view.setBackgroundResource(R.drawable.back);
 			}
-
+			
+			currentPosition = position;
+			
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
 			if (item != null) {

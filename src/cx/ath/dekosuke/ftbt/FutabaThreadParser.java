@@ -22,7 +22,7 @@ public class FutabaThreadParser {
 	private static final String TABLETAG = "table";
 	private static final String IMGTAG = "img";
 	private static final String SRCTAG = "src";
-
+	
 	private String urlStr;
 	private String title;
 	private String titleImgURL;
