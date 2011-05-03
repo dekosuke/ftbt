@@ -34,6 +34,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Button;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +78,14 @@ public class Post extends Activity implements Runnable {
 					onClickImageChooseButton(v);
 				}
 			});
+			/*
+			TableLayout tablelayout = (TableLayout) findViewById(id.tableLayout1);
+			tablelayout.setColumnCollapsed(0, true);
+			tablelayout.setColumnCollapsed(1, true);
+			tablelayout.setColumnCollapsed(2, true);
+			tablelayout.setColumnCollapsed(3, true);
+			tablelayout.setColumnCollapsed(4, true);
+			*/
 
 			// cookie関連
 			CookieSyncManager.createInstance(this);
