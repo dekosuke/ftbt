@@ -42,6 +42,7 @@ public class FutabaThreadParser {
 	}
 
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
+	// TODO:mailtoのパーズ
 	// スレッドの形式:
 	public void parse() {
 		try {
@@ -112,7 +113,7 @@ public class FutabaThreadParser {
 				mcText.find();
 				FutabaStatus status = new FutabaStatus();
 				status.title=mcText.group(1);
-				status.name =mcText.group(2); //メールアドレスが入っていることあり
+				status.name =normalize(mcText.group(2)); //メールアドレスが入っていることあり
 				status.datestr =mcText.group(3);
 				status.idstr =mcText.group(4);
 				text = mcText.group(5);
