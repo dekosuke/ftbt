@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.content.Intent;
 
@@ -159,5 +160,18 @@ public class fthread extends Activity implements Runnable {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.settings:
+			Toast.makeText(this, "settings", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.about:
+			Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
 	}
 }
