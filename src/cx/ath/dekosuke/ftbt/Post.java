@@ -21,19 +21,26 @@ import org.apache.http.message.BasicNameValuePair;
 import cx.ath.dekosuke.ftbt.R.id;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class Post extends Activity {
+public class Post extends Activity implements Runnable {
 	public String urlStr;
 	public String threadNum;
 	public String threadURL;
+
+	ProgressDialog waitDialog;
+	Thread thread;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,8 +51,7 @@ public class Post extends Activity {
 			Intent intent = getIntent();
 			// urlStr = (String) intent.getSerializableExtra("urlStr");
 			String baseURL = (String) intent.getSerializableExtra("baseURL");
-			threadNum = (String) intent
-					.getSerializableExtra("threadNum");
+			threadNum = (String) intent.getSerializableExtra("threadNum");
 			threadURL = baseURL + threadNum;
 			urlStr = baseURL + "futaba.php";
 			String[] temp = threadNum.split("[/]");
@@ -64,7 +70,7 @@ public class Post extends Activity {
 			// cookie関連
 			CookieSyncManager.createInstance(this);
 			CookieSyncManager.getInstance().startSync();
-			
+
 			FutabaCookieManager.PrintCookie();
 
 		} catch (Exception e) {
@@ -84,7 +90,44 @@ public class Post extends Activity {
 		CookieSyncManager.getInstance().sync();
 	}
 
+	public void setWait() {
+		waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
+
+		thread = new Thread(this);
+		thread.start();
+	}
+
+	public void run() {
+		try { // 細かい時間を置いて、ダイアログを確実に表示させる
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		}
+		handler.sendEmptyMessage(0);
+	}
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			// HandlerクラスではActivityを継承してないため
+			// 別の親クラスのメソッドにて処理を行うようにした。
+			try {
+				loading();
+			} catch (Exception e) {
+				Log.d("ftbt", "message", e);
+			}
+		}
+	};
+
 	public void onClickPostButton(View v) {
+			setWait();
+	}
+
+	private void loading() {
+
 		// HTTPリクエストを作成する
 		// futaba.php?guid=on POST
 		// <b>題　　名</b></td><td><input type=text name=sub size="35"
@@ -120,8 +163,10 @@ public class Post extends Activity {
 		Log.d("ftbt", "email=" + email);
 		Log.d("ftbt", "name=" + name);
 		Log.d("ftbt", "threadURL=" + threadURL);
-		
-		if(false){ return; }
+
+		if (false) {
+			return;
+		}
 
 		// というわけでリクエストの作成
 		// スレッドに一度アクセスしてcookieセット－＞書き込みの２度アクセス
@@ -139,22 +184,17 @@ public class Post extends Activity {
 			httpClient.getParams().setParameter("http.socket.timeout", 3000);
 
 			/*
-			HttpGet httpGet = new HttpGet(urlStr);
-			HttpResponse httpResponse = null;
-			httpResponse = httpClient.execute(httpGet);
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			httpResponse.getEntity().writeTo(byteArrayOutputStream);
-			String retData = byteArrayOutputStream.toString("Shift-JIS");
-			Log.d("ftbt", retData);
-			Log.d("ftbt", "1st access end");
-
-			try {
-				// 操作間隔を置く
-				Thread.sleep(3000);
-			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
-			}
-			*/
+			 * HttpGet httpGet = new HttpGet(urlStr); HttpResponse httpResponse
+			 * = null; httpResponse = httpClient.execute(httpGet);
+			 * ByteArrayOutputStream byteArrayOutputStream = new
+			 * ByteArrayOutputStream();
+			 * httpResponse.getEntity().writeTo(byteArrayOutputStream); String
+			 * retData = byteArrayOutputStream.toString("Shift-JIS");
+			 * Log.d("ftbt", retData); Log.d("ftbt", "1st access end");
+			 * 
+			 * try { // 操作間隔を置く Thread.sleep(3000); } catch (Exception e) {
+			 * Log.i("ftbt", "message", e); }
+			 */
 
 			try {
 				// クッキー内容の取得
@@ -182,18 +222,33 @@ public class Post extends Activity {
 			nameValuePair.add(new BasicNameValuePair("com", comment));
 			nameValuePair.add(new BasicNameValuePair("sub", ""));
 			nameValuePair.add(new BasicNameValuePair("pwd", deletekey));
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePair, "Shift-JIS"));
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePair,
+					"Shift-JIS"));
 			httppost.addHeader("referer", threadURL);
 			HttpResponse response = httpClient.execute(httppost);
 			FutabaCookieManager.saveCookie(httpClient);
 			ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
 			response.getEntity().writeTo(byteArrayOutputStream2);
 			String retData2 = byteArrayOutputStream2.toString("Shift-JIS");
-			SDCard.saveBin("retdata2", retData2.getBytes("Shift-JIS"), false);
+			// SDCard.saveBin("retdata2", retData2.getBytes("Shift-JIS"),
+			// false);
 			Log.v("ftbt", retData2);
 			Log.d("ftbt", "2nd access end");
+
+			PostParser parser = new PostParser();
+			String contents = parser.parse(this, retData2);
+			if (!contents.equals("")) {
+				Toast.makeText(this, contents, Toast.LENGTH_LONG).show();
+			}else{
+				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();				
+			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
+		waitDialog.dismiss();
+		
+		//スレッドに戻る
+		finish();
+		
 	}
 }
