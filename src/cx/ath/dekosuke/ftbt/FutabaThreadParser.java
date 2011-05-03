@@ -47,7 +47,7 @@ public class FutabaThreadParser {
 	public void parse() {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
-			Pattern honbunPattern = Pattern.compile("<form.+?>.+?</form>",
+			Pattern honbunPattern = Pattern.compile("<form.*?>.+?</form>",
 					Pattern.DOTALL);
 			Pattern resPattern = Pattern.compile("<table.*?>(.+?)</table>",
 					Pattern.DOTALL);
@@ -76,9 +76,12 @@ public class FutabaThreadParser {
 					allData = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(urlStr));
 					cache_ok = true;
+				}else{
+					cache_ok = false;					
 				}
 			}
 			// parser.setInput(new StringReader(new String(data, "UTF-8")));
+			Log.d("ftbt", allData);
 			Matcher mc = honbunPattern.matcher(allData);
 			mc.find();
 			mc.find(); // 2つ目

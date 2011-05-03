@@ -99,10 +99,16 @@ public class fthread extends Activity implements Runnable {
 			statuses = new ArrayList<FutabaStatus>();
 			FutabaThreadParser parser = new FutabaThreadParser(threadURL);
 			parser.parse();
-			if (!parser.network_ok && parser.cache_ok) {
-				Toast.makeText(this,
-						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します。",
+			if (!parser.network_ok) {
+				if(parser.cache_ok){
+					Toast.makeText(this,
+						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 						Toast.LENGTH_LONG).show();
+				}else{
+					Toast.makeText(this,
+							"ネットワークに繋がっていません",
+							Toast.LENGTH_LONG).show();
+				}
 			}
 			statuses = parser.getStatuses();
 			Log.d("ftbt", "parse end");
