@@ -1,6 +1,7 @@
 package cx.ath.dekosuke.ftbt;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,8 @@ import cx.ath.dekosuke.ftbt.R.id;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -41,6 +44,8 @@ public class Post extends Activity implements Runnable {
 
 	ProgressDialog waitDialog;
 	Thread thread;
+	
+	final int REQUEST_IMAGEPICK_CONSTANT = 0x100200;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,12 @@ public class Post extends Activity implements Runnable {
 			postbutton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					onClickPostButton(v);
+				}
+			});
+			Button imgchoosebutton = (Button) findViewById(id.imgchoosebutton);
+			imgchoosebutton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					onClickImageChooseButton(v);
 				}
 			});
 
@@ -123,7 +134,29 @@ public class Post extends Activity implements Runnable {
 	};
 
 	public void onClickPostButton(View v) {
-			setWait();
+		setWait();
+	}
+
+	public void onClickImageChooseButton(View v) {
+		//画像選択ボタン
+		Intent intent = new Intent(Intent.ACTION_PICK);
+		intent.setType("image/*");
+		startActivityForResult(intent, REQUEST_IMAGEPICK_CONSTANT);
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGEPICK_CONSTANT) {
+	    	Toast.makeText(this, "画像"+data.getData(), Toast.LENGTH_SHORT).show();
+	    	/*
+	        try{
+	            InputStream is = getContentResolver().openInputStream(data.getData());
+	            Bitmap bm = BitmapFactory.decodeStream(is);
+	            is.close();
+	        }catch(Exception e){
+	            
+	        }
+	        */
+	    }
 	}
 
 	private void loading() {
@@ -239,16 +272,16 @@ public class Post extends Activity implements Runnable {
 			String contents = parser.parse(this, retData2);
 			if (!contents.equals("")) {
 				Toast.makeText(this, contents, Toast.LENGTH_LONG).show();
-			}else{
-				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();				
+			} else {
+				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
 		waitDialog.dismiss();
-		
-		//スレッドに戻る
+
+		// スレッドに戻る
 		finish();
-		
+
 	}
 }

@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical" android:baselineAligned="true" android:layout_height="fill_parent" android:layout_width="fill_parent">
+  android:orientation="vertical" android:baselineAligned="true" android:background="#F0E0D6"
+   android:layout_height="fill_parent" android:layout_width="fill_parent">
     <TableLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/tableLayout1">
-    <TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_weight="2">
+        <TextView
+         	android:layout_span="3"
+			android:textSize="20sp"
+			android:layout_margin="2dip"
+            android:text="返信"
+            android:background="#EEAA88"
+            android:textColor="#880000"
+            android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_weight="1" android:gravity="center"/>
+    </TableRow>
+    <TableRow android:layout_weight="1">
         <TextView
             android:text="おなまえ"
-            android:background="#fff"
-            android:layout_height="fill_parent"/>
-        <EditText android:text="" android:id="@+id/name" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content"></EditText>
+            android:background="#EEAA88"
+            android:textColor="#880000"
+            android:layout_height="fill_parent" android:gravity="center_vertical"/>
+        <EditText android:text="" android:id="@+id/name" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:singleLine="true"></EditText>
     </TableRow>
-    <TableRow>
+    <TableRow android:layout_weight="1">
         <TextView
             android:text="E-mail"
-            android:background="#fff"
-            android:layout_height="fill_parent"/>
-        <EditText android:text="" android:id="@+id/email" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content"></EditText>
+            android:background="#EEAA88"
+            android:textColor="#880000"
+            android:layout_height="fill_parent" android:gravity="center_vertical"/>
+        <EditText android:text="" android:id="@+id/email" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:singleLine="true"></EditText>
     </TableRow>
-    <TableRow android:layout_width="fill_parent" android:baselineAligned="false">
+    <TableRow android:layout_width="fill_parent" android:baselineAligned="false" android:layout_weight="1">
         <TextView
             android:text="コメント"
-            android:background="#fff" android:layout_height="fill_parent" android:layout_weight="0"/>
-        <EditText android:text="えっ" android:id="@+id/comment" android:layout_width="wrap_content" android:layout_weight="2" android:layout_height="wrap_content"></EditText>
+            android:background="#EEAA88"
+            android:textColor="#880000"
+            android:layout_height="fill_parent" android:layout_weight="0" android:gravity="center_vertical"/>
+        <EditText android:text="" android:id="@+id/comment" android:layout_width="wrap_content" android:layout_weight="2" android:layout_height="wrap_content" android:maxLines="5"></EditText>
     </TableRow>
-    <TableRow android:layout_width="fill_parent" android:baselineAligned="false">
+    <TableRow android:layout_width="fill_parent" android:baselineAligned="false" android:layout_weight="1">
         <TextView
             android:text="添付File"
-            android:background="#fff" android:layout_height="fill_parent" android:layout_weight="0"/>
+            android:background="#EEAA88"
+            android:textColor="#880000"
+            android:layout_height="fill_parent" android:layout_weight="0" android:gravity="center_vertical"/>
+	    <Button android:id="@+id/imgchoosebutton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="画像を選択" ></Button>
     </TableRow>
-    <TableRow android:layout_width="fill_parent" android:baselineAligned="false">
+    <TableRow android:layout_width="fill_parent" android:baselineAligned="false" android:layout_weight="1">
         <TextView
             android:text="削除キー"
-            android:background="#fff" android:layout_height="fill_parent" android:layout_weight="0"/>
-        <EditText android:text="" android:id="@+id/deletekey" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1"></EditText>
+            android:background="#EEAA88"
+            android:textColor="#880000"
+            android:layout_height="fill_parent" android:layout_weight="0" android:gravity="center_vertical"/>
+        <EditText android:text="" android:id="@+id/deletekey" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1" android:inputType="numberDecimal"></EditText>
     </TableRow>
     
     
     </TableLayout>
-    <Button android:id="@+id/postbutton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Button" ></Button>
+    <Button android:id="@+id/postbutton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="投稿する" ></Button>
 
 </LinearLayout>
