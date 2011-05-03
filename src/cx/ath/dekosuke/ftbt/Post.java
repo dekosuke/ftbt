@@ -138,6 +138,7 @@ public class Post extends Activity {
 					.setParameter("http.connection.timeout", 5000);
 			httpClient.getParams().setParameter("http.socket.timeout", 3000);
 
+			/*
 			HttpGet httpGet = new HttpGet(urlStr);
 			HttpResponse httpResponse = null;
 			httpResponse = httpClient.execute(httpGet);
@@ -153,6 +154,7 @@ public class Post extends Activity {
 			} catch (Exception e) {
 				Log.i("ftbt", "message", e);
 			}
+			*/
 
 			try {
 				// クッキー内容の取得
@@ -172,7 +174,7 @@ public class Post extends Activity {
 			}
 
 			HttpPost httppost = new HttpPost(urlStr);
-			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
+			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(7);
 			nameValuePair.add(new BasicNameValuePair("email", email));
 			nameValuePair.add(new BasicNameValuePair("name", name));
 			nameValuePair.add(new BasicNameValuePair("mode", "regist"));
@@ -180,7 +182,7 @@ public class Post extends Activity {
 			nameValuePair.add(new BasicNameValuePair("com", comment));
 			nameValuePair.add(new BasicNameValuePair("sub", ""));
 			nameValuePair.add(new BasicNameValuePair("pwd", deletekey));
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePair));
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePair, "Shift-JIS"));
 			httppost.addHeader("referer", threadURL);
 			HttpResponse response = httpClient.execute(httppost);
 			FutabaCookieManager.saveCookie(httpClient);

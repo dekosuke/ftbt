@@ -32,7 +32,7 @@
         <TextView
             android:text="削除キー"
             android:background="#fff" android:layout_height="fill_parent" android:layout_weight="0"/>
-        <EditText android:text="1111" android:id="@+id/deletekey" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1"></EditText>
+        <EditText android:text="" android:id="@+id/deletekey" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1"></EditText>
     </TableRow>
     
     

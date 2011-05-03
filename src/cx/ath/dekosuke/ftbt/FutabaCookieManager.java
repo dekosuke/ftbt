@@ -32,7 +32,7 @@ public class FutabaCookieManager {
 		} else {
 			Log.d("ftbt", "Show Cookies(in FutabaCookieManager)");
 			for (int i = 0; i < data.size(); i++) {
-				Log.d("ftbt", " " + data.get(i).toString());
+				Log.d("ftbt", "1 " + data.get(i).toString());
 			}
 		}
 	}
