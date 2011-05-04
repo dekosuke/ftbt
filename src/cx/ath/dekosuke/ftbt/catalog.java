@@ -147,9 +147,9 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 					R.layout.futaba_catalog_row, fthreads);
 			listView.setAdapter(adapter);
 			if(position!=0){
-				listView.setSelection(position);
+				listView.setSelection(Math.min(position, listView.getCount()));
 			}
-
+			
 			waitDialog.dismiss();
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
@@ -158,7 +158,7 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "catalog onclick-reload");
-		position = adapter.currentPosition;
+		position = listView.getFirstVisiblePosition();; //現在位置（リロードで復帰）
 		setWait();
 	}
 

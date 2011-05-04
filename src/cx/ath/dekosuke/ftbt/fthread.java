@@ -125,7 +125,7 @@ public class fthread extends Activity implements Runnable {
 					statuses);
 			listView.setAdapter(adapter);
 			if(position!=0){
-				listView.setSelection(position);
+				listView.setSelection(Math.min(position, listView.getCount()));
 			}
 
 		} catch (Exception e) {
@@ -153,7 +153,7 @@ public class fthread extends Activity implements Runnable {
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "fthread onclick-reload");
-		position = adapter.currentPosition; //現在位置（リロードで復帰）
+		position = listView.getFirstVisiblePosition();; //現在位置（リロードで復帰）
 		Log.d("ftbt", "position="+position);
 		setWait();
 	}
