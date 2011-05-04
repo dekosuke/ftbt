@@ -23,6 +23,7 @@ import android.widget.Toast;
 public class ImageCatalog extends Activity {
 
 	Toast toast = null;
+	String myImageURL = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class ImageCatalog extends Activity {
 
 		try {
 
-		//	linearLayout.addView(gallery, createParam(WC, FP));
+			// linearLayout.addView(gallery, createParam(WC, FP));
 
 			Log.d("ftbt", "ImageCatalog.onCreate start");
 			Intent intent = getIntent();
@@ -38,8 +39,8 @@ public class ImageCatalog extends Activity {
 			ArrayList<String> imgURLs = (ArrayList<String>) intent
 					.getSerializableExtra("imgURLs");
 
-			Log.d("ftbt", "hoge-"+imgURLs.size());
-			String myImageURL = (String) intent
+			Log.d("ftbt", "hoge-" + imgURLs.size());
+			myImageURL = (String) intent
 					.getSerializableExtra("myImgURL");
 			Log.d("ftbt", myImageURL);
 
@@ -55,27 +56,28 @@ public class ImageCatalog extends Activity {
 				}
 			}
 
-			//ImageCatalogSingleView sview = new ImageCatalogSingleView(this);
+			// ImageCatalogSingleView sview = new ImageCatalogSingleView(this);
 			setContentView(R.layout.imagegallery_row);
 			Button download = (Button) findViewById(id.down_btn);
 			download.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					try{
+					try {
 						// 画像を保存する
 						String imgFile = CircleList.get();
 						File file = new File(imgFile);
 						ImageCache.saveImage(imgFile);
 						/*
-						SDCard.saveFromURL(file.getName(), new URL(imgFile),
-								false);
-						*/
-						if(toast!=null){
+						 * SDCard.saveFromURL(file.getName(), new URL(imgFile),
+						 * false);
+						 */
+						if (toast != null) {
 							toast.cancel();
 						}
-						toast = Toast.makeText(v.getContext(), "画像"+file.getName()+"を保存しました", 
+						toast = Toast.makeText(v.getContext(),
+								"画像" + file.getName() + "を保存しました",
 								Toast.LENGTH_SHORT);
 						toast.show();
-					}catch(Exception e){
+					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
 				}
@@ -83,11 +85,12 @@ public class ImageCatalog extends Activity {
 			Button prev = (Button) findViewById(id.prev_btn);
 			prev.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					try{
+					try {
 						CircleList.move(-1);
 						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 						imageview.setImage();
-					}catch(Exception e){
+						setReturnImage();
+					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
 				}
@@ -95,23 +98,40 @@ public class ImageCatalog extends Activity {
 			Button next = (Button) findViewById(id.next_btn);
 			next.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-					try{
+					try {
 						CircleList.move(+1);
 						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 						imageview.setImage();
-					}catch(Exception e){
+						setReturnImage();
+					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
 				}
 			});
+			
+			setReturnImage();
 
 		} catch (Exception e) {
 			Log.d("ftbt", "message", e);
 		}
+	}
+	
+	//戻ったときのインテントにパラメータ渡す（場所復帰のため）
+	public void setReturnImage(){
+		Intent ret_i = new Intent();
+		ret_i.putExtra("imgURL", CircleList.get());
+		setResult(RESULT_OK, ret_i);
 	}
 
 	private LinearLayout.LayoutParams createParam(int w, int h) {
 		return new LinearLayout.LayoutParams(w, h);
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		// if(isFinishing()){
+		// スレ一覧に戻ったときに渡す情報
+		// }
+	}
 }

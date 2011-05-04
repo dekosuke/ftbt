@@ -55,6 +55,9 @@ public class fthread extends Activity implements Runnable {
 	private ListView listView;
 
 	int position = 0; // 現在位置(リロード時復帰用)
+	
+	//画像カタログから戻ってきたときにどの画像から戻ってきたか判定用
+	final int TO_IMAGECATALOG=0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -178,6 +181,7 @@ public class fthread extends Activity implements Runnable {
 		return true;
 	}
 
+	//メニューをクリック
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
@@ -211,5 +215,27 @@ public class fthread extends Activity implements Runnable {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		try{
+			String imgURL = (String) intent.getSerializableExtra("imgURL");
+			//Log.d("ftbt", "return intent imgURL="+imgURL);
+			if(requestCode==TO_IMAGECATALOG){
+				for(int i=0;i<statuses.size();++i){
+					//Log.d("ftbt", "image"+i+"="+statuses.get(i).bigImgURL);
+					if(imgURL.equals(statuses.get(i).bigImgURL)){
+						//Log.d("ftbt", "hit="+i);
+						listView.setSelection(Math.min(i, listView.getCount()));
+						break;
+					}
+				}
+			}else{
+				Log.d("ftbt", "unknown result code");
+			}
+		}catch(Exception e){
+			Log.i("ftbt", "message", e);
+		}
 	}
 }

@@ -248,8 +248,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 													.getClass().getPackage()
 													.getName()
 													+ ".ImageCatalog");
-									activity.startActivity(intent); // Never
-																	// called!
+									//http://android.roof-balcony.com/intent/intent/
+									activity.startActivityForResult(intent, activity.TO_IMAGECATALOG);
 								} catch (Exception e) {
 									Log.i("ftbt", "message", e);
 								}
