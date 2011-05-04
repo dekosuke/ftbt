@@ -1,8 +1,11 @@
 package cx.ath.dekosuke.ftbt;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +27,14 @@ import cx.ath.dekosuke.ftbt.R.id;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -38,6 +44,13 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//multipart postのため
+//設定 buildpath->configure buildpath->libraryで個別追加した
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+
 public class Post extends Activity implements Runnable {
 	public String urlStr;
 	public String threadNum;
@@ -45,13 +58,15 @@ public class Post extends Activity implements Runnable {
 
 	ProgressDialog waitDialog;
 	Thread thread;
-	
+
+	//multipart 画像添付回り
 	final int REQUEST_IMAGEPICK_CONSTANT = 0x100200;
+	Uri imageContent = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		try {
 			Log.d("ftbt", "start Post activity");
 			Intent intent = getIntent();
@@ -146,6 +161,7 @@ public class Post extends Activity implements Runnable {
 		setWait();
 	}
 
+	
 	public void onClickImageChooseButton(View v) {
 		//画像選択ボタン
 		Intent intent = new Intent(Intent.ACTION_PICK);
@@ -153,6 +169,7 @@ public class Post extends Activity implements Runnable {
 		startActivityForResult(intent, REQUEST_IMAGEPICK_CONSTANT);
 	}
 	
+	//画像を選択した直後に呼ばれる
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGEPICK_CONSTANT) {
 	    	Toast.makeText(this, "画像"+data.getData(), Toast.LENGTH_SHORT).show();
@@ -165,6 +182,7 @@ public class Post extends Activity implements Runnable {
 	            
 	        }
 	        */
+	    	imageContent = data.getData();
 	    }
 	}
 
@@ -267,16 +285,38 @@ public class Post extends Activity implements Runnable {
 				//FileBody fileBody = new FileBody(file);
 				//entity.addPart("upfile", fileBody);
 			}
+			/*
 			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(7);
 			nameValuePair.add(new BasicNameValuePair("email", email));
 			nameValuePair.add(new BasicNameValuePair("name", name));
 			nameValuePair.add(new BasicNameValuePair("mode", "regist"));
 			nameValuePair.add(new BasicNameValuePair("resto", threadNum));
 			nameValuePair.add(new BasicNameValuePair("com", comment));
-			nameValuePair.add(new BasicNameValuePair("sub", ""));
+			nameValuePair.add(new BasicNameValuePair("sub", "")); //題名
 			nameValuePair.add(new BasicNameValuePair("pwd", deletekey));
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePair,
-					"Shift-JIS"));
+			*/
+			MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			Charset sjisCharset = Charset.forName("Shift_JIS");
+			entity.addPart("email", new StringBody(email, sjisCharset));
+			entity.addPart("name", new StringBody(name, sjisCharset));
+			entity.addPart("mode", new StringBody("regist"));
+			entity.addPart("resto", new StringBody(threadNum));
+			entity.addPart("com", new StringBody(comment, sjisCharset));
+			entity.addPart("sub", new StringBody(""));
+			entity.addPart("pwd", new StringBody(deletekey));
+			if(imageContent!=null){ // content:// -> file://
+				Log.d("ftbt", "imageContent="+imageContent);
+				Log.d("ftbt", "getPath="+imageContent.getPath());
+				//if(true) return;
+				//Cursor c = getContentResolver().query(imageContent, null, null, null, null);
+				//c.moveToFirst();	
+				//String filename = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA)); 
+				//Log.d("ftbt", "filename="+filename);
+				FileBody fileBody = new FileBody(new File(imageContent.getPath()));
+				entity.addPart("upfile", fileBody);
+			}
+			httppost.setEntity(entity);
+			//httppost.setEntity(new UrlEncodedFormEntity(nameValuePair, "Shift-JIS"));
 			httppost.addHeader("referer", threadURL);
 			HttpResponse response = httpClient.execute(httppost);
 			FutabaCookieManager.saveCookie(httpClient);
