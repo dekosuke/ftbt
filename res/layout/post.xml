@@ -45,6 +45,9 @@
             android:textColor="#880000"
             android:layout_height="fill_parent" android:layout_weight="0" android:gravity="center_vertical"/>
 	    <Button android:id="@+id/imgchoosebutton" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="画像を選択" ></Button>
+	    <TextView android:id="@+id/imgchoosenotify" android:layout_width="wrap_content"
+	     android:text="画像を選択します" android:layout_height="fill_parent" 
+	     android:gravity="center_vertical"></TextView>
     </TableRow>
     <TableRow android:layout_width="fill_parent" android:baselineAligned="false" android:layout_weight="1">
         <TextView

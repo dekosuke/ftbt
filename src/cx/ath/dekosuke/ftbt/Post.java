@@ -30,6 +30,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -183,6 +184,11 @@ public class Post extends Activity implements Runnable {
 	        }
 	        */
 	    	imageContent = data.getData();
+			Button imgchoosebutton = (Button) findViewById(id.imgchoosebutton);
+			imgchoosebutton.setVisibility(View.GONE); //画像選択ボタンを消す
+			TextView imgchoosenotify = (TextView) findViewById(id.imgchoosenotify);
+			imgchoosenotify.setText("選択:"+imageContent.toString()); //選択したファイル名を表示
+			imgchoosenotify.setTextColor(Color.RED);
 	    }
 	}
 
