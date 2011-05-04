@@ -32,13 +32,6 @@ public class ImageCatalog extends Activity {
 
 		//	linearLayout.addView(gallery, createParam(WC, FP));
 
-			/*
-			 * ArrayAdapter<String> arrayAdapter = new
-			 * ArrayAdapter<String>(this, R.layout.imagegallery_row, data);
-			 * 
-			 * gallery.setAdapter(arrayAdapter);
-			 */
-
 			Log.d("ftbt", "ImageCatalog.onCreate start");
 			Intent intent = getIntent();
 			Log.d("ftbt", "hoge");

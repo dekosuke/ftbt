@@ -55,8 +55,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	private Thread thread;
 
 	// マルチタッチのための２点座標
-	private boolean p1_pressed = false;
-	private boolean p2_pressed = false;
 	private PointF point = null;
 	private PointF p1 = new PointF();
 	private PointF p2 = new PointF();
@@ -69,7 +67,14 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	public ImageCatalogSingleView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
-
+    
+	//画面サイズを取得するための小細工・・・
+	@Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+      width = w; //これで幅が取得できる
+      height = h; //これで高さが取得できる
+    }
+    
 	public ImageCatalogSingleView(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
@@ -78,13 +83,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		bx = by = 0;
 		setClickable(true); // これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
 		setOnTouchListener(this);
-
-		// 画面サイズの取得
-		WindowManager wm = ((WindowManager) getContext().getSystemService(
-				Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
-		width = display.getWidth();
-		height = display.getHeight();
 
 		// 拡大縮小可能に
 		this.setScaleType(ScaleType.MATRIX);
@@ -129,15 +127,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 				}
 				break;
 			case MotionEvent.ACTION_MOVE:
-				/*
-				if (p1 != null) {
-					Log.d("ftbt", "move p1=" + p1.x + " p1=" + p1.y);
-				}
-				if (p2 != null) {
-					Log.d("ftbt", "move p2=" + p2.x + " p2=" + p2.y);
-				}
-				*/
-				//Log.d("ftbt", "mode=" + mode);
 				float ex = event.getX();
 				float ey = event.getY();
 				float d1_sq = (p1.x - ex) * (p1.x - ex) + (p1.y - ey)
@@ -160,8 +149,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 					p2 = new PointF(ex, ey);
 					near_side = 2;
 				}
-				//Log.d("ftbt", "ex=" + event.getX() + " ry=" + event.getY()
-				//		+ " px=" + point.x + " py=" + point.y);
 				float d2 = (ex - point.x) * (ex - point.x) + (ey - point.y)
 						* (ey - point.y);
 				if (d2 > 50 * 50 && (point_side != near_side)) { // ポインタ入れ替わり対策
@@ -206,7 +193,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		return false;
 	}
 
-	// x軸方向の移動。画像移動matrix->一定以上はみ出たらgalleryのonscroll
+	//画像の平行移動
 	private void move(float dx, float dy) {
 		// matrix.postTranslate(dx, 0f);
 		float[] values = new float[9];
@@ -231,22 +218,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		by = bm.getHeight() * postScale;
 
 		matrix.postScale(scale, scale, mx, my);
-		/*
-		 * Rect r = new Rect(); this.getGlobalVisibleRect(r); if ((r.left) *
-		 * (r.left) > 1f) { //左が空いているなら左寄せ //デフォルトで左寄せ拡大 //mx = (mx - prex_bx/2)
-		 * * () }else{ //右が開いているなら右寄せ float currentX = values[Matrix.MTRANS_X];
-		 * float nextX = (bx - width); values[Matrix.MTRANS_X] = -nextX;
-		 * //mx+=nextX-currentX; }
-		 */
-		float dbx = bm.getWidth() * (postScale - currentScale);
-		// 中央寄せ
-		/*
-		 * values[Matrix.MTRANS_X] = -dbx / 2; mx += dbx / 2;
-		 */
-
-		// matrix.setValues(values);
-		// matrix.postTranslate(-dbx / 2, 0f);
-		mx = 0;
 		setImageMatrix(matrix);
 	}
 
@@ -257,13 +228,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	}
 
 	public void zoomImageToWindow() {
-		// 画面サイズの取得
-		WindowManager wm = ((WindowManager) getContext().getSystemService(
-				Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
-		int width = display.getWidth();
-		int height = display.getHeight();
-
 		if (bm.getWidth() < width && bm.getHeight() < height) {
 			// matrix.reset();
 			bx = bm.getWidth();
@@ -277,20 +241,17 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 			by = bm.getHeight() * scale;
 		}
 
-		// 中央にセット
-		matrix.preTranslate(-(bx - width) / 2, -(by - height) / 2);
+		// 画像をView中央にセット
+		float[] values = new float[9];
+		matrix.getValues(values);
+		values[Matrix.MTRANS_X] = (width-bx)/2;
+		values[Matrix.MTRANS_Y] = (height-by)/2;
+		matrix.setValues(values);
 	}
 
 	public void setImageBitmap(Bitmap bm) {
 		super.setImageBitmap(bm);
 		this.bm = bm;
-
-		// 画面サイズの取得
-		WindowManager wm = ((WindowManager) getContext().getSystemService(
-				Context.WINDOW_SERVICE));
-		Display display = wm.getDefaultDisplay();
-		int width = display.getWidth();
-		int height = display.getHeight();
 
 		// フィット+中央配置
 		matrix.set(moveMatrix);
