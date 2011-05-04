@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.widget.ImageView;
 
 //画面サイズ取得のため
@@ -72,24 +73,30 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				// 背景画像をセットする
 				// view.setBackgroundResource(R.drawable.back);
 			}
-			
+
+			if (position == 0) { // 最初だけ色違う
+				view.setBackgroundColor(Color.rgb(255, 255, 238));
+			} else {
+				// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
+				view.setBackgroundColor(Color.rgb(240, 224, 214));
+			}
+
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
 			if (item != null) {
-				TextView title = (TextView) view
-						.findViewById(R.id.title);
-				title.setText(item.title+" ");// item.getImgURL());
-				TextView name = (TextView) view
-				.findViewById(R.id.name);
-				if(item.name!=null){
+				TextView title = (TextView) view.findViewById(R.id.title);
+				title.setText(item.title + " ");// item.getImgURL());
+				TextView name = (TextView) view.findViewById(R.id.name);
+				if (item.name != null) {
 					name.setText(item.name);// item.getImgURL());
 				}
-				
+
 				// スクリーンネームをビューにセット
 				TextView text = (TextView) view.findViewById(R.id.maintext);
-				TextView bottomtext = (TextView) view.findViewById(R.id.bottomtext);
-				if(item.datestr!=null){
-					bottomtext.setText(item.datestr+" "+item.idstr);
+				TextView bottomtext = (TextView) view
+						.findViewById(R.id.bottomtext);
+				if (item.datestr != null) {
+					bottomtext.setText(item.datestr + " " + item.idstr);
 				}
 
 				Bitmap bm = null;
@@ -105,7 +112,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						iv.setImageBitmap(bm);
 						ImageGetTask task = new ImageGetTask(iv);
 						task.execute(item.imgURL);
-						//title.setText("(画像あり)");
+						// title.setText("(画像あり)");
 					} else { // 画像なし
 						/*
 						 * Log.d("ftbt", "w="+item.width+" h="+item.height ); bm
@@ -226,8 +233,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
 						image.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
-								try{
-									Log.d("ftbt", "intent calling thread activity");
+								try {
+									Log.d("ftbt",
+											"intent calling thread activity");
 									Intent intent = new Intent();
 									fthread activity = (fthread) getContext();
 									// Log.d ( "ftbt", threadNum );
@@ -235,12 +243,14 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 									intent.putExtra("imgURLs",
 											activity.getImageURLs());
 									intent.putExtra("myImgURL", tag);
-									intent.setClassName(activity.getPackageName(),
-											activity.getClass().getPackage()
+									intent.setClassName(
+											activity.getPackageName(), activity
+													.getClass().getPackage()
 													.getName()
 													+ ".ImageCatalog");
-									activity.startActivity(intent); // Never called!
-								}catch(Exception e){
+									activity.startActivity(intent); // Never
+																	// called!
+								} catch (Exception e) {
 									Log.i("ftbt", "message", e);
 								}
 							}
@@ -253,7 +263,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				Log.i("ftbt", "message", e);
 			}
 		}
-
 
 	}
 }
