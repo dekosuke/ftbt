@@ -189,9 +189,16 @@ public class fthread extends Activity implements Runnable {
 			//threadURL
 			String hashTag = " #fromandroid";
 			String status_encoded = "てすてす"; //URIエンコードされた、ツイートしたい文章
-			Uri uri = Uri.parse("http://twitter.com/?status="+status_encoded);
-			intent = new Intent(Intent.ACTION_VIEW,uri);
-			startActivity(intent); 
+			//Uri uri = Uri.parse("http://twitter.com/?status="+status_encoded);
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, status_encoded);
+			try{
+			  startActivityForResult(intent, 0);
+			}
+			catch (android.content.ActivityNotFoundException ex) {
+			  Toast.makeText(this, "client not found", Toast.LENGTH_LONG).show();
+			}
 			return true;
 		case R.id.settings:
 			intent = new Intent();
