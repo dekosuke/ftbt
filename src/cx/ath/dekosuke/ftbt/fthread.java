@@ -2,6 +2,7 @@ package cx.ath.dekosuke.ftbt;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,10 +51,10 @@ public class fthread extends Activity implements Runnable {
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
-	
+
 	private ListView listView;
-	
-	int position = 0; //現在位置(リロード時復帰用)
+
+	int position = 0; // 現在位置(リロード時復帰用)
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -104,14 +105,13 @@ public class fthread extends Activity implements Runnable {
 			FutabaThreadParser parser = new FutabaThreadParser(threadURL);
 			parser.parse();
 			if (!parser.network_ok) {
-				if(parser.cache_ok){
+				if (parser.cache_ok) {
 					Toast.makeText(this,
-						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-						Toast.LENGTH_LONG).show();
-				}else{
-					Toast.makeText(this,
-							"ネットワークに繋がっていません",
+							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 							Toast.LENGTH_LONG).show();
+				} else {
+					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_LONG)
+							.show();
 				}
 			}
 			statuses = parser.getStatuses();
@@ -124,7 +124,7 @@ public class fthread extends Activity implements Runnable {
 			adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 					statuses);
 			listView.setAdapter(adapter);
-			if(position!=0){
+			if (position != 0) {
 				listView.setSelection(Math.min(position, listView.getCount()));
 			}
 
@@ -153,8 +153,9 @@ public class fthread extends Activity implements Runnable {
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "fthread onclick-reload");
-		position = listView.getFirstVisiblePosition();; //現在位置（リロードで復帰）
-		Log.d("ftbt", "position="+position);
+		position = listView.getFirstVisiblePosition();
+		; // 現在位置（リロードで復帰）
+		Log.d("ftbt", "position=" + position);
 		setWait();
 	}
 
@@ -179,9 +180,21 @@ public class fthread extends Activity implements Runnable {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
 		switch (item.getItemId()) {
+		case R.id.tweet:
+			Toast.makeText(this, "簡易ブラウザ画面に移動します", Toast.LENGTH_SHORT).show();
+			String thread_title = statuses.get(0).text;
+			thread_title = thread_title.substring(0, Math.min(50, thread_title.length()));
+			//threadURL
+			String hashTag = " #fromandroid";
+			String status_encoded = "てすてす"; //URIエンコードされた、ツイートしたい文章
+			Uri uri = Uri.parse("http://twitter.com/?status="+status_encoded);
+			intent = new Intent(Intent.ACTION_VIEW,uri);
+			startActivity(intent); 
+			return true;
 		case R.id.settings:
-			Intent intent = new Intent();
+			intent = new Intent();
 			intent.setClassName(getPackageName(), getClass().getPackage()
 					.getName() + ".PrefSetting");
 			startActivity(intent);
