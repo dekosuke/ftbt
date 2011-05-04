@@ -86,12 +86,16 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				title.setText(item.title+" ");// item.getImgURL());
 				TextView name = (TextView) view
 				.findViewById(R.id.name);
-				name.setText(item.name);// item.getImgURL());
+				if(item.name!=null){
+					name.setText(item.name);// item.getImgURL());
+				}
 				
 				// スクリーンネームをビューにセット
 				TextView text = (TextView) view.findViewById(R.id.maintext);
 				TextView bottomtext = (TextView) view.findViewById(R.id.bottomtext);
-				bottomtext.setText(item.datestr+" "+item.idstr);
+				if(item.datestr!=null){
+					bottomtext.setText(item.datestr+" "+item.idstr);
+				}
 
 				Bitmap bm = null;
 				ImageView iv = (ImageView) view.findViewById(R.id.image);

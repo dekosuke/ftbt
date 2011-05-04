@@ -51,10 +51,11 @@ public class FutabaThreadParser {
 					Pattern.DOTALL);
 			Pattern resPattern = Pattern.compile("<table.*?>(.+?)</table>",
 					Pattern.DOTALL);
-			Pattern textPattern = Pattern.compile(
+			Pattern textAttrPattern = Pattern.compile(
 					"<input[^>]+><font[^>]+><b>(.*?)</b></font>"+
 					".*?<font[^>]+><b>(.*?) ?</b></font>"+
-					"(.*?) (No.[0-9]+).+?<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
+					"(.*?) (No.[0-9]+).+?<blockquote", Pattern.DOTALL);
+			Pattern textPattern = Pattern.compile("<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
 					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')", Pattern.DOTALL);
 			Pattern thumbPattern = Pattern.compile(
@@ -99,11 +100,15 @@ public class FutabaThreadParser {
 			statusTop.bigImgURL = mcBigImg.group(1);
 			Matcher mcText = textPattern.matcher(honbun);
 			mcText.find();
-			statusTop.title=mcText.group(1);
-			statusTop.name =mcText.group(2);
-			statusTop.datestr =mcText.group(3);
-			statusTop.idstr =mcText.group(4);
-			String text = mcText.group(5);
+			Matcher mcTextAttr = textAttrPattern.matcher(honbun);
+			mcTextAttr.find();
+			if(mcTextAttr.find()){
+				statusTop.title=mcTextAttr.group(1);
+				statusTop.name =mcTextAttr.group(2);
+				statusTop.datestr =mcTextAttr.group(3);
+				statusTop.idstr =mcTextAttr.group(4);
+			}
+			String text = mcText.group(1);
 			text = normalize(text);
 			statusTop.text = text;
 			statuses.add(statusTop);
@@ -114,12 +119,15 @@ public class FutabaThreadParser {
 				mcText = textPattern.matcher(mcRes.group(1));
 				// Log.d( "ftbt", mcRes.group(1) );
 				mcText.find();
+				mcTextAttr = textAttrPattern.matcher(honbun);
 				FutabaStatus status = new FutabaStatus();
-				status.title=mcText.group(1);
-				status.name =normalize(mcText.group(2)); //メールアドレスが入っていることあり
-				status.datestr =mcText.group(3);
-				status.idstr =mcText.group(4);
-				text = mcText.group(5);
+				if(mcTextAttr.find()){
+					status.title=mcTextAttr.group(1);
+					status.name =normalize(mcTextAttr.group(2)); //メールアドレスが入っていることあり
+					status.datestr =mcTextAttr.group(3);
+					status.idstr =mcTextAttr.group(4);
+				}
+				text = mcText.group(1);
 				text = normalize(text);
 				status.text = text;
 				mcImg = thumbPattern.matcher(mcRes.group(1));
