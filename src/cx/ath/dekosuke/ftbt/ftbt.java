@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,18 +37,27 @@ public class ftbt extends TabActivity {
 		Intent intent;
 
 		// キャッシュを削除する(重い)
-		ProgressDialog waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("キャッシュの整理中・・・");
-		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		// waitDialoProgressDialogg.setCancelable(true);
-		waitDialog.show();
 		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this);
+			int cacheSize = Integer.parseInt(preferences.getString(
+					getString(R.string.cachesize), "5"));
+			Log.d("ftbt", "cachesize=" + cacheSize);
+			ProgressDialog waitDialog = new ProgressDialog(this);
+			waitDialog.setMessage("キャッシュの整理中・・・");
+			waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			// waitDialoProgressDialogg.setCancelable(true);
+			waitDialog.show();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+			SDCard.limitCache(30);
+			waitDialog.dismiss();
+		} catch (Exception e) {
+			Log.i("ftbt", "message", e);
 		}
-		SDCard.limitCache(30);
-		waitDialog.dismiss();
-		
+
 		try {
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBS>();
@@ -99,8 +110,8 @@ public class ftbt extends TabActivity {
 			Log.i("ftbt", "message", e);
 		}
 	}
-	
-	//メニュー
+
+	// メニュー
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -109,7 +120,7 @@ public class ftbt extends TabActivity {
 		return true;
 	}
 
-	//メニューをクリック
+	// メニューをクリック
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;

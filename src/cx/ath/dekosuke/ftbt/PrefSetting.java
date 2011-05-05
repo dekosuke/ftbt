@@ -17,7 +17,7 @@ public class PrefSetting extends PreferenceActivity {
 
 		try{
 			EditTextPreference etp = (EditTextPreference) this
-					.findPreference("cachesize");
+					.findPreference(getString(R.string.cachesize));
 			// リスナーを設定する
 			etp.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 				public boolean onPreferenceChange(Preference preference,
