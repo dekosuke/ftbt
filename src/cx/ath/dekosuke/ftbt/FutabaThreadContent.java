@@ -13,6 +13,7 @@ public class FutabaThreadContent {
 	public String imgURL;
 	public String threadNum;
 	public String resNum;
+	public String BBSName; //どの板か->過去ログ表示のときに使う
 
 	// 投稿時刻private date
 	// 画像private
@@ -25,5 +26,6 @@ public class FutabaThreadContent {
 		mailTo = "";
 		id = 0;
 		resNum="";
+		BBSName="";
 	}
 }
