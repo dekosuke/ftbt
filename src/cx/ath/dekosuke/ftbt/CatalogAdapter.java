@@ -62,7 +62,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		View view = convertView;
 
 		// 表示すべきデータの取得
-		FutabaThreadContent item = (FutabaThreadContent) items.get(position);
+		final FutabaThreadContent item = (FutabaThreadContent) items.get(position);
 		final String threadNum = item.threadNum;
 
 		if (view == null) {
@@ -73,12 +73,23 @@ public class CatalogAdapter extends ArrayAdapter {
 
 		}
 
+		//カタログからスレッドをクリックしたときのリスナー
 		if (true) {
 			view.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					Log.d("ftbt", "intent calling thread activity");
 					Intent intent = new Intent();
 					Catalog activity = (Catalog) getContext();
+					try{
+						FutabaThreadContent thread = item;
+						HistoryManager man = new HistoryManager();
+						man.Load();
+						man.addThread(thread);
+						man.Save();
+					}catch(Exception e){
+						Log.i("ftbt", "message", e);
+					}
+
 					// Log.d ( "ftbt", threadNum );
 					String baseUrl = activity.baseUrl;
 					intent.putExtra("baseUrl", baseUrl);
@@ -94,6 +105,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		Bitmap bm = null;
 		ImageView iv = (ImageView) view.findViewById(R.id.image);
 		iv.setImageBitmap(bm);
+		Catalog activity = (Catalog)getContext();
 
 		if (item != null) {
 			// テキストをビューにセット
@@ -103,6 +115,10 @@ public class CatalogAdapter extends ArrayAdapter {
 			}
 			TextView resNum = (TextView) view.findViewById(R.id.resnum);
 			resNum.setText(item.resNum+"レス");
+			if(activity.mode.equals("history")){
+				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
+				BBSName.setText("("+item.BBSName+")");
+			}
 
 			//とりあえず空画像を作成
 			bm = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);

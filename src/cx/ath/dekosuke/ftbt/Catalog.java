@@ -56,9 +56,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private Thread thread;
 	private Button buttonReload;
 	private ListView listView;
+	private String BBSName = ""; // 板名
 
 	// 履歴モードか通常モードか
-	private String mode;
+	public String mode;
 
 	int position = 0; // 現在位置(リロード時復帰用)
 
@@ -125,6 +126,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		try {
 			Intent intent = getIntent();
 			baseUrl = (String) intent.getSerializableExtra("baseUrl");
+			BBSName = (String) intent.getSerializableExtra("BBSName");
 			mode = (String) intent.getSerializableExtra("mode");
 			catalogURL = baseUrl + "futaba.php";
 			buttonReload = new Button(this);
@@ -132,7 +134,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			buttonReload.setOnClickListener(this);
 			parser = new CatalogParser();
 
-			if (!mode.equals("history")) { //通常
+			if (!mode.equals("history")) { // 通常
 				String catalogHtml = "";
 				Boolean network_ok = true;
 				Boolean cache_ok = true;
@@ -169,6 +171,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				parser.parse(catalogHtml);
 				fthreads = parser.getThreads();
 
+				// BBS名足す
+				for (int i = 0; i < fthreads.size(); ++i) {
+					fthreads.get(i).BBSName = BBSName;
+				}
 			} else { // 履歴モード。複数板混在なので注意
 				HistoryManager man = new HistoryManager();
 				man.Load();
@@ -197,6 +203,18 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		position = listView.getFirstVisiblePosition();
 		; // 現在位置（リロードで復帰）
 		setWait();
+	}
+
+	// 履歴モードに
+	public void onClickHistoryBtn(View v) {
+		Intent intent = new Intent();
+		intent.putExtra("baseUrl", baseUrl);
+		// 履歴モードは全板共通だが、どこから着たのか保持のため一応持ってる
+		intent.putExtra("BBSName", BBSName);
+		intent.putExtra("mode", "history");
+		intent.setClassName(getPackageName(), getClass().getPackage().getName()
+				+ ".Catalog");
+		startActivity(intent);
 	}
 
 	public void onClick(View v) {

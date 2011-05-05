@@ -18,7 +18,7 @@
 	            android:layout_height="fill_parent" android:layout_weight="1"
 	            android:layout_gravity="right"
 	            android:gravity="right"
-	            android:id="@+id/threadname"  
+	            android:id="@+id/bbsname"  
 	            android:textSize="12sp"
 	            android:textColor="#117743"
 	            />  

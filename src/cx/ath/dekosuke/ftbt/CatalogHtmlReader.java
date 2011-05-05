@@ -22,6 +22,7 @@ import android.util.Log;
 import android.webkit.CookieManager;
 
 //カタログのHTML取得が死ぬほど長いのでとりあえず一つのファイルに
+//長い理由は２回アクセスしているからだったり
 public class CatalogHtmlReader {
 
 	public static String Read(String urlStr) throws Exception {
@@ -38,7 +39,7 @@ public class CatalogHtmlReader {
 		httpClient.getParams().setParameter("http.connection.timeout", 5000);
 		httpClient.getParams().setParameter("http.socket.timeout", 3000);
 		HttpPost httppost = new HttpPost(urlStr);
-		List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(3);
+		List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(4);
 		nameValuePair.add(new BasicNameValuePair("mode", "catset"));
 		nameValuePair.add(new BasicNameValuePair("cx", "10"));
 		nameValuePair.add(new BasicNameValuePair("cy", "5"));

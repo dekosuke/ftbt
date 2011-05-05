@@ -1,1 +1,9 @@
 help for ftbt
+
+:what's this
+
+android向けふたば☆ちゃんねるブラウザです
+
+:FAQ
+
+

@@ -1,10 +1,16 @@
 package cx.ath.dekosuke.ftbt;
 
+import java.io.Serializable;
+
 //One thread Activity for Futaba
 
 //import android.graphics.*;
 
-public class FutabaThreadContent {
+public class FutabaThreadContent implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public String userName;
 	public String title;
 	public String text;

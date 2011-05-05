@@ -96,12 +96,9 @@ public class ftbt_tab extends Activity implements Runnable {
 				}
 			}
 			BBSs = parser.getBBSs();
-			Log.d("ftbt", "BBSs_a" + BBSs.toString());
 		} else { // fav
 			ftbt parent_activity = (ftbt) this.getParent();
-			Log.d("ftbt", "read hoge");
 			BBSs = parent_activity.favoriteBBSs;
-			Log.d("ftbt", "BBSs_f" + BBSs.toString());
 		}
 		adapter = new FutabaBBSMenuAdapter(this, R.layout.futaba_bbs_row, BBSs);
 		// アイテムを追加します
@@ -123,6 +120,7 @@ public class ftbt_tab extends Activity implements Runnable {
 		 */
 		Log.d("ftbt", item.url);
 		intent.putExtra("baseUrl", item.url);
+		intent.putExtra("BBSName", item.name);
 		intent.putExtra("mode", "normal");
 		intent.setClassName(getPackageName(),
 				getClass().getPackage().getName() + ".Catalog");
