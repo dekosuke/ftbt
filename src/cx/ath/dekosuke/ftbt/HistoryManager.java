@@ -30,6 +30,9 @@ public class HistoryManager {
 			// すでにある－＞更新
 			threads.put(thread.threadNum, thread);
 		}
+		if(threads.size() > 20){
+			threads.remove(threads.firstKey());
+		}
 	}
 
 	// スレッドの削除

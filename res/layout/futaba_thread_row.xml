@@ -11,10 +11,10 @@
         android:layout_height="fill_parent">  
           
         <TextView android:id="@+id/title" android:layout_width="wrap_content"
-         android:layout_height="fill_parent" android:textSize="14sp" 
+         android:layout_height="fill_parent" android:textSize="16sp" 
          android:textColor="#cc1105" layout_weight="1"/>
         <TextView android:id="@+id/name" android:layout_width="wrap_content" 
-         android:layout_height="fill_parent" android:textSize="14sp" 
+         android:layout_height="fill_parent" android:textSize="16sp" 
          android:textColor="#117743" layout_weight="1" />
           
     </LinearLayout>  
@@ -33,7 +33,7 @@
         android:layout_height="fill_parent">  
        <TextView android:layout_width="fill_parent"  
             android:layout_height="fill_parent" android:layout_weight="1" android:id="@+id/maintext"  
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:autoLink="web"
             android:textColor="#800000"
             android:ellipsize="marquee" />  
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content">  
        <TextView android:layout_width="fill_parent"  
             android:layout_height="fill_parent" android:layout_weight="0" android:id="@+id/bottomtext"  
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:textColor="#800000"
             android:ellipsize="marquee" android:gravity="right"/>  
     </LinearLayout>  

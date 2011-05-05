@@ -57,7 +57,7 @@ android:layout_height="wrap_content" android:id="@+id/top_blank">
 	android:id="@+id/imagenum"  
 	android:text="test"
 	android:gravity="right"
-	android:textSize="14sp"
+	android:textSize="16sp"
 	android:textColor="#117743"
 	/>
 </FrameLayout>
