@@ -32,6 +32,8 @@ import org.apache.http.protocol.HttpContext;
 
 import android.app.ProgressDialog;
 import java.lang.Thread;
+import java.net.URL;
+
 import android.os.Handler;
 import android.os.Message;
 
@@ -105,10 +107,34 @@ public class fthread extends Activity implements Runnable {
 	private void loading() {
 		try {
 			statuses = new ArrayList<FutabaStatus>();
-			FutabaThreadParser parser = new FutabaThreadParser(threadURL);
-			parser.parse();
-			if (!parser.network_ok) {
-				if (parser.cache_ok) {
+			FutabaThreadParser parser = new FutabaThreadParser();
+			
+			Boolean network_ok = true;
+			Boolean cache_ok = true;
+			String threadHtml = "";
+			try {
+				// byte[] data = HttpClient.getByteArrayFromURL(urlStr);
+				// allData = new String(data, "Shift-JIS");
+				SDCard.saveFromURL(FutabaCrypt.createDigest(threadURL), new URL(
+						threadURL), true); // キャッシュに保存
+				threadHtml = SDCard
+						.loadTextCache(FutabaCrypt.createDigest(threadURL));
+				network_ok = true;
+			} catch (Exception e) { // ネットワークつながってないときとか
+				network_ok = false;
+				Log.d("ftbt", "failed to get catalog html");
+				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
+					Log.d("ftbt", "getting html from cache");
+					threadHtml = SDCard.loadTextCache(FutabaCrypt
+							.createDigest(threadURL));
+					cache_ok = true;
+				}else{
+					cache_ok = false;					
+				}
+			}
+			parser.parse(threadHtml);
+			if (!network_ok) {
+				if (cache_ok) {
 					Toast.makeText(this,
 							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 							Toast.LENGTH_LONG).show();

@@ -27,16 +27,12 @@ public class FutabaThreadParser {
 	private String title;
 	private String titleImgURL;
 
-	public boolean network_ok;
-	public boolean cache_ok;
-
 	private ArrayList<FutabaStatus> statuses;
 
 	private static Pattern tagPattern = Pattern
 			.compile("<.+?>", Pattern.DOTALL);
 
-	public FutabaThreadParser(String urlStr) {
-		this.urlStr = urlStr;
+	public FutabaThreadParser() {
 		title = "(title)";
 		statuses = new ArrayList<FutabaStatus>();
 	}
@@ -44,7 +40,7 @@ public class FutabaThreadParser {
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
 	// TODO:mailtoのパーズ
 	// スレッドの形式:
-	public void parse() {
+	public void parse(String allData) {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
 			Pattern honbunPattern = Pattern.compile("<form.*?>.+?</form>",
@@ -61,27 +57,7 @@ public class FutabaThreadParser {
 			Pattern thumbPattern = Pattern.compile(
 					"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
 					Pattern.DOTALL);
-			String allData = "";
-			try {
-				// byte[] data = HttpClient.getByteArrayFromURL(urlStr);
-				// allData = new String(data, "Shift-JIS");
-				SDCard.saveFromURL(FutabaCrypt.createDigest(urlStr), new URL(
-						urlStr), true); // キャッシュに保存
-				allData = SDCard
-						.loadTextCache(FutabaCrypt.createDigest(urlStr));
-				network_ok = true;
-			} catch (Exception e) { // ネットワークつながってないときとか
-				network_ok = false;
-				Log.d("ftbt", "failed to get catalog html");
-				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
-					Log.d("ftbt", "getting html from cache");
-					allData = SDCard.loadTextCache(FutabaCrypt
-							.createDigest(urlStr));
-					cache_ok = true;
-				}else{
-					cache_ok = false;					
-				}
-			}
+
 			// parser.setInput(new StringReader(new String(data, "UTF-8")));
 			Matcher mc = honbunPattern.matcher(allData);
 			mc.find();
