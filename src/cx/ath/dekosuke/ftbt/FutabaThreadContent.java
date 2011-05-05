@@ -4,7 +4,7 @@ package cx.ath.dekosuke.ftbt;
 
 //import android.graphics.*;
 
-public class FutabaThread {
+public class FutabaThreadContent {
 	public String userName;
 	public String title;
 	public String text;
@@ -18,7 +18,7 @@ public class FutabaThread {
 	// 画像private
 
 	// コンストラクタ
-	FutabaThread() {
+	FutabaThreadContent() {
 		userName = "";
 		title = "";
 		text = "";

@@ -47,7 +47,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 //板カタログ表示アクティビティ
 public class Catalog extends Activity implements OnClickListener, Runnable {
 
-	private ArrayList<FutabaThread> fthreads = null;
+	private ArrayList<FutabaThreadContent> fthreads = null;
 	private CatalogParser parser;
 	private CatalogAdapter adapter = null;
 	public String baseUrl = "";

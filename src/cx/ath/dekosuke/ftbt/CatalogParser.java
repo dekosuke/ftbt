@@ -34,12 +34,12 @@ public class CatalogParser {
 	public boolean network_ok;
 	public boolean cache_ok;
 
-	private ArrayList<FutabaThread> fthreads;
+	private ArrayList<FutabaThreadContent> fthreads;
 
 	public CatalogParser(String urlStr) {
 		this.urlStr = urlStr;
 		title = "(title)";
-		fthreads = new ArrayList<FutabaThread>();
+		fthreads = new ArrayList<FutabaThreadContent>();
 		network_ok = true;
 		cache_ok = true;
 	}
@@ -131,7 +131,7 @@ public class CatalogParser {
 			while (mcRes.find()) {
 				Matcher mcText = textPattern.matcher(mcRes.group(1));
 				mcText.find();
-				FutabaThread thread = new FutabaThread();
+				FutabaThreadContent thread = new FutabaThreadContent();
 				String text = mcText.group(1);
 				String resNum = mcText.group(2);
 				text = tagPattern.matcher(text).replaceAll(""); // タグ除去
@@ -155,7 +155,7 @@ public class CatalogParser {
 		// return list;
 	}
 
-	public ArrayList<FutabaThread> getThreads() {
+	public ArrayList<FutabaThreadContent> getThreads() {
 		return fthreads;
 	}
 }

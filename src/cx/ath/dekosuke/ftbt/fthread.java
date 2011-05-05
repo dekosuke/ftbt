@@ -187,7 +187,6 @@ public class fthread extends Activity implements Runnable {
 		Intent intent;
 		switch (item.getItemId()) {
 		case R.id.tweet:
-			Toast.makeText(this, "簡易ブラウザ画面に移動します", Toast.LENGTH_SHORT).show();
 			String thread_title = statuses.get(0).text;
 			thread_title = thread_title.substring(0, Math.min(50, thread_title.length()));
 			//threadURL

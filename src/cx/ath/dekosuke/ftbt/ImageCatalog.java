@@ -44,8 +44,7 @@ public class ImageCatalog extends Activity {
 					.getSerializableExtra("imgURLs");
 
 			Log.d("ftbt", "hoge-" + imgURLs.size());
-			myImageURL = (String) intent
-					.getSerializableExtra("myImgURL");
+			myImageURL = (String) intent.getSerializableExtra("myImgURL");
 			Log.d("ftbt", myImageURL);
 
 			// ここでIntentによる追加情報からCircleListを構築する
@@ -112,7 +111,7 @@ public class ImageCatalog extends Activity {
 					}
 				}
 			});
-			
+
 			moveImage(0);
 			setReturnImage();
 
@@ -120,15 +119,16 @@ public class ImageCatalog extends Activity {
 			Log.d("ftbt", "message", e);
 		}
 	}
-	
-	public void moveImage(int num){
+
+	public void moveImage(int num) {
 		CircleList.move(num);
 		TextView imagenum = (TextView) findViewById(id.imagenum);
-		imagenum.setText("画像:"+(1+CircleList.pos())+"/"+CircleList.size());		
+		imagenum.setText("画像:" + (1 + CircleList.pos()) + "/"
+				+ CircleList.size());
 	}
-	
-	//戻ったときのインテントにパラメータ渡す（場所復帰のため）
-	public void setReturnImage(){
+
+	// 戻ったときのインテントにパラメータ渡す（場所復帰のため）
+	public void setReturnImage() {
 		Intent ret_i = new Intent();
 		ret_i.putExtra("imgURL", CircleList.get());
 		setResult(RESULT_OK, ret_i);
@@ -145,8 +145,8 @@ public class ImageCatalog extends Activity {
 		// スレ一覧に戻ったときに渡す情報
 		// }
 	}
-	
-	//メニュー
+
+	// メニュー
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -155,11 +155,26 @@ public class ImageCatalog extends Activity {
 		return true;
 	}
 
-	//メニューをクリック
+	// メニューをクリック
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
+		case R.id.tweet:
+			String status_encoded = myImageURL; // URIエンコードされた、ツイートしたい文章
+			// Uri uri =
+			// Uri.parse("http://twitter.com/?status="+status_encoded);
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, status_encoded);
+			try {
+				startActivityForResult(intent, 0);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "client not found", Toast.LENGTH_LONG)
+						.show();
+			}
+			return true;
+
 		case R.id.settings:
 			intent = new Intent();
 			intent.setClassName(getPackageName(), getClass().getPackage()

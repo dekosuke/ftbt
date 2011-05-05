@@ -62,7 +62,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		View view = convertView;
 
 		// 表示すべきデータの取得
-		FutabaThread item = (FutabaThread) items.get(position);
+		FutabaThreadContent item = (FutabaThreadContent) items.get(position);
 		final String threadNum = item.threadNum;
 
 		if (view == null) {
