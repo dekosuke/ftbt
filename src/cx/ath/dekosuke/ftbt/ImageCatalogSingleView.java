@@ -214,10 +214,20 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		float currentScale = values[Matrix.MSCALE_X];
 		float postScale = currentScale * scale;
 
+		//画面に収まるサイズ
+		float minScale = Math.min((float) width / (float) bm.getWidth(),
+				(float) height / (float) bm.getHeight());
+		
+		Log.d("ftbt", "minScale="+minScale);
+		if(postScale<minScale){
+			scale = minScale/currentScale;
+		}
+		matrix.postScale(scale, scale, mx, my);
+				
 		bx = bm.getWidth() * postScale;
 		by = bm.getHeight() * postScale;
 
-		matrix.postScale(scale, scale, mx, my);
+		
 		setImageMatrix(matrix);
 	}
 
