@@ -42,7 +42,7 @@ import java.lang.Thread; //To call Thread.sleep
 
 public class FutabaTopAdapter extends ArrayAdapter {
 
-	private ArrayList items;
+	public ArrayList items;
 	private LayoutInflater inflater;
 
 	public FutabaTopAdapter(Context context, int textViewResourceId,

@@ -2,6 +2,7 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 
+import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -23,7 +24,9 @@ import cx.ath.dekosuke.ftbt.R.id;
 
 public class ftbt extends TabActivity {
 
-	public ArrayList<FutabaBBS> favoriteBBSs;
+	public ArrayList<FutabaBBS> favoriteBBSs = new ArrayList<FutabaBBS>();
+	
+	private TabSpec tab02;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class ftbt extends TabActivity {
 		try {
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBS>();
+			Log.d("ftbt", "favbbs="+favoriteBBSs);
 			favoriteBBSs = FavoriteSettings.getFavorites(this);
 			// タブシートの設定
 			intent = new Intent().setClassName(getPackageName(), getClass()
@@ -74,10 +78,8 @@ public class ftbt extends TabActivity {
 			intent = new Intent().setClassName(getPackageName(), getClass()
 					.getPackage().getName() + ".ftbt_tab");
 			intent.putExtra("mode", "fav");
-			intent.putExtra("favoriteBBSs", favoriteBBSs);
-			TabSpec tab02 = tabs.newTabSpec("TabSheet2");
+			tab02 = tabs.newTabSpec("TabSheet2");
 			tab02.setIndicator("お気に入り");
-			tab02.setContent(R.id.sheet02_id);
 			tab02.setContent(intent);
 			tabs.addTab(tab02);
 			// 初期表示のタブ設定
@@ -88,11 +90,14 @@ public class ftbt extends TabActivity {
 	}
 
 	public void addFavoriteBBSs(FutabaBBS bbs) {
+		Log.d("ftbt", "favoriteBBSs=" + favoriteBBSs.toString());
 		try {
 			if (favoriteBBSs.indexOf(bbs) == -1) {
 				Log.d("ftbt", "add " + bbs.toString());
 				favoriteBBSs.add(bbs);
 				FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
+				//adapter.addList(bbs);
+				//adapter.notifyDataSetChanged();
 			} else {
 				Log.d("ftbt", "thread already exist in favlist");
 			}
@@ -137,4 +142,5 @@ public class ftbt extends TabActivity {
 		}
 		return false;
 	}
+
 }

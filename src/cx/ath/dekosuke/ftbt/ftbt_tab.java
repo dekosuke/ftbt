@@ -86,20 +86,22 @@ public class ftbt_tab extends Activity implements Runnable {
 					"http://www.2chan.net/bbsmenu.html");
 			parser.parse();
 			if (!parser.network_ok) {
-				if(parser.cache_ok){
+				if (parser.cache_ok) {
 					Toast.makeText(this,
-						"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-						Toast.LENGTH_LONG).show();
-				}else{
-					Toast.makeText(this,
-							"ネットワークに繋がっていません",
+							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 							Toast.LENGTH_LONG).show();
+				} else {
+					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_LONG)
+							.show();
 				}
 			}
 			BBSs = parser.getBBSs();
+			Log.d("ftbt", "BBSs_a" + BBSs.toString());
 		} else { // fav
-			BBSs = (ArrayList<FutabaBBS>) intent
-					.getSerializableExtra("favoriteBBSs");
+			ftbt parent_activity = (ftbt) this.getParent();
+			Log.d("ftbt", "read hoge");
+			BBSs = parent_activity.favoriteBBSs;
+			Log.d("ftbt", "BBSs_f" + BBSs.toString());
 		}
 		adapter = new FutabaTopAdapter(this, R.layout.futaba_bbs_row, BBSs);
 		// アイテムを追加します
@@ -125,5 +127,22 @@ public class ftbt_tab extends Activity implements Runnable {
 		// getClass().getPackage().getName()+".fthread");
 				getClass().getPackage().getName() + ".Catalog");
 		startActivity(intent);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		try {
+			if (mode.equals("fav")) {
+				ftbt parent_activity = (ftbt) this.getParent();
+				if(adapter!=null){
+					adapter.items = parent_activity.favoriteBBSs;
+					adapter.notifyDataSetChanged();
+				}
+				Log.d("ftbt", "read hoge2");
+			}
+		} catch (Exception e) {
+			Log.d("ftbt", "message", e);
+		}
 	}
 }

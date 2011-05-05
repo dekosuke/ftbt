@@ -30,7 +30,7 @@ public class SDCard {
 	
 	public static String getCacheDir(){
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		String cacheDir = sdcard_dir + "/.ftbt_cache/";
+		String cacheDir = sdcard_dir + "/.ftbtcache/";
 		File file = new File(cacheDir);
 		file.mkdir(); //ディレクトリないときにつくる
 		return cacheDir;
