@@ -260,6 +260,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	public void zoomImageToWindow() {
 		if (bm.getWidth() < width && bm.getHeight() < height) {
 			// matrix.reset();
+			matrix.setScale(1f, 1f);
 			bx = bm.getWidth();
 			by = bm.getHeight();
 		} else {
