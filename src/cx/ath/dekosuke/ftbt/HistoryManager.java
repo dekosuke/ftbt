@@ -17,6 +17,11 @@ public class HistoryManager {
 	// キーがスレッドidのlist
 	private TreeMap<String, FutabaThreadContent> threads = new TreeMap<String, FutabaThreadContent>();
 
+	//初期化
+	public void clear(){
+		threads = new TreeMap<String, FutabaThreadContent>();
+	}
+	
 	// スレッドの追加
 	public void addThread(FutabaThreadContent thread) {
 		if (!threads.containsKey(thread.threadNum)) {
@@ -55,6 +60,13 @@ public class HistoryManager {
 			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
+		}
+	}
+	
+	public void set(ArrayList<FutabaThreadContent> threads_array){
+		clear();
+		for(int i=0;i<threads_array.size();++i){
+			addThread(threads_array.get(i));
 		}
 	}
 

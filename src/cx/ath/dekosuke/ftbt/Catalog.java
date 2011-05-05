@@ -1,15 +1,18 @@
 package cx.ath.dekosuke.ftbt;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.view.View.OnClickListener;
@@ -80,6 +83,12 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	protected void onResume() {
 		super.onResume();
 		CookieSyncManager.getInstance().stopSync();
+		try{
+			Log.d("ftbt", "Catalog::onResume");
+			adapter.notifyDataSetChanged();
+		}catch(Exception e){
+			Log.i("ftbt", "message", e);
+		}
 	}
 
 	@Override
@@ -217,11 +226,79 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		startActivity(intent);
 	}
 
+	int delete_option = 0;
+	final int DELETE_CHECKED = 0;
+	final int DELETE_NONCHECKED = 1;
+	// 履歴削除ボタン
+	public void onClickDeleteBtn(View v) {
+		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ" };
+		AlertDialog.Builder dlg;
+		dlg = new AlertDialog.Builder(Catalog.this);
+		dlg.setTitle("スレッド履歴の削除");
+		dlg.setCancelable(true);
+		dlg.setSingleChoiceItems(items, 0,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						// button.setText(String.format("%sが選択されました。",items[item]));
+						Catalog.this.delete_option = item;
+					}
+				});
+		dlg.setPositiveButton("削除する", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// Catalog.this.finish();
+				Catalog.this.deleteThreads();
+			}
+		});
+		dlg.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// Catalog.cancel();
+				//Catalog.this.deleteThreads(false);
+			}
+		});
+		dlg.show();
+	}
+	
+	//チェックされたスレッド、もしくはチェックされていないスレッドを削除する
+	public void deleteThreads(){
+		try{
+			Log.d("ftbt", "delete threads with option "+delete_option);
+			if(delete_option == DELETE_CHECKED){
+				for(int i=listView.getCount()-1;i>=0;--i){
+					View view = listView.getChildAt(i);
+					CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+					if(checkbox.isChecked()){
+						Log.d("ftbt", "delete element at "+i);
+						adapter.items.remove(i);
+					}
+				}
+			}else if(delete_option == DELETE_NONCHECKED){
+				for(int i=listView.getCount()-1;i>=0;--i){
+					View view = listView.getChildAt(i);
+					CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+					if(!checkbox.isChecked()){
+						Log.d("ftbt", "delete element at "+i);
+						adapter.items.remove(i);
+					}
+				}			
+			}
+			HistoryManager man = new HistoryManager();
+			man.set(adapter.items);
+			man.Save();
+			//adapter.items = man.getThreadsArray();
+			//DesireHDで動かしてて分かったけど
+			//adapter.itemの参照アドレスが変わる->notifyDataSetChanged で落ちる
+			adapter.notifyDataSetChanged();
+			//listView.invalidateViews();
+		}catch(Exception e){
+			Log.i("ftbt", "message", e);
+		}
+	}
+
 	public void onClick(View v) {
 		Log.d("ftbt", "catalog onclick");
 		// v.reload();
 	}
-
+	
 	// メニュー
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

@@ -27,6 +27,12 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
         android:layout_height="wrap_content"
         android:onClick="onClickHistoryBtn">
     </Button>
+    <Button android:text="スレッドを削除"
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickDeleteBtn">
+    </Button>
 </LinearLayout>
 
 <ListView android:id="@+id/cataloglistview"

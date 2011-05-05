@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.net.URL;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.widget.ImageView;
 
 //画面サイズ取得のため
@@ -32,7 +34,7 @@ import android.view.Display;
 
 public class CatalogAdapter extends ArrayAdapter {
 
-	private ArrayList items;
+	public ArrayList<FutabaThreadContent> items;
 	private LayoutInflater inflater;
 	private Context context;
 
@@ -43,7 +45,7 @@ public class CatalogAdapter extends ArrayAdapter {
 	public CatalogAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
 		super(context, textViewResourceId, items);
-		this.items = items;
+		this.items = (ArrayList<FutabaThreadContent>)items;
 		this.context = context;
 		this.inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -115,9 +117,13 @@ public class CatalogAdapter extends ArrayAdapter {
 			}
 			TextView resNum = (TextView) view.findViewById(R.id.resnum);
 			resNum.setText(item.resNum+"レス");
-			if(activity.mode.equals("history")){
+			if(activity.mode.equals("history")){ //履歴モード
 				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
 				BBSName.setText("("+item.BBSName+")");
+				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
+			}else{ //
+				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+				checkbox.setVisibility(View.GONE);
 			}
 
 			//とりあえず空画像を作成
