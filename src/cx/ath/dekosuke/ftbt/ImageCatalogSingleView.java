@@ -13,6 +13,8 @@ import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,9 +22,9 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 import java.lang.Math;
+import android.view.GestureDetector;
 
-class ImageCatalogSingleView extends ImageView implements OnTouchListener,
-		Runnable {
+class ImageCatalogSingleView extends ImageView implements Runnable {
 
 	private static final int NONE = 0;
 	private static final int DRAG = 1;
@@ -60,6 +62,9 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	private PointF p2 = new PointF();
 	private int point_side = 1;
 
+	// ダブルクリックのための(ry
+	private GestureDetector gestureDetector;
+
 	public ImageCatalogSingleView(Context context) {
 		this(context, null, 0);
 	}
@@ -67,34 +72,50 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	public ImageCatalogSingleView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
-    
-	//画面サイズを取得するための小細工・・・
+
+	// 画面サイズを取得するための小細工・・・
 	@Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-      width = w; //これで幅が取得できる
-      height = h; //これで高さが取得できる
-    }
-    
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		width = w; // これで幅が取得できる
+		height = h; // これで高さが取得できる
+	}
+
 	public ImageCatalogSingleView(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
 		matrix = new Matrix();
 		matrix.setScale(1, 1);
 		bx = by = 0;
+		setEnabled(true);
 		setClickable(true); // これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
-		setOnTouchListener(this);
+		// setOnTouchListener(this);
 
 		// 拡大縮小可能に
 		this.setScaleType(ScaleType.MATRIX);
 		// 画像取得
 		setImage();
+		// ダブルタップ
+		try {
+			this.gestureDetector = new GestureDetector(context,
+					simpleOnGestureListener);
+		} catch (Exception e) {
+			Log.i("ftbt", "message", e);
+		}
 	}
 
-	public boolean onTouch(View v, MotionEvent event) {
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		onTouch(event);
+		gestureDetector.onTouchEvent(event);
+		return true;
+		// trueにしないとdoubletap取れない
+		// http://mokkouyou.blog114.fc2.com/blog-entry-49.html
+	}
+
+	public boolean onTouch(MotionEvent event) {
 		try {
 			// Toast.makeText(getContext(), "touch detected",
 			// Toast.LENGTH_SHORT).show();
-			ImageView view = (ImageView) v;
 			ImageCatalog activity = (ImageCatalog) getContext();
 			/*
 			 * if( activity.gallery.onTouchEvent(event) ){ return true; }
@@ -102,11 +123,11 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 			// activity.gallery.onFling(null, null, 1000f, 0f);
 			// Log.d("ftbt", "fling "+activity.gallery.onFling(null, null, 100f,
 			// 100f) );
-			Log.d("ftbt", event.toString());
+			// Log.d("ftbt", event.toString());
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_1_DOWN:
-				Log.d("ftbt", "mode=DRAG");
+				// Log.d("ftbt", "mode=DRAG");
 				mode = DRAG;
 				p1.set(event.getX(), event.getY());
 				moveMatrix.set(matrix);
@@ -114,7 +135,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_2_UP:
 				point = null;
-				Log.d("ftbt", "mode=NONE");
+				// Log.d("ftbt", "mode=NONE");
 				mode = NONE;
 				break;
 			case MotionEvent.ACTION_POINTER_2_DOWN:
@@ -155,10 +176,11 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 					// 参考 http://cuaoar.jp/2010/05/flash-player-101-1.html
 					break;
 				}
-				if (d2 > 150 * 150 && mode==ZOOM) { // 誤作動対策
+				if (d2 > 150 * 150 && mode == ZOOM) { // 誤作動対策
 					break;
 				}
-				//Log.d("ftbt", "move ex=" + event.getX() + " ey=" + event.getY());
+				// Log.d("ftbt", "move ex=" + event.getX() + " ey=" +
+				// event.getY());
 				// activity.gallery.onScroll(e_temp, event, 100f, 100f);
 				// //これは動いた
 
@@ -166,8 +188,8 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 				case DRAG:
 					matrix.set(moveMatrix);
 					// matrix.postTranslate(ex - point.x, ey - point.y);
-					move(1.0f*(ex - point.x), 1.3f*(ey - point.y));
-					view.setImageMatrix(matrix);
+					move(1.0f * (ex - point.x), 1.3f * (ey - point.y));
+					setImageMatrix(matrix);
 					break;
 				case ZOOM:
 					if (mode == ZOOM) { // ちょっとdisable
@@ -179,8 +201,9 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 									/ initLength);
 							// matrix.postScale(scale, scale, middle.x,
 							// middle.y);
-							zoomImage((float)Math.pow(scale, 1.3f), middle.x, middle.y);
-							view.setImageMatrix(matrix);
+							zoomImage((float) Math.pow(scale, 1.3f), middle.x,
+									middle.y);
+							setImageMatrix(matrix);
 						}
 						break;
 					}
@@ -193,7 +216,7 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		return false;
 	}
 
-	//画像の平行移動
+	// 画像の平行移動
 	private void move(float dx, float dy) {
 		// matrix.postTranslate(dx, 0f);
 		float[] values = new float[9];
@@ -206,7 +229,6 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 	// 画像の拡大縮小
 	public void zoomImage(float scale, float mx, float my) {
 		matrix.set(moveMatrix);
-		Log.d("ftbt", "matrix update" + matrix.toString());
 
 		// 現在のスケール取得
 		float[] values = new float[9];
@@ -214,20 +236,18 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		float currentScale = values[Matrix.MSCALE_X];
 		float postScale = currentScale * scale;
 
-		//画面に収まるサイズ
+		// 画面に収まるサイズ
 		float minScale = Math.min((float) width / (float) bm.getWidth(),
 				(float) height / (float) bm.getHeight());
-		
-		Log.d("ftbt", "minScale="+minScale);
-		if(postScale<minScale){
-			scale = minScale/currentScale;
+
+		if (postScale < minScale) {
+			scale = minScale / currentScale;
 		}
 		matrix.postScale(scale, scale, mx, my);
-				
+
 		bx = bm.getWidth() * postScale;
 		by = bm.getHeight() * postScale;
 
-		
 		setImageMatrix(matrix);
 	}
 
@@ -254,8 +274,8 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 		// 画像をView中央にセット
 		float[] values = new float[9];
 		matrix.getValues(values);
-		values[Matrix.MTRANS_X] = (width-bx)/2;
-		values[Matrix.MTRANS_Y] = (height-by)/2;
+		values[Matrix.MTRANS_X] = (width - bx) / 2;
+		values[Matrix.MTRANS_Y] = (height - by) / 2;
 		matrix.setValues(values);
 	}
 
@@ -372,9 +392,12 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 				bm = ImageCache.getImage(urls[0]);
 				if (bm == null) { // does not exist on cache
 					boolean network_result = ImageCache.setImage(urls[0]);
-					if(!network_result){ //画像をhttpで取ってくるのに失敗
-						Toast.makeText(getContext(), "画像の取得に失敗しました。\nネットワークがつながっていないか、" +
-								"画像ファイルが存在しない可能性があります", Toast.LENGTH_SHORT).show();
+					if (!network_result) { // 画像をhttpで取ってくるのに失敗
+						Toast.makeText(
+								getContext(),
+								"画像の取得に失敗しました。\nネットワークがつながっていないか、"
+										+ "画像ファイルが存在しない可能性があります",
+								Toast.LENGTH_SHORT).show();
 					}
 					bm = ImageCache.getImage(urls[0]);
 				}
@@ -405,4 +428,75 @@ class ImageCatalogSingleView extends ImageView implements OnTouchListener,
 			Log.d("ftbt", "スレッドキャンセル id=" + id);
 		}
 	}
+
+	private final SimpleOnGestureListener simpleOnGestureListener = new SimpleOnGestureListener() {
+
+		@Override
+		public boolean onDoubleTap(MotionEvent event) {
+			Log.i("ftbt", "onDoubleTap");
+			return super.onDoubleTap(event);
+		}
+
+		@Override
+		public boolean onDoubleTapEvent(MotionEvent event) {
+			Log.i("ftbt", "onDoubleTapEvent");
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_POINTER_2_UP:
+				middle = getMiddle(event, middle);
+				if (true) {
+					matrix.set(moveMatrix);
+					zoomImage(1.3f, middle.x, middle.y);
+					setImageMatrix(matrix);
+				}
+				break;
+			}
+			return super.onDoubleTapEvent(event);
+		}
+
+		@Override
+		public boolean onDown(MotionEvent event) {
+			Log.i("ftbt", "onDown");
+			return super.onDown(event);
+		}
+
+		@Override
+		public boolean onFling(MotionEvent event1, MotionEvent event2,
+				float velocityX, float velocityY) {
+			Log.i("ftbt", "onFling");
+			return super.onFling(event1, event2, velocityX, velocityY);
+		}
+
+		@Override
+		public void onLongPress(MotionEvent event) {
+			Log.i("ftbt", "onLongPress");
+			super.onLongPress(event);
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent event1, MotionEvent event2,
+				float distanceX, float distanceY) {
+			Log.i("ftbt", "onScroll");
+			return super.onScroll(event1, event2, distanceX, distanceY);
+		}
+
+		@Override
+		public void onShowPress(MotionEvent event) {
+			Log.i("ftbt", "onShowPress");
+			super.onShowPress(event);
+		}
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent event) {
+			Log.i("ftbt", "onSingleTapConfirmed");
+			return super.onSingleTapConfirmed(event);
+		}
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent event) {
+			Log.i("ftbt", "onSingleTapUp");
+			return super.onSingleTapUp(event);
+		}
+
+	};
 }
