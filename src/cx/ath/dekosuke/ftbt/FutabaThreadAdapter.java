@@ -237,7 +237,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 									Log.d("ftbt",
 											"intent calling thread activity");
 									Intent intent = new Intent();
-									fthread activity = (fthread) getContext();
+									FutabaThread activity = (FutabaThread) getContext();
 									// Log.d ( "ftbt", threadNum );
 									// これスレッドごとに作られているのが結構ひどい気がする
 									intent.putExtra("imgURLs",

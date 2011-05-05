@@ -40,12 +40,12 @@ import android.view.Display;
 
 import java.lang.Thread; //To call Thread.sleep
 
-public class FutabaTopAdapter extends ArrayAdapter {
+public class FutabaBBSMenuAdapter extends ArrayAdapter {
 
 	public ArrayList items;
 	private LayoutInflater inflater;
 
-	public FutabaTopAdapter(Context context, int textViewResourceId,
+	public FutabaBBSMenuAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
@@ -69,7 +69,7 @@ public class FutabaTopAdapter extends ArrayAdapter {
 			}
 
 			// 表示すべきデータの取得
-			final FutabaBBS item = (FutabaBBS) items.get(position);
+			final FutabaBBSContents item = (FutabaBBSContents) items.get(position);
 			if (item != null) {
 				TextView url = (TextView) view.findViewById(R.id.url);
 				url.setText(item.url);

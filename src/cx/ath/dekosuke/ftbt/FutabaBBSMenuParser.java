@@ -14,14 +14,14 @@ import java.util.regex.Matcher;
 //板一覧を取得するクラス
 public class FutabaBBSMenuParser {
 
-	private ArrayList<FutabaBBS> BBSs;
+	private ArrayList<FutabaBBSContents> BBSs;
 	private String urlStr;
 	public boolean network_ok;
 	public boolean cache_ok;
 
 	public FutabaBBSMenuParser(String urlStr) {
 		this.urlStr = urlStr;
-		BBSs = new ArrayList<FutabaBBS>();
+		BBSs = new ArrayList<FutabaBBSContents>();
 		network_ok = true;
 		cache_ok = true;
 	}
@@ -56,7 +56,7 @@ public class FutabaBBSMenuParser {
 			}
 			Matcher mcBBS = BBSPattern.matcher(allData);
 			while (mcBBS.find()) {
-				FutabaBBS bbs = new FutabaBBS();
+				FutabaBBSContents bbs = new FutabaBBSContents();
 				bbs.url = mcBBS.group(1);
 				bbs.name = mcBBS.group(2);
 				BBSs.add(bbs);
@@ -67,7 +67,7 @@ public class FutabaBBSMenuParser {
 		// return list;
 	}
 
-	public ArrayList<FutabaBBS> getBBSs() {
+	public ArrayList<FutabaBBSContents> getBBSs() {
 		return BBSs;
 	}
 }

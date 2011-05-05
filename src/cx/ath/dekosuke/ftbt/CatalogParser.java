@@ -28,25 +28,15 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 
 public class CatalogParser {
 
-	private String urlStr;
-	private String title;
-	private String titleImgURL;
-	public boolean network_ok;
-	public boolean cache_ok;
-
 	private ArrayList<FutabaThreadContent> fthreads;
 
-	public CatalogParser(String urlStr) {
-		this.urlStr = urlStr;
-		title = "(title)";
+	public CatalogParser() {
 		fthreads = new ArrayList<FutabaThreadContent>();
-		network_ok = true;
-		cache_ok = true;
 	}
 
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
 	// スレッドの形式:
-	public void parse(Context context) {
+	public void parse(String catalogHtml) {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
 			Pattern honbunPattern = Pattern.compile("<table.+?>.+?</table>",
@@ -62,67 +52,7 @@ public class CatalogParser {
 					Pattern.DOTALL);
 			Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
 
-			CookieManager.getInstance().setAcceptCookie(true);
-			CookieManager.getInstance().removeExpiredCookie();
-
-			// HttpClientの準備
-			DefaultHttpClient httpClient;
-			httpClient = new DefaultHttpClient();
-			FutabaCookieManager.loadCookie(httpClient); //クッキーのロード
-			httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
-					CookiePolicy.BROWSER_COMPATIBILITY);
-			httpClient.getParams()
-					.setParameter("http.connection.timeout", 5000);
-			httpClient.getParams().setParameter("http.socket.timeout", 3000);
-			HttpPost httppost = new HttpPost(urlStr);
-			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(3);
-			nameValuePair.add(new BasicNameValuePair("mode", "catset"));
-			nameValuePair.add(new BasicNameValuePair("cx", "10"));
-			nameValuePair.add(new BasicNameValuePair("cy", "5"));
-			nameValuePair.add(new BasicNameValuePair("cl", "50"));
-
-			urlStr = urlStr + "?mode=cat"; // カタログです
-			String data = null;
-			// cookie取得->カタログ取得と2度HTTPアクセスしている
-			try {
-				httppost.setEntity(new UrlEncodedFormEntity(nameValuePair));
-				HttpResponse response = httpClient.execute(httppost);
-				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				response.getEntity().writeTo(byteArrayOutputStream);
-				HttpGet httpget = new HttpGet(urlStr);
-				HttpResponse httpResponse = null;
-				httpResponse = httpClient.execute(httpget);
-				FutabaCookieManager.saveCookie(httpClient); //クッキー保存
-				int status = httpResponse.getStatusLine().getStatusCode();
-				if (HttpStatus.SC_OK == status) {
-					ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-					httpResponse.getEntity().writeTo(outputStream);
-					SDCard.saveBin(FutabaCrypt.createDigest(urlStr),
-							outputStream.toByteArray(), true); // キャッシュに保存
-					data = outputStream.toString("SHIFT-JIS");
-					// parse(outputStream.toString());
-				} else {
-					Log.d("ftbt", "NON-OK Status" + status);
-					throw new Exception("HTTP BAD RESULT");
-				}
-				network_ok = true;
-			} catch (Exception e) { // カタログ取得に失敗、キャッシュから
-				Log.d("ftbt", "message", e);
-				network_ok = false;
-				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
-					Log.d("ftbt",
-							"getting html from cache"
-									+ FutabaCrypt.createDigest(urlStr));
-					data = SDCard.loadTextCache(FutabaCrypt
-							.createDigest(urlStr));
-				} else {
-					Log.d("ftbt", "cache " + FutabaCrypt.createDigest(urlStr)
-							+ "not found");
-					cache_ok = false;
-				}
-			}
-
-			Matcher mc = honbunPattern.matcher(data);
+			Matcher mc = honbunPattern.matcher(catalogHtml);
 			mc.find();
 			mc.find(); // 2つ目
 			String honbun = mc.group(0);

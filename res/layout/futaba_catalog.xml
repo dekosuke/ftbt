@@ -15,11 +15,17 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     android:layout_alignParentBottom="true"
     android:id="@+id/bottom_control_bar"
     >
-    <Button android:text="reload"
+    <Button android:text="リロード"
         android:id="@+id/reload_btn"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClickReloadBtn">
+    </Button>
+    <Button android:text="履歴"
+        android:id="@+id/history_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onClickHistoryBtn">
     </Button>
 </LinearLayout>
 
