@@ -28,7 +28,7 @@ public class ftbt_tab extends Activity implements Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 
-	private FutabaTopAdapter adapter = null;
+	private FutabaBBSMenuAdapter adapter = null;
 	String mode;
 
 	/** Called when the activity is first created. */
@@ -80,7 +80,7 @@ public class ftbt_tab extends Activity implements Runnable {
 
 		Intent intent = getIntent();
 
-		ArrayList<FutabaBBS> BBSs = new ArrayList<FutabaBBS>();
+		ArrayList<FutabaBBSContents> BBSs = new ArrayList<FutabaBBSContents>();
 		if (mode.equals("all")) {
 			FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
 					"http://www.2chan.net/bbsmenu.html");
@@ -103,7 +103,7 @@ public class ftbt_tab extends Activity implements Runnable {
 			BBSs = parent_activity.favoriteBBSs;
 			Log.d("ftbt", "BBSs_f" + BBSs.toString());
 		}
-		adapter = new FutabaTopAdapter(this, R.layout.futaba_bbs_row, BBSs);
+		adapter = new FutabaBBSMenuAdapter(this, R.layout.futaba_bbs_row, BBSs);
 		// アイテムを追加します
 		ListView listView = (ListView) findViewById(id.listview);
 		// アダプターを設定します
@@ -115,7 +115,7 @@ public class ftbt_tab extends Activity implements Runnable {
 	}
 
 	// 設定画面に遷移
-	public void transSetting(FutabaBBS item) {
+	public void transSetting(FutabaBBSContents item) {
 		Intent intent = new Intent();
 		/*
 		 * intent.setClassName(getPackageName(),
@@ -123,8 +123,8 @@ public class ftbt_tab extends Activity implements Runnable {
 		 */
 		Log.d("ftbt", item.url);
 		intent.putExtra("baseUrl", item.url);
+		intent.putExtra("mode", "normal");
 		intent.setClassName(getPackageName(),
-		// getClass().getPackage().getName()+".fthread");
 				getClass().getPackage().getName() + ".Catalog");
 		startActivity(intent);
 	}

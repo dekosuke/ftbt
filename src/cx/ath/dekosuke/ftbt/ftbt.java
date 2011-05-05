@@ -24,7 +24,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 
 public class ftbt extends TabActivity {
 
-	public ArrayList<FutabaBBS> favoriteBBSs = new ArrayList<FutabaBBS>();
+	public ArrayList<FutabaBBSContents> favoriteBBSs = new ArrayList<FutabaBBSContents>();
 	
 	private TabSpec tab02;
 
@@ -63,7 +63,7 @@ public class ftbt extends TabActivity {
 
 		try {
 			// お気に入りスレッドリスト
-			favoriteBBSs = new ArrayList<FutabaBBS>();
+			favoriteBBSs = new ArrayList<FutabaBBSContents>();
 			Log.d("ftbt", "favbbs="+favoriteBBSs);
 			favoriteBBSs = FavoriteSettings.getFavorites(this);
 			// タブシートの設定
@@ -89,7 +89,7 @@ public class ftbt extends TabActivity {
 		}
 	}
 
-	public void addFavoriteBBSs(FutabaBBS bbs) {
+	public void addFavoriteBBSs(FutabaBBSContents bbs) {
 		Log.d("ftbt", "favoriteBBSs=" + favoriteBBSs.toString());
 		try {
 			if (favoriteBBSs.indexOf(bbs) == -1) {
@@ -106,7 +106,7 @@ public class ftbt extends TabActivity {
 		}
 	}
 
-	public void removeFavoriteBBSs(FutabaBBS bbs) {
+	public void removeFavoriteBBSs(FutabaBBSContents bbs) {
 		try {
 			favoriteBBSs.remove(bbs);
 			FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
