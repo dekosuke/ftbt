@@ -45,11 +45,11 @@ import android.widget.Button;
 import cx.ath.dekosuke.ftbt.R.id;
 
 //板カタログ表示アクティビティ
-public class catalog extends Activity implements OnClickListener, Runnable {
+public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	private ArrayList<FutabaThread> fthreads = null;
-	private FutabaCatalogParser parser;
-	private FutabaCatalogAdapter adapter = null;
+	private CatalogParser parser;
+	private CatalogAdapter adapter = null;
 	public String baseUrl = "";
 	private String catalogURL;
 	private ProgressDialog waitDialog;
@@ -126,7 +126,7 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 			buttonReload = new Button(this);
 			buttonReload.setText("Reload");
 			buttonReload.setOnClickListener(this);
-			parser = new FutabaCatalogParser(catalogURL);
+			parser = new CatalogParser(catalogURL);
 			parser.parse(getApplicationContext());
 			Log.d("ftbt", " " + parser.network_ok + " " + parser.cache_ok);
 			if (!parser.network_ok) {
@@ -146,7 +146,7 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 
 			listView = (ListView) findViewById(id.cataloglistview);
 			// アダプターを設定します
-			adapter = new FutabaCatalogAdapter(this,
+			adapter = new CatalogAdapter(this,
 					R.layout.futaba_catalog_row, fthreads);
 			listView.setAdapter(adapter);
 			if(position!=0){

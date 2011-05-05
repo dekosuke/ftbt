@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.Gallery;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ImageCatalog extends Activity {
@@ -89,7 +90,7 @@ public class ImageCatalog extends Activity {
 			prev.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					try {
-						CircleList.move(-1);
+						moveImage(-1);
 						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 						imageview.setImage();
 						setReturnImage();
@@ -102,7 +103,7 @@ public class ImageCatalog extends Activity {
 			next.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					try {
-						CircleList.move(+1);
+						moveImage(+1);
 						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 						imageview.setImage();
 						setReturnImage();
@@ -112,11 +113,18 @@ public class ImageCatalog extends Activity {
 				}
 			});
 			
+			moveImage(0);
 			setReturnImage();
 
 		} catch (Exception e) {
 			Log.d("ftbt", "message", e);
 		}
+	}
+	
+	public void moveImage(int num){
+		CircleList.move(num);
+		TextView imagenum = (TextView) findViewById(id.imagenum);
+		imagenum.setText("画像:"+(1+CircleList.pos())+"/"+CircleList.size());		
 	}
 	
 	//戻ったときのインテントにパラメータ渡す（場所復帰のため）

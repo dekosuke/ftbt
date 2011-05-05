@@ -123,7 +123,7 @@ public class ftbt_tab extends Activity implements Runnable {
 		intent.putExtra("baseUrl", item.url);
 		intent.setClassName(getPackageName(),
 		// getClass().getPackage().getName()+".fthread");
-				getClass().getPackage().getName() + ".catalog");
+				getClass().getPackage().getName() + ".Catalog");
 		startActivity(intent);
 	}
 }

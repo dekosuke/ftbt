@@ -20,7 +20,7 @@
             <intent-filter>
             </intent-filter>
         </activity>
-        <activity android:name="catalog"
+        <activity android:name="Catalog"
                   android:label="@string/app_name"
                   android:screenOrientation="portrait">
             <intent-filter>

@@ -26,7 +26,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 
-public class FutabaCatalogParser {
+public class CatalogParser {
 
 	private String urlStr;
 	private String title;
@@ -36,7 +36,7 @@ public class FutabaCatalogParser {
 
 	private ArrayList<FutabaThread> fthreads;
 
-	public FutabaCatalogParser(String urlStr) {
+	public CatalogParser(String urlStr) {
 		this.urlStr = urlStr;
 		title = "(title)";
 		fthreads = new ArrayList<FutabaThread>();

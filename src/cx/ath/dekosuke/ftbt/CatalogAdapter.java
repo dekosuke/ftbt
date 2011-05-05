@@ -30,7 +30,7 @@ import android.view.WindowManager;
 import android.content.Context;
 import android.view.Display;
 
-public class FutabaCatalogAdapter extends ArrayAdapter {
+public class CatalogAdapter extends ArrayAdapter {
 
 	private ArrayList items;
 	private LayoutInflater inflater;
@@ -40,7 +40,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 	private int width;
 	private int height;
 
-	public FutabaCatalogAdapter(Context context, int textViewResourceId,
+	public CatalogAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
 		super(context, textViewResourceId, items);
 		this.items = items;
@@ -78,7 +78,7 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 				public void onClick(View v) {
 					Log.d("ftbt", "intent calling thread activity");
 					Intent intent = new Intent();
-					catalog activity = (catalog) getContext();
+					Catalog activity = (Catalog) getContext();
 					// Log.d ( "ftbt", threadNum );
 					String baseUrl = activity.baseUrl;
 					intent.putExtra("baseUrl", baseUrl);
@@ -140,9 +140,9 @@ public class FutabaCatalogAdapter extends ArrayAdapter {
 		public ImageGetTask(ImageView _image) {
 			image = _image;
 			tag = _image.getTag().toString();
-			synchronized (FutabaCatalogAdapter.lock_id) {
-				FutabaCatalogAdapter.LastTaskID += 1;
-				id = FutabaCatalogAdapter.LastTaskID;
+			synchronized (CatalogAdapter.lock_id) {
+				CatalogAdapter.LastTaskID += 1;
+				id = CatalogAdapter.LastTaskID;
 			}
 		}
 
