@@ -2,12 +2,17 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 
+import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TabHost;
+import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 
 import cx.ath.dekosuke.ftbt.R.id;
@@ -29,6 +34,19 @@ public class ftbt extends TabActivity {
 				tabs.getTabContentView(), true);
 		Intent intent;
 
+		// キャッシュを削除する(重い)
+		ProgressDialog waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("キャッシュの整理中・・・");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialoProgressDialogg.setCancelable(true);
+		waitDialog.show();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		SDCard.limitCache(30);
+		waitDialog.dismiss();
+		
 		try {
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBS>();
@@ -80,5 +98,32 @@ public class ftbt extends TabActivity {
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
+	}
+	
+	//メニュー
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_bbsmenu, menu);
+		return true;
+	}
+
+	//メニューをクリック
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
+		switch (item.getItemId()) {
+		case R.id.settings:
+			intent = new Intent();
+			intent.setClassName(getPackageName(), getClass().getPackage()
+					.getName() + ".PrefSetting");
+			startActivity(intent);
+			return true;
+		case R.id.about:
+			Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
 	}
 }

@@ -39,19 +39,6 @@ public class ftbt_tab extends Activity implements Runnable {
 		Intent intent = getIntent();
 		mode = (String) intent.getSerializableExtra("mode");
 
-		// キャッシュを削除する(重いので明示+確認すべし)
-		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("キャッシュの整理中・・・");
-		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		// waitDialog.setCancelable(true);
-		waitDialog.show();
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-		SDCard.limitCache(30);
-		waitDialog.dismiss();
-
 		setWait();
 
 	}

@@ -177,7 +177,7 @@ public class fthread extends Activity implements Runnable {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
+		inflater.inflate(R.menu.menu_thread, menu);
 		return true;
 	}
 

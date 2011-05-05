@@ -3,6 +3,9 @@ package cx.ath.dekosuke.ftbt;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.content.Intent;
 import android.webkit.CookieSyncManager;
@@ -165,6 +168,33 @@ public class catalog extends Activity implements OnClickListener, Runnable {
 	public void onClick(View v) {
 		Log.d("ftbt", "catalog onclick");
 		// v.reload();
+	}
+
+	//メニュー
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_catalog, menu);
+		return true;
+	}
+
+	//メニューをクリック
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
+		switch (item.getItemId()) {
+		case R.id.settings:
+			intent = new Intent();
+			intent.setClassName(getPackageName(), getClass().getPackage()
+					.getName() + ".PrefSetting");
+			startActivity(intent);
+			return true;
+		case R.id.about:
+			Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
 	}
 
 }

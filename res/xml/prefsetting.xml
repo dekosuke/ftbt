@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:title="てすと" android:key="test" android:summary="テストのサマリー"></EditTextPreference>
+    <EditTextPreference android:title="キャッシュ(単位:MB)" android:key="cachesize" 
+    android:inputType="number"
+    android:defaultValue="10"
+    android:summary="大きくすると起動時に時間がかかる可能性があります"></EditTextPreference>
     <CheckBoxPreference android:summaryOn="On" android:summary="サマリー" android:summaryOff="Off" android:key="TestCheckBox" android:title="チェックボックスのテスト"></CheckBoxPreference>
 </PreferenceScreen>
