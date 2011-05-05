@@ -90,13 +90,14 @@ public class FutabaTopAdapter extends ArrayAdapter {
 							ftbt ftbt_top = (ftbt)activity.getParent();
 							//ftbt_top.favoriteBBSs.add(item);
                             ftbt_top.addFavoriteBBSs(item);
+    						Toast.makeText(activity, "お気に入り追加しました", Toast.LENGTH_SHORT).show();
 						}else{
 							ftbt ftbt_top = (ftbt)activity.getParent();
                             ftbt_top.removeFavoriteBBSs(item);
+    						Toast.makeText(activity, "お気に入りから外しました", Toast.LENGTH_SHORT).show();
 						}
 						view_parent.invalidate();
 						notifyDataSetChanged();
-						Toast.makeText(activity, "Favがクリックされました", Toast.LENGTH_SHORT).show();
 					}
 				});			
 				

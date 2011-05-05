@@ -40,12 +40,26 @@ android:layout_height="wrap_content" android:id="@+id/top_blank">
     
     </LinearLayout>  
 
+<FrameLayout
+            android:id="@+id/TestSample"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+		    android:layout_below="@id/top_blank" 
+		    android:layout_above="@id/buttons"
+            >
 <cx.ath.dekosuke.ftbt.ImageCatalogSingleView
 	android:id="@+id/image" 
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-    android:layout_below="@id/top_blank" 
-    android:layout_above="@id/buttons"
 /> 
+<TextView android:layout_width="fill_parent"  
+	android:layout_height="fill_parent"
+	android:id="@+id/imagenum"  
+	android:text="test"
+	android:gravity="right"
+	android:textSize="14sp"
+	android:textColor="#117743"
+	/>
+</FrameLayout>
 
 </RelativeLayout>

@@ -191,8 +191,8 @@ public class fthread extends Activity implements Runnable {
 			String thread_title = statuses.get(0).text;
 			thread_title = thread_title.substring(0, Math.min(50, thread_title.length()));
 			//threadURL
-			String hashTag = " #fromandroid";
-			String status_encoded = "てすてす"; //URIエンコードされた、ツイートしたい文章
+			//String hashTag = " #futaba";
+			String status_encoded = thread_title+" "+threadURL; //URIエンコードされた、ツイートしたい文章
 			//Uri uri = Uri.parse("http://twitter.com/?status="+status_encoded);
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");

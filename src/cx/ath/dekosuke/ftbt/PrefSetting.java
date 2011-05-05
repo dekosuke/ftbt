@@ -33,8 +33,8 @@ public class PrefSetting extends PreferenceActivity {
 	private boolean CacheSizeChange(Preference preference, Object newValue) {
         String input = newValue.toString();  
         try{
-	        if (input != null && Integer.parseInt(input) > 0
-	        		&& Integer.parseInt(input) < 999){  
+	        if (input != null && Integer.parseInt(input) > 0 &&
+	        		Integer.parseInt(input) > 4 && Integer.parseInt(input) <= 1000){  
 	            preference.setSummary(input);  
 	            return true;  
 	        } else {  
@@ -43,7 +43,7 @@ public class PrefSetting extends PreferenceActivity {
         }catch(Exception e){
         	
         }
-        Toast.makeText(this, "1000より小さい数字を入力してください", Toast.LENGTH_LONG);
+        Toast.makeText(this, "キャッシュサイズは5MBから1000MBにしてください", Toast.LENGTH_LONG);
         return false;
 	}
 }
