@@ -68,6 +68,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public String mode;
 
 	int position = 0; // 現在位置(リロード時復帰用)
+	
+	boolean onCreateEnd=false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				adapter.notifyDataSetChanged();
 				ListView listView = (ListView) findViewById(id.cataloglistview);
 				listView.invalidate();
+			}
+			if (onCreateEnd && mode.equals("history")) { //履歴カター＞スレ－＞履歴カタで履歴の並びが変わっている可能性あり
+				if(adapter!=null){				
+					setWait();
+				}
 			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
@@ -224,6 +231,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			}
 
 			waitDialog.dismiss();
+			onCreateEnd = true;
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
@@ -253,6 +261,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	final int DELETE_CHECKED = 0;
 	final int DELETE_NONCHECKED = 1;
 	final int DELETE_ALL = 2;
+
 	// 履歴削除ボタン
 	public void onClickDeleteBtn(View v) {
 		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ", "すべてのスレ" };
@@ -286,10 +295,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void deleteThreads() {
 		try {
 			ListView listView = (ListView) findViewById(id.cataloglistview);
-			Log.d("ftbt", "count="+listView.getCount());
+			Log.d("ftbt", "count=" + listView.getCount());
 			Log.d("ftbt", "delete threads with option " + delete_option);
-			//http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
-			//見えてる場所しか消せないぽいよ？・・
+			// http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
+			// 見えてる場所しか消せないぽいよ？・・
 			int firstPosition = listView.getFirstVisiblePosition();
 			if (delete_option == DELETE_CHECKED) {
 				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
@@ -299,7 +308,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 								.findViewById(R.id.checkbox);
 						if (checkbox.isChecked()) {
 							Log.d("ftbt", "delete element at " + i);
-							adapter.items.remove(i+firstPosition);
+							adapter.items.remove(i + firstPosition);
 						}
 					}
 				}
@@ -311,11 +320,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 								.findViewById(R.id.checkbox);
 						if (!checkbox.isChecked()) {
 							Log.d("ftbt", "delete element at " + i);
-							adapter.items.remove(i+firstPosition);
+							adapter.items.remove(i + firstPosition);
 						}
 					}
 				}
-			} else if(delete_option == DELETE_ALL ){
+			} else if (delete_option == DELETE_ALL) {
 				adapter.items.clear();
 			}
 			HistoryManager man = new HistoryManager();
@@ -335,11 +344,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		Log.d("ftbt", "catalog onclick");
 		// v.reload();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		Log.d("ftbt", "Catalog::onDestoy(), System.gc will be called");
-		System.gc(); //GC促す
+		System.gc(); // GC促す
 		super.onDestroy();
 	}
 
@@ -369,5 +378,4 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		}
 		return false;
 	}
-
 }

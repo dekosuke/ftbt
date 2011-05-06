@@ -197,6 +197,16 @@ public class FutabaThread extends Activity implements Runnable {
 		setWait();
 	}
 
+	public void onClickGoTopBtn(View v) {
+		//最後へ
+		listView.setSelection(0);
+	}
+	
+	public void onClickGoBottomBtn(View v) {
+		//最後へ
+		listView.setSelection(listView.getCount()-1);
+	}
+
 	public void onClickPostBtn(View v) {
 		// Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
