@@ -61,7 +61,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 	private Button buttonReload;
-	//private ListView listView;
+	// private ListView listView;
 	private String BBSName = ""; // 板名
 
 	// 履歴モードか通常モードか
@@ -88,7 +88,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		CookieSyncManager.getInstance().stopSync();
 		try {
 			Log.d("ftbt", "Catalog::onResume");
-			if(adapter!=null){
+			if (adapter != null) {
 				adapter.notifyDataSetChanged();
 				ListView listView = (ListView) findViewById(id.cataloglistview);
 				listView.invalidate();
@@ -162,7 +162,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					network_ok = true;
 				} catch (UnknownHostException e) { // ネット繋がってない
 
-					//Log.d("ftbt", "message", e);
+					// Log.d("ftbt", "message", e);
 					network_ok = false;
 					if (SDCard.cacheExist(FutabaCrypt.createDigest(catalogURL))) {
 						Log.d("ftbt",
@@ -207,8 +207,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				HistoryManager man = new HistoryManager();
 				man.Load();
 				fthreads = man.getThreadsArray();
-				
-				//通常モードのときのボタンを非表示に
+
+				// 通常モードのときのボタンを非表示に
 				Button reloadButton = (Button) findViewById(id.reload_btn);
 				reloadButton.setVisibility(View.GONE);
 				Button historyButton = (Button) findViewById(id.history_btn);
@@ -252,10 +252,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	int delete_option = 0;
 	final int DELETE_CHECKED = 0;
 	final int DELETE_NONCHECKED = 1;
+	final int DELETE_ALL = 2;
 
 	// 履歴削除ボタン
 	public void onClickDeleteBtn(View v) {
-		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ" };
+		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ", "すべてのスレ" };
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(Catalog.this);
 		dlg.setTitle("スレッド履歴の削除");
@@ -286,27 +287,37 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void deleteThreads() {
 		try {
 			ListView listView = (ListView) findViewById(id.cataloglistview);
+			Log.d("ftbt", "count="+listView.getCount());
 			Log.d("ftbt", "delete threads with option " + delete_option);
+			//http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
+			//見えてる場所しか消せないぽいよ？・・
+			int firstPosition = listView.getFirstVisiblePosition();
 			if (delete_option == DELETE_CHECKED) {
 				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
-					CheckBox checkbox = (CheckBox) view
-							.findViewById(R.id.checkbox);
-					if (checkbox.isChecked()) {
-						Log.d("ftbt", "delete element at " + i);
-						adapter.items.remove(i);
+					if (view != null) {
+						CheckBox checkbox = (CheckBox) view
+								.findViewById(R.id.checkbox);
+						if (checkbox.isChecked()) {
+							Log.d("ftbt", "delete element at " + i);
+							adapter.items.remove(i+firstPosition);
+						}
 					}
 				}
 			} else if (delete_option == DELETE_NONCHECKED) {
 				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
-					CheckBox checkbox = (CheckBox) view
-							.findViewById(R.id.checkbox);
-					if (!checkbox.isChecked()) {
-						Log.d("ftbt", "delete element at " + i);
-						adapter.items.remove(i);
+					if (view != null) {
+						CheckBox checkbox = (CheckBox) view
+								.findViewById(R.id.checkbox);
+						if (!checkbox.isChecked()) {
+							Log.d("ftbt", "delete element at " + i);
+							adapter.items.remove(i+firstPosition);
+						}
 					}
 				}
+			} else if(delete_option == DELETE_ALL ){
+				adapter.items.clear();
 			}
 			HistoryManager man = new HistoryManager();
 			man.set(adapter.items);
