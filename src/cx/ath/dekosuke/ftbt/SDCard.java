@@ -165,17 +165,16 @@ public class SDCard {
 	// HTMLファイルは消えにくいように時間を一日伸ばしている
 	static Comparator comparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
+			final long additional_days = 3 * 24 * 3600 * 1000;
 			File f1 = (File) o1;
 			File f2 = (File) o2;
 			long f1_lastmodified = f1.lastModified();
 			if (FutabaCrypt.isHTMLName(f1.toString())) {
-				long oneday = 24 * 3600 * 1000;
-				f1_lastmodified += oneday;
+				f1_lastmodified += additional_days;
 			}
 			long f2_lastmodified = f2.lastModified();
-			if (FutabaCrypt.isHTMLName(f1.toString())) {
-				long oneday = 24 * 3600 * 1000;
-				f2_lastmodified += oneday;
+			if (FutabaCrypt.isHTMLName(f2.toString())) {				
+				f2_lastmodified += additional_days;
 			}
 
 			return (int) (f2_lastmodified - f1_lastmodified);
