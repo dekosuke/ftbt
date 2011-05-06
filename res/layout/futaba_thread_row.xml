@@ -32,7 +32,7 @@
             android:textSize="16sp"
             android:autoLink="web"
             android:textColor="#800000"
-            android:ellipsize="marquee" />  
+            android:ellipsize="none" />  
     </LinearLayout>  
      <LinearLayout  
         android:orientation="vertical"
