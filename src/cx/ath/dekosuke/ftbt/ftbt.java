@@ -68,7 +68,7 @@ public class ftbt extends TabActivity {
 			favoriteBBSs = FavoriteSettings.getFavorites(this);
 			// タブシートの設定
 			intent = new Intent().setClassName(getPackageName(), getClass()
-					.getPackage().getName() + ".ftbt_tab");
+					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "all");
 			TabSpec tab01 = tabs.newTabSpec("TabSheet1");
 			tab01.setIndicator("すべて");
@@ -76,7 +76,7 @@ public class ftbt extends TabActivity {
 			tabs.addTab(tab01);
 
 			intent = new Intent().setClassName(getPackageName(), getClass()
-					.getPackage().getName() + ".ftbt_tab");
+					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "fav");
 			tab02 = tabs.newTabSpec("TabSheet2");
 			tab02.setIndicator("お気に入り");

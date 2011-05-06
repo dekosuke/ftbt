@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import cx.ath.dekosuke.ftbt.R.id;
 
-public class ftbt_tab extends Activity implements Runnable {
+public class FutabaBBSMenu extends Activity implements Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 

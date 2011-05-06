@@ -76,7 +76,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				TextView name = (TextView) view.findViewById(R.id.name);
 				name.setText(item.name);
 				final Button buttonFavorite = (Button) view.findViewById(R.id.favorite_btn);
-				final ftbt_tab activity = (ftbt_tab)getContext();
+				final FutabaBBSMenu activity = (FutabaBBSMenu)getContext();
 				if(activity.mode.equals("all")){
 					buttonFavorite.setText("Fav!");
 				}else{
@@ -106,7 +106,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				ll_main.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						Log.d("ftbt", "onclick_bbs");
-						ftbt_tab activity = (ftbt_tab)getContext();
+						FutabaBBSMenu activity = (FutabaBBSMenu)getContext();
 						activity.transSetting(item);
 					}
 				});			

@@ -14,7 +14,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ftbt_tab"
+        <activity android:name="FutabaBBSMenu"
                   android:label="@string/app_name"
                   android:screenOrientation="portrait">
             <intent-filter>
