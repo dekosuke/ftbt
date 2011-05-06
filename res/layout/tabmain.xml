@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:paddingTop="5px"
         >
-        // <!-- タブ画面1のレイアウト -->
+        // <!-- タブ画面1のレイアウト。事実上あまり意味ない -->
         <LinearLayout android:id="@+id/sheet01_id"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

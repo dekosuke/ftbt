@@ -6,10 +6,10 @@
     android:padding="1dip">
     <ImageView android:id="@+id/image" android:layout_width="wrap_content"  
         android:layout_height="fill_parent" android:layout_marginRight="6dip"  
+        android:layout_margin="6dip"
           />  
     <LinearLayout android:orientation="vertical"  
         android:layout_width="fill_parent" android:layout_weight="1"  
-        android:layout_margin="6dip"
         android:layout_height="fill_parent">  
 	    <LinearLayout android:orientation="horizontal"  
 	        android:layout_width="fill_parent" android:layout_weight="0"

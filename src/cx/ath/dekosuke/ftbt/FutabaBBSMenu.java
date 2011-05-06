@@ -76,7 +76,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 	};
 
 	private void loading() {
-		setContentView(R.layout.main);
+		setContentView(R.layout.bbsmenu);
 
 		Intent intent = getIntent();
 
