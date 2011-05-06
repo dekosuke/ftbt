@@ -23,9 +23,13 @@ class FutabaCrypt {
 		for (int i = 0; i < digest.length; i++) {
 			sb.append(Integer.toHexString(0xff & digest[i]));
 		}
-		if( source.substring(Math.max(0, source.length()-4)).equals(".htm") ){
+		if( FutabaCrypt.isHTMLName(source) ){
 			return sb.toString()+".htm";
 		}
 		return sb.toString();
+	}
+	
+	public static boolean isHTMLName(String str){
+		return str.substring(Math.max(0, str.length()-4)).equals(".htm");
 	}
 }
