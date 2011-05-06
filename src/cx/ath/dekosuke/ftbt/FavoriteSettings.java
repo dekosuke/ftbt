@@ -16,12 +16,12 @@ import android.util.Log;
 public class FavoriteSettings {
 	private static final String OPT_FAVORITES = "favorites";
 
-	public static ArrayList<FutabaBBSContents> getFavorites(Context context) 
+	public static ArrayList<FutabaBBSContent> getFavorites(Context context) 
         throws IOException {
-    	ArrayList<FutabaBBSContents> bbss = new ArrayList<FutabaBBSContents>();
+    	ArrayList<FutabaBBSContent> bbss = new ArrayList<FutabaBBSContent>();
         try{
 	    	if( SDCard.existSeriarized(OPT_FAVORITES)){
-                bbss = (ArrayList<FutabaBBSContents>) SDCard.getSerialized(OPT_FAVORITES).readObject();
+                bbss = (ArrayList<FutabaBBSContent>) SDCard.getSerialized(OPT_FAVORITES).readObject();
             }
         }catch(Exception e){
             Log.i("ftbt", "message", e);
@@ -30,7 +30,7 @@ public class FavoriteSettings {
 	}
 
 	public static void setFavorites(Context context,
-			ArrayList<FutabaBBSContents> futabaBBSs) throws IOException { // PASSWORD用ゲッタの定義
+			ArrayList<FutabaBBSContent> futabaBBSs) throws IOException { // PASSWORD用ゲッタの定義
         /*
 		String serializeStr = "";
 		Iterator iterator = futabaBBSs.iterator();

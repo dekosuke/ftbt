@@ -4,7 +4,7 @@
     <EditTextPreference android:title="(未実装)フォントサイズの変更"
     android:key="@string/fontsize" 
     android:inputType="number"
-    android:defaultValue="10"
+    android:defaultValue="16"
     android:summary="画面のフォントサイズを設定します"></EditTextPreference>
     <EditTextPreference android:title="キャッシュ(単位:MB)"
     android:key="@string/cachesize" 

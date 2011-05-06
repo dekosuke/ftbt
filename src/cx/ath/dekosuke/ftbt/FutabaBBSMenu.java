@@ -80,7 +80,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 
 		Intent intent = getIntent();
 
-		ArrayList<FutabaBBSContents> BBSs = new ArrayList<FutabaBBSContents>();
+		ArrayList<FutabaBBSContent> BBSs = new ArrayList<FutabaBBSContent>();
 		if (mode.equals("all")) {
 			FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
 					"http://www.2chan.net/bbsmenu.html");
@@ -112,7 +112,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 	}
 
 	// 設定画面に遷移
-	public void transSetting(FutabaBBSContents item) {
+	public void transSetting(FutabaBBSContent item) {
 		Intent intent = new Intent();
 		/*
 		 * intent.setClassName(getPackageName(),

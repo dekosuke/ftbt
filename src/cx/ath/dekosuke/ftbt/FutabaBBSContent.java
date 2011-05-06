@@ -5,7 +5,7 @@ import java.io.Serializable;
 import android.util.Log;
 
 //板の情報を持つクラス
-public class FutabaBBSContents implements Serializable{
+public class FutabaBBSContent implements Serializable{
 	/**
 	 * 
 	 */
@@ -13,10 +13,10 @@ public class FutabaBBSContents implements Serializable{
 	public String url;
 	public String name;
 
-	public FutabaBBSContents() {
+	public FutabaBBSContent() {
 	}
 
-	public FutabaBBSContents(String s) {
+	public FutabaBBSContent(String s) {
 		String[] elems = s.split(":::");
 		url = elems[0];
 		name = elems[1];
@@ -27,7 +27,7 @@ public class FutabaBBSContents implements Serializable{
 	}
 	
 	public boolean equals(Object obj){
-		FutabaBBSContents rhs = (FutabaBBSContents)obj;
+		FutabaBBSContent rhs = (FutabaBBSContent)obj;
 		return (url.equals(rhs.url)) && (name.equals(rhs.name));
 	}
 	

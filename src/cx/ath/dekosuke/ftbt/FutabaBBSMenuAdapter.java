@@ -69,7 +69,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 			}
 
 			// 表示すべきデータの取得
-			final FutabaBBSContents item = (FutabaBBSContents) items.get(position);
+			final FutabaBBSContent item = (FutabaBBSContent) items.get(position);
 			if (item != null) {
 				TextView url = (TextView) view.findViewById(R.id.url);
 				url.setText(item.url);
