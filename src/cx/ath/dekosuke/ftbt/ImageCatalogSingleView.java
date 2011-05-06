@@ -61,7 +61,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	private PointF p1 = new PointF();
 	private PointF p2 = new PointF();
 	private int point_side = 1;
-	
+
 	private boolean rotated = false;
 
 	// ダブルクリックのための(ry
@@ -85,19 +85,19 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	public ImageCatalogSingleView(Context context, AttributeSet attrs,
 			int defStyle) {
 		super(context, attrs, defStyle);
-		matrix = new Matrix();
-		matrix.setScale(1, 1);
-		bx = by = 0;
-		setEnabled(true);
-		setClickable(true); // これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
-		// setOnTouchListener(this);
-
-		// 拡大縮小可能に
-		this.setScaleType(ScaleType.MATRIX);
-		// 画像取得
-		setImage();
-		// ダブルタップ
 		try {
+			matrix = new Matrix();
+			matrix.setScale(1, 1);
+			bx = by = 0;
+			setEnabled(true);
+			setClickable(true); // これないとマルチタッチ効かないけど、あると親クラスのクリックイベントを奪う・・
+			// setOnTouchListener(this);
+
+			// 拡大縮小可能に
+			this.setScaleType(ScaleType.MATRIX);
+			// 画像取得
+			setImage();
+			// ダブルタップ
 			this.gestureDetector = new GestureDetector(context,
 					simpleOnGestureListener);
 		} catch (Exception e) {
@@ -232,56 +232,51 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	public void rotateImage() {
 		Log.d("ftbt", "rotate called");
 		/*
-		float[] values = new float[9];
-		matrix.getValues(values);
-		values[Matrix] += dx;
-		values[Matrix.MTRANS_Y] += dy;
-		matrix.setValues(values);
-		*/
-		matrix.postRotate(90f, width/2, height/2);
+		 * float[] values = new float[9]; matrix.getValues(values);
+		 * values[Matrix] += dx; values[Matrix.MTRANS_Y] += dy;
+		 * matrix.setValues(values);
+		 */
+		matrix.postRotate(90f, width / 2, height / 2);
 		setImageMatrix(matrix);
 		rotated = !rotated;
 	}
-		
+
 	// 画像の拡大縮小
 	public void zoomImage(float scale, float mx, float my) {
-		//matrix.set(moveMatrix);
+		// matrix.set(moveMatrix);
 
 		// 現在のスケール取得
 		float[] values = new float[9];
 		matrix.getValues(values);
-		float currentScale = 1f; 
-		if(!rotated){
+		float currentScale = 1f;
+		if (!rotated) {
 			currentScale = Math.abs(values[Matrix.MSCALE_X]);
-		}else{
-			currentScale = Math.abs(values[Matrix.MSKEW_X]);			
+		} else {
+			currentScale = Math.abs(values[Matrix.MSKEW_X]);
 		}
 		float postScale = currentScale * scale;
-		
-		Log.d("ftbt", "current="+currentScale+" scale="+scale);
+
+		Log.d("ftbt", "current=" + currentScale + " scale=" + scale);
 
 		// 画面に収まるサイズ
 		float minScale = 1f;
-		if(!rotated){
+		if (!rotated) {
 			minScale = Math.min((float) width / (float) bm.getWidth(),
 					(float) height / (float) bm.getHeight());
-		}else{
+		} else {
 			minScale = Math.min((float) height / (float) bm.getWidth(),
-					(float) width / (float) bm.getHeight());			
+					(float) width / (float) bm.getHeight());
 		}
 		minScale = Math.min(minScale, 1f);
-		Log.d("ftbt", "minscale="+minScale);
+		Log.d("ftbt", "minscale=" + minScale);
 		if (postScale < minScale) {
 			scale = minScale / currentScale;
 		}
 		matrix.postScale(scale, scale, mx, my);
 		/*
-		if(!rotated){
-			matrix.postScale(scale, scale, mx, my);
-		}else{
-			matrix.postScale(scale, scale, my, mx);			
-		}
-		*/
+		 * if(!rotated){ matrix.postScale(scale, scale, mx, my); }else{
+		 * matrix.postScale(scale, scale, my, mx); }
+		 */
 
 		bx = bm.getWidth() * postScale;
 		by = bm.getHeight() * postScale;
