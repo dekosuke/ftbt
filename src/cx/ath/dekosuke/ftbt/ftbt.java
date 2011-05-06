@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -15,7 +16,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 
@@ -72,7 +77,8 @@ public class ftbt extends TabActivity {
 					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "all");
 			TabSpec tab01 = tabs.newTabSpec("TabSheet1");
-			tab01.setIndicator("すべて");
+			View v1 = new MyView(this, "すべて");
+			tab01.setIndicator(v1);
 			tab01.setContent(intent);
 			tabs.addTab(tab01);
 
@@ -80,7 +86,9 @@ public class ftbt extends TabActivity {
 					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "fav");
 			tab02 = tabs.newTabSpec("TabSheet2");
-			tab02.setIndicator("お気に入り");
+			//tab02.setIndicator("お気に入り");
+			View v2 = new MyView(this, "お気に入り");
+			tab02.setIndicator(v2);
 			tab02.setContent(intent);
 			tabs.addTab(tab02);
 			// 初期表示のタブ設定
@@ -143,5 +151,25 @@ public class ftbt extends TabActivity {
 		}
 		return false;
 	}
+	
+    private class MyView extends FrameLayout {
+        private LayoutInflater inflater;
 
+        public MyView(Context context) {
+            super(context);
+            inflater = LayoutInflater.from(context);
+        }
+
+        public MyView(Context context, String title) {
+            this(context);
+
+            View v = inflater.inflate(R.layout.tabwidget, null);
+
+            // テキスト
+            TextView tv = (TextView) v.findViewById(R.id.text);
+            tv.setText(title);
+
+            addView(v);
+        }
+    }
 }
