@@ -69,6 +69,7 @@ public class FutabaThread extends Activity implements Runnable {
 		baseURL = (String) intent.getSerializableExtra("baseUrl");
 		threadNum = (String) intent.getSerializableExtra("threadNum");
 		threadURL = baseURL + threadNum;
+		Log.d("ftbt", "threadurl="+threadURL);
 		setWait();
 	}
 
@@ -119,7 +120,7 @@ public class FutabaThread extends Activity implements Runnable {
 						threadURL), true); // キャッシュに保存
 				threadHtml = SDCard
 						.loadTextCache(FutabaCrypt.createDigest(threadURL));
-				Log.d("ftbt", threadHtml);
+				//Log.d("ftbt", threadHtml);
 				network_ok = true;
 			} catch (IOException e){ //レスポンスコードが2XX以外とか(スレ落ちなど)
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {

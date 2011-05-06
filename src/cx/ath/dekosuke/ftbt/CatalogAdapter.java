@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.text.Html;
 import android.util.Log;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -88,6 +89,9 @@ public class CatalogAdapter extends ArrayAdapter {
 					Catalog activity = (Catalog) getContext();
 					try{
 						FutabaThreadContent thread = item;
+						if(!activity.mode.equals("history")){ //通常
+							thread.baseUrl = activity.baseUrl;
+						}
 						HistoryManager man = new HistoryManager();
 						man.Load();
 						int maxHistoryNum = 5;
@@ -107,8 +111,15 @@ public class CatalogAdapter extends ArrayAdapter {
 					}
 
 					// Log.d ( "ftbt", threadNum );
-					String baseUrl = activity.baseUrl;
-					intent.putExtra("baseUrl", baseUrl);
+					if(!activity.mode.equals("history")){ //通常
+						String baseUrl = activity.baseUrl;
+						intent.putExtra("baseUrl", baseUrl);						
+						Log.d("ftbt", "normal intent");
+					}else{
+						String baseUrl = item.baseUrl; //履歴モード
+						intent.putExtra("baseUrl", baseUrl);		
+						Log.d("ftbt", "history intent");
+					}
 					intent.putExtra("threadNum", threadNum);
 					intent.setClassName(activity.getPackageName(), activity
 							.getClass().getPackage().getName()
@@ -127,7 +138,8 @@ public class CatalogAdapter extends ArrayAdapter {
 			// テキストをビューにセット
 			TextView text = (TextView) view.findViewById(R.id.bottomtext);
 			if (item.text != null) {
-				text.setText(item.text);
+				CharSequence cs = Html.fromHtml(item.text);
+				text.setText(cs);
 			}
 			TextView resNum = (TextView) view.findViewById(R.id.resnum);
 			resNum.setText(item.resNum+"レス");

@@ -64,7 +64,7 @@ public class CatalogParser {
 				FutabaThreadContent thread = new FutabaThreadContent();
 				String text = mcText.group(1);
 				String resNum = mcText.group(2);
-				text = tagPattern.matcher(text).replaceAll(""); // タグ除去
+				//text = tagPattern.matcher(text).replaceAll(""); // タグ除去
 				thread.text=text;
 				thread.resNum=resNum;
 				Matcher mcThreadNum = threadNumPattern.matcher(mcRes.group(1));

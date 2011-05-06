@@ -288,7 +288,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			ListView listView = (ListView) findViewById(id.cataloglistview);
 			Log.d("ftbt", "delete threads with option " + delete_option);
 			if (delete_option == DELETE_CHECKED) {
-				for (int i = listView.getCount() - 1; i >= 0; --i) {
+				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
 					CheckBox checkbox = (CheckBox) view
 							.findViewById(R.id.checkbox);
@@ -298,7 +298,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 				}
 			} else if (delete_option == DELETE_NONCHECKED) {
-				for (int i = listView.getCount() - 1; i >= 0; --i) {
+				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
 					CheckBox checkbox = (CheckBox) view
 							.findViewById(R.id.checkbox);

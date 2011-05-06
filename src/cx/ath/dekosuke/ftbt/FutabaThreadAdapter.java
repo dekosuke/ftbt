@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.text.Html;
 import android.util.Log;
 import android.os.AsyncTask;
 import android.content.Intent;
@@ -126,7 +127,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 				// テキストをビューにセット
 				if (text != null) {
-					text.setText(item.text);
+					CharSequence cs = Html.fromHtml(item.text); //HTML表示
+					text.setText(cs);
 				}
 			}
 

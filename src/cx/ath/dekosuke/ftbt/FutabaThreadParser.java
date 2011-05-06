@@ -66,26 +66,27 @@ public class FutabaThreadParser {
 			// ここで画像(img)とテキスト(blockquote)のマッチング
 			FutabaStatus statusTop = new FutabaStatus();
 			Matcher mcImg = thumbPattern.matcher(honbun);
-			mcImg.find();
-			statusTop.imgURL = mcImg.group(1);
+			if(mcImg.find()){
+				statusTop.imgURL = mcImg.group(1);				
+				statusTop.width = Integer.parseInt(mcImg.group(2));
+				statusTop.height = Integer.parseInt(mcImg.group(3));
+			}
 			// Log.d("ftbt", "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
-			statusTop.width = Integer.parseInt(mcImg.group(2));
-			statusTop.height = Integer.parseInt(mcImg.group(3));
 			Matcher mcBigImg = imgPattern.matcher(honbun);
-			mcBigImg.find();
-			statusTop.bigImgURL = mcBigImg.group(1);
+			if(mcBigImg.find()){
+				statusTop.bigImgURL = mcBigImg.group(1);
+			}
 			Matcher mcText = textPattern.matcher(honbun);
 			mcText.find();
 			Matcher mcTextAttr = textAttrPattern.matcher(honbun);
 			mcTextAttr.find();
 			if(mcTextAttr.find()){
 				statusTop.title=mcTextAttr.group(1);
-				statusTop.name =mcTextAttr.group(2);
+				statusTop.name =normalize(mcTextAttr.group(2)); //メールアドレスが入っていることあり
 				statusTop.datestr =mcTextAttr.group(3);
 				statusTop.idstr =mcTextAttr.group(4);
 			}
 			String text = mcText.group(1);
-			text = normalize(text);
 			statusTop.text = text;
 			statuses.add(statusTop);
 
@@ -104,7 +105,6 @@ public class FutabaThreadParser {
 					status.idstr =mcTextAttr.group(4);
 				}
 				text = mcText.group(1);
-				text = normalize(text);
 				status.text = text;
 				mcImg = thumbPattern.matcher(mcRes.group(1));
 				if (mcImg.find()) {

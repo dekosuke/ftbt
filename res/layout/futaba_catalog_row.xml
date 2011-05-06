@@ -9,7 +9,7 @@
           />  
     <LinearLayout android:orientation="vertical"  
         android:layout_width="fill_parent" android:layout_weight="1"  
-        android:layout_margin="0dip"
+        android:layout_margin="6dip"
         android:layout_height="fill_parent">  
 	    <LinearLayout android:orientation="horizontal"  
 	        android:layout_width="fill_parent" android:layout_weight="0"
