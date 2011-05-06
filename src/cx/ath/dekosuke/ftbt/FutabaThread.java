@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.content.Context;
 import android.content.Intent;
 
 import android.util.Log;
@@ -205,8 +207,20 @@ public class FutabaThread extends Activity implements Runnable {
 	public void onClickGoBottomBtn(View v) {
 		//最後へ
 		listView.setSelection(listView.getCount()-1);
+		//listView.setSelectionFromTop(position, y)
+		//listView.getScrollY()
 	}
 
+	//一画面ぶんスクロール。未完成
+	//http://d.hatena.ne.jp/gae+eyo/20100729/1280393179
+	//を読めばできそう
+	public void onClickGoBtn(View v) {
+		WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		//smoothScrollByOffsetはAndroid3からですねはい
+		//listView.smoothScrollByOffset(display.getHeight());
+	}
+	
 	public void onClickPostBtn(View v) {
 		// Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();

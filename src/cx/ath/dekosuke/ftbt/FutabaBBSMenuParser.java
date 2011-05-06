@@ -59,6 +59,15 @@ public class FutabaBBSMenuParser {
 				FutabaBBSContent bbs = new FutabaBBSContent();
 				bbs.url = mcBBS.group(1);
 				bbs.name = mcBBS.group(2);
+				if(bbs.name.equals("二次元裏")){
+					if(bbs.url.contains("may")){
+						bbs.name="二次元裏(may)";
+					}else if(bbs.url.contains("dec")){
+						bbs.name="二次元裏(dec)";						
+					}else if(bbs.url.contains("jun")){
+						bbs.name="二次元裏(jun)";						
+					}
+				}
 				BBSs.add(bbs);
 			}
 		} catch (Exception e) {

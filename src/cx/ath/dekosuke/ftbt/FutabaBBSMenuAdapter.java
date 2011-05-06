@@ -78,9 +78,9 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				final Button buttonFavorite = (Button) view.findViewById(R.id.favorite_btn);
 				final FutabaBBSMenu activity = (FutabaBBSMenu)getContext();
 				if(activity.mode.equals("all")){
-					buttonFavorite.setText("Fav!");
+					buttonFavorite.setText("追加");
 				}else{
-					buttonFavorite.setText("Unfav");					
+					buttonFavorite.setText("削除");					
 				}
 
 				final ViewGroup view_parent = parent;
@@ -90,11 +90,11 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 							ftbt ftbt_top = (ftbt)activity.getParent();
 							//ftbt_top.favoriteBBSs.add(item);
                             ftbt_top.addFavoriteBBSs(item);
-    						Toast.makeText(activity, item.name+"をお気に入り追加しました", Toast.LENGTH_SHORT).show();
+    						Toast.makeText(activity, item.name+"をお気に入りに追加しました", Toast.LENGTH_SHORT).show();
 						}else{
 							ftbt ftbt_top = (ftbt)activity.getParent();
                             ftbt_top.removeFavoriteBBSs(item);
-    						Toast.makeText(activity, item.name+"をお気に入りから外しました", Toast.LENGTH_SHORT).show();
+    						Toast.makeText(activity, item.name+"をお気に入りから削除しました", Toast.LENGTH_SHORT).show();
 						}
 						view_parent.invalidate();
 						notifyDataSetChanged();
