@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:title="(未実装)フォントサイズの変更"
+    android:key="@string/fontsize" 
+    android:inputType="number"
+    android:defaultValue="10"
+    android:summary="画面のフォントサイズを設定します"></EditTextPreference>
     <EditTextPreference android:title="キャッシュ(単位:MB)"
     android:key="@string/cachesize" 
     android:inputType="number"

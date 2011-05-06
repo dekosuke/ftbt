@@ -17,21 +17,27 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     >
     <Button android:text="リロード"
         android:id="@+id/reload_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickReloadBtn">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:onClick="onClickReloadBtn"
+        android:layout_weight="2"
+        >
     </Button>
     <Button android:text="履歴"
         android:id="@+id/history_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickHistoryBtn">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:onClick="onClickHistoryBtn"
+        android:layout_weight="2"        
+        >
     </Button>
-    <Button android:text="スレッドを削除"
+    <Button android:text="履歴を削除"
         android:id="@+id/delete_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onClickDeleteBtn">
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:onClick="onClickDeleteBtn"
+        android:layout_weight="2"
+        >
     </Button>
 </LinearLayout>
 

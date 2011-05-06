@@ -3,4 +3,5 @@
     <string name="app_name">ふたばと（debug）</string>
     <string name="cachesize">myCacheSize</string>
     <string name="historynum">myHistoryNum</string>
+    <string name="fontsize">fontSize</string>
 </resources>

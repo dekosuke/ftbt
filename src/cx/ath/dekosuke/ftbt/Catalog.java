@@ -60,7 +60,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 	private Button buttonReload;
-	private ListView listView;
+	//private ListView listView;
 	private String BBSName = ""; // 板名
 
 	// 履歴モードか通常モードか
@@ -88,6 +88,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		try {
 			Log.d("ftbt", "Catalog::onResume");
 			adapter.notifyDataSetChanged();
+			ListView listView = (ListView) findViewById(id.cataloglistview);
 			listView.invalidate();
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
@@ -147,7 +148,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			parser = new CatalogParser();
 
 			setContentView(R.layout.futaba_catalog);
-			listView = (ListView) findViewById(id.cataloglistview);
+			ListView listView = (ListView) findViewById(id.cataloglistview);
 
 			if (!mode.equals("history")) { // 通常
 				String catalogHtml = "";
@@ -226,6 +227,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "catalog onclick-reload");
+		ListView listView = (ListView) findViewById(id.cataloglistview);
 		position = listView.getFirstVisiblePosition();
 		; // 現在位置（リロードで復帰）
 		setWait();
@@ -279,6 +281,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	// チェックされたスレッド、もしくはチェックされていないスレッドを削除する
 	public void deleteThreads() {
 		try {
+			ListView listView = (ListView) findViewById(id.cataloglistview);
 			Log.d("ftbt", "delete threads with option " + delete_option);
 			if (delete_option == DELETE_CHECKED) {
 				for (int i = listView.getCount() - 1; i >= 0; --i) {
