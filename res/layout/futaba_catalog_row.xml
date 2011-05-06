@@ -40,7 +40,14 @@
             android:textColor="#800000"
             />  
     </LinearLayout>  
-　		<CheckBox android:id="@+id/checkbox"
+	        <TextView android:layout_width="50px"  
+	            android:layout_height="wrap_content"
+	            android:id="@+id/nonclickableblank"  
+	            android:textSize="14sp"
+	            android:textColor="#CCCCCC"
+	            android:text="(blank)"
+	            />  
+	        <CheckBox android:id="@+id/checkbox"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:checked="false"
