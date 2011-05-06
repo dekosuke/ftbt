@@ -203,8 +203,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 				Button historyDeleteButton = (Button) findViewById(id.delete_btn);
 				historyDeleteButton.setVisibility(View.GONE);
-				TextView nonclickableblank = (TextView) findViewById(id.nonclickableblank);
-				nonclickableblank.setVisibility(View.GONE);
 			} else { // 履歴モード。複数板混在なので注意
 				HistoryManager man = new HistoryManager();
 				man.Load();

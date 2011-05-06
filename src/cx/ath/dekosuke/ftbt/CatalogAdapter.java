@@ -24,6 +24,8 @@ import android.widget.ListView;
 import java.io.InputStream;
 import java.net.URL;
 
+import cx.ath.dekosuke.ftbt.R.id;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -135,9 +137,11 @@ public class CatalogAdapter extends ArrayAdapter {
 				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setChecked(false);
-			}else{ //
+			}else{ //通常モード
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setVisibility(View.GONE);
+				TextView nonclickableblank = (TextView) view.findViewById(id.nonclickableblank);
+				nonclickableblank.setVisibility(View.GONE);
 			}
 
 			//とりあえず空画像を作成
