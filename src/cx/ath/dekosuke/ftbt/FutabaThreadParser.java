@@ -79,7 +79,6 @@ public class FutabaThreadParser {
 			Matcher mcText = textPattern.matcher(honbun);
 			mcText.find();
 			Matcher mcTextAttr = textAttrPattern.matcher(honbun);
-			mcTextAttr.find();
 			if(mcTextAttr.find()){
 				statusTop.title=mcTextAttr.group(1);
 				statusTop.name =normalize(mcTextAttr.group(2)); //メールアドレスが入っていることあり
@@ -96,7 +95,7 @@ public class FutabaThreadParser {
 				mcText = textPattern.matcher(mcRes.group(1));
 				// Log.d( "ftbt", mcRes.group(1) );
 				mcText.find();
-				mcTextAttr = textAttrPattern.matcher(honbun);
+				mcTextAttr = textAttrPattern.matcher(mcRes.group(1));
 				FutabaStatus status = new FutabaStatus();
 				if(mcTextAttr.find()){
 					status.title=mcTextAttr.group(1);

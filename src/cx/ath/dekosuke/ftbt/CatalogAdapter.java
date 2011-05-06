@@ -51,7 +51,7 @@ public class CatalogAdapter extends ArrayAdapter {
 	public CatalogAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
 		super(context, textViewResourceId, items);
-		this.items = (ArrayList<FutabaThreadContent>)items;
+		this.items = (ArrayList<FutabaThreadContent>) items;
 		this.context = context;
 		this.inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -70,7 +70,8 @@ public class CatalogAdapter extends ArrayAdapter {
 		View view = convertView;
 
 		// 表示すべきデータの取得
-		final FutabaThreadContent item = (FutabaThreadContent) items.get(position);
+		final FutabaThreadContent item = (FutabaThreadContent) items
+				.get(position);
 		final String threadNum = item.threadNum;
 
 		if (view == null) {
@@ -81,16 +82,16 @@ public class CatalogAdapter extends ArrayAdapter {
 
 		}
 
-		//カタログからスレッドをクリックしたときのリスナー
+		// カタログからスレッドをクリックしたときのリスナー
 		if (true) {
 			view.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					Log.d("ftbt", "intent calling thread activity");
 					Intent intent = new Intent();
 					Catalog activity = (Catalog) getContext();
-					try{
+					try {
 						FutabaThreadContent thread = item;
-						if(!activity.mode.equals("history")){ //通常
+						if (!activity.mode.equals("history")) { // 通常
 							thread.baseUrl = activity.baseUrl;
 						}
 						Calendar calendar = Calendar.getInstance();
@@ -98,28 +99,30 @@ public class CatalogAdapter extends ArrayAdapter {
 						HistoryManager man = new HistoryManager();
 						man.Load();
 						int maxHistoryNum = 5;
-						try{
-						SharedPreferences preferences = PreferenceManager
-							.getDefaultSharedPreferences(activity);
-						maxHistoryNum = Integer.parseInt(preferences.getString(
-								activity.getString(R.string.historynum), "5"));
-						}catch(Exception e){
+						try {
+							SharedPreferences preferences = PreferenceManager
+									.getDefaultSharedPreferences(activity);
+							maxHistoryNum = Integer.parseInt(preferences
+									.getString(activity
+											.getString(R.string.historynum),
+											"5"));
+						} catch (Exception e) {
 							Log.d("ftbt", "message", e);
 						}
 
 						man.addThread(thread, maxHistoryNum);
 						man.Save();
-					}catch(Exception e){
+					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
 
-					if(!activity.mode.equals("history")){ //通常
+					if (!activity.mode.equals("history")) { // 通常
 						String baseUrl = activity.baseUrl;
-						intent.putExtra("baseUrl", baseUrl);						
+						intent.putExtra("baseUrl", baseUrl);
 						Log.d("ftbt", "normal intent");
-					}else{
-						String baseUrl = item.baseUrl; //履歴モード
-						intent.putExtra("baseUrl", baseUrl);		
+					} else {
+						String baseUrl = item.baseUrl; // 履歴モード
+						intent.putExtra("baseUrl", baseUrl);
 						Log.d("ftbt", "history intent");
 					}
 					intent.putExtra("threadNum", threadNum);
@@ -134,7 +137,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		Bitmap bm = null;
 		ImageView iv = (ImageView) view.findViewById(R.id.image);
 		iv.setImageBitmap(bm);
-		Catalog activity = (Catalog)getContext();
+		Catalog activity = (Catalog) getContext();
 
 		if (item != null) {
 			// テキストをビューにセット
@@ -144,21 +147,22 @@ public class CatalogAdapter extends ArrayAdapter {
 				text.setText(cs);
 			}
 			TextView resNum = (TextView) view.findViewById(R.id.resnum);
-			resNum.setText(item.resNum+"レス");
-			if(activity.mode.equals("history")){ //履歴モード
+			resNum.setText(item.resNum + "レス");
+			if (activity.mode.equals("history")) { // 履歴モード
 				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
-				BBSName.setText("("+item.BBSName+")");
-				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
+				BBSName.setText("(" + item.BBSName + ")");
+				view.setBackgroundColor(Color.parseColor("#CCCCAA"));
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setChecked(false);
-			}else{ //通常モード
+			} else { // 通常モード
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setVisibility(View.GONE);
-				TextView nonclickableblank = (TextView) view.findViewById(id.nonclickableblank);
+				TextView nonclickableblank = (TextView) view
+						.findViewById(id.nonclickableblank);
 				nonclickableblank.setVisibility(View.GONE);
 			}
 
-			//とりあえず空画像を作成
+			// とりあえず空画像を作成
 			bm = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
 			iv.setImageBitmap(bm);
 

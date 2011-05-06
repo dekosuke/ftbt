@@ -19,7 +19,7 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
         android:layout_height="wrap_content"
         android:onClick="onClickReloadBtn" android:layout_width="fill_parent" android:layout_weight="1">
     </Button>
-    <Button android:text="投稿する"
+    <Button android:text="返信する"
         android:id="@+id/post_btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -84,6 +84,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
+			Log.d("ftbt", "potision="+position+" datestr="+item.datestr);
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
 				title.setText(item.title + " ");// item.getImgURL());
