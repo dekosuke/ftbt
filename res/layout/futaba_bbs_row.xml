@@ -47,8 +47,8 @@
 	            android:layout_height="wrap_content"
 	            android:id="@+id/nonclickableblank"  
 	            android:textSize="14sp"
-	            android:textColor="#CCCCCC"
-	            android:text="(blank)"
+				android:textColor="#117743"
+	            android:text=""
 	            />  
 		<Button
     	    android:id="@+id/favorite_btn"

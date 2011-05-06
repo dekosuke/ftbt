@@ -119,30 +119,38 @@ public class FutabaThread extends Activity implements Runnable {
 						threadURL), true); // キャッシュに保存
 				threadHtml = SDCard
 						.loadTextCache(FutabaCrypt.createDigest(threadURL));
+				Log.d("ftbt", threadHtml);
 				network_ok = true;
-			} catch (Exception e) { // ネットワークつながってないときとか
-				network_ok = false;
-				Log.d("ftbt", "failed to get catalog html");
+			} catch (IOException e){ //レスポンスコードが2XX以外とか(スレ落ちなど)
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
 					Log.d("ftbt", "getting html from cache");
 					threadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
-					cache_ok = true;
+					Toast.makeText(this,
+							"スレッドが存在しません。代わりに前回読み込み時のキャッシュを使用します",
+							Toast.LENGTH_LONG).show();
 				}else{
-					cache_ok = false;					
+					Toast.makeText(this, "スレッドが存在しません", Toast.LENGTH_LONG)
+					.show();
 				}
-			}
-			parser.parse(threadHtml);
-			if (!network_ok) {
-				if (cache_ok) {
+				
+			} catch (Exception e) { // ネットワークつながってないときとか
+				network_ok = false;
+				Log.d("ftbt", "message", e);
+				Log.d("ftbt", "failed to get thread html");
+				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
+					Log.d("ftbt", "getting html from cache");
+					threadHtml = SDCard.loadTextCache(FutabaCrypt
+							.createDigest(threadURL));
 					Toast.makeText(this,
 							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 							Toast.LENGTH_LONG).show();
-				} else {
+				}else{
 					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_LONG)
-							.show();
+					.show();
 				}
 			}
+			parser.parse(threadHtml);
 			statuses = parser.getStatuses();
 			Log.d("ftbt", "parse end");
 

@@ -21,40 +21,39 @@ import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.graphics.BitmapFactory;
 
 //File Saver
 public class SDCard {
-	
-	public static String getCacheDir(){
+
+	public static String getCacheDir() {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
 		String cacheDir = sdcard_dir + "/.ftbtcache/";
 		File file = new File(cacheDir);
-		file.mkdir(); //ディレクトリないときにつくる
+		file.mkdir(); // ディレクトリないときにつくる
 		return cacheDir;
 	}
 
-	public static String getSaveDir(){
+	public static String getSaveDir() {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
 		String saveDir = sdcard_dir + "/ふたばと/";
 		File file = new File(saveDir);
-		file.mkdir(); //ディレクトリないときにつくる
+		file.mkdir(); // ディレクトリないときにつくる
 		return saveDir;
 	}
 
-	
-	public static String getSeriarizedDir(){
+	public static String getSeriarizedDir() {
 		String cacheDir = getCacheDir();
 		String seriarizedDir = cacheDir + "bin/";
 		File file = new File(seriarizedDir);
-		file.mkdir(); //ディレクトリないときにつくる
+		file.mkdir(); // ディレクトリないときにつくる
 		return seriarizedDir;
-		
+
 	}
-	
-	
+
 	public static void saveBin(String name, byte[] bytes, boolean isCache) {
 		String filename;
 		if (!isCache) {
@@ -77,7 +76,8 @@ public class SDCard {
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
 	}
 
-	public static void saveFromURL(String name, URL url, boolean isCache) {
+	public static void saveFromURL(String name, URL url, boolean isCache)
+			throws IOException {
 		try {
 			String filename;
 			if (!isCache) {
@@ -86,7 +86,17 @@ public class SDCard {
 				filename = getCacheDir() + name;
 			}
 
-			InputStream is = url.openStream();
+			// InputStream is = url.openStream();
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+			if (!String.valueOf(conn.getResponseCode()).startsWith("2")) {
+				throw new IOException("Incorrect response code "
+						+ conn.getResponseCode());
+			}
+
+			Log.d("ftbt", "HTTP Response code="+conn.getResponseCode());
+			InputStream is = conn.getInputStream();
+
 			// OutputStream os = new FileOutputStream(filename);
 			File file = new File(filename);
 			file.getParentFile().mkdir();
@@ -100,6 +110,8 @@ public class SDCard {
 			fos.flush();
 			is.close();
 			fos.close();
+		} catch (IOException e) { // 2XX代以外のレスポンスコードとか
+			throw new IOException(e.toString());
 		} catch (Exception e) {
 			Log.d("ftbt", "failed to write file" + name);
 		}
@@ -128,7 +140,8 @@ public class SDCard {
 		return file.exists();
 	}
 
-	public static void copyCacheToFile(String urlhash, String url) throws IOException {
+	public static void copyCacheToFile(String urlhash, String url)
+			throws IOException {
 		String srcfilename = getCacheDir() + urlhash;
 		String dstfilename = getSaveDir() + url;
 		// ファイルコピーのフェーズ
@@ -155,12 +168,12 @@ public class SDCard {
 			File f1 = (File) o1;
 			File f2 = (File) o2;
 			long f1_lastmodified = f1.lastModified();
-			if(FutabaCrypt.isHTMLName(f1.toString())){
+			if (FutabaCrypt.isHTMLName(f1.toString())) {
 				long oneday = 24 * 3600 * 1000;
 				f1_lastmodified += oneday;
 			}
 			long f2_lastmodified = f2.lastModified();
-			if(FutabaCrypt.isHTMLName(f1.toString())){
+			if (FutabaCrypt.isHTMLName(f1.toString())) {
 				long oneday = 24 * 3600 * 1000;
 				f2_lastmodified += oneday;
 			}
