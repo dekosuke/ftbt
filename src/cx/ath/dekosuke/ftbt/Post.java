@@ -314,11 +314,11 @@ public class Post extends Activity implements Runnable {
 				Log.d("ftbt", "imageContent="+imageContent);
 				Log.d("ftbt", "getPath="+imageContent.getPath());
 				//if(true) return;
-				//Cursor c = getContentResolver().query(imageContent, null, null, null, null);
-				//c.moveToFirst();	
-				//String filename = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA)); 
-				//Log.d("ftbt", "filename="+filename);
-				FileBody fileBody = new FileBody(new File(imageContent.getPath()));
+				Cursor c = getContentResolver().query(imageContent, null, null, null, null);
+				c.moveToFirst();	
+				String filename = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA)); 
+				Log.d("ftbt", "filename="+filename);
+				FileBody fileBody = new FileBody(new File(filename));//new File(imageContent.getPath()));
 				entity.addPart("upfile", fileBody);
 			}
 			httppost.setEntity(entity);
