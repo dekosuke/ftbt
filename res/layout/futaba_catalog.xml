@@ -24,7 +24,7 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
         android:layout_weight="2"
         >
     </Button>
-    <Button android:text="履歴"
+    <Button android:text="履歴モードへ"
         android:id="@+id/history_btn"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
