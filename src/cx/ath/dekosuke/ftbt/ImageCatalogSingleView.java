@@ -89,7 +89,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		if(bm!=null){
 			int size = bm.getWidth() * bm.getHeight();
 			bm = null;
-			if(size>1000000){ //巨大な画像ならGC呼ぶよ
+			if(size>640*480){ //そこそこの画像ならGC呼ぶよ
 				Log.d("ftbt", "calling GC");
 				System.gc();
 			}
@@ -256,6 +256,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		matrix.postRotate(90f, width / 2, height / 2);
 		setImageMatrix(matrix);
 		rotated = !rotated;
+		zoomImage(1, width/2, height/2);
 	}
 
 	// 画像の拡大縮小

@@ -335,6 +335,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		Log.d("ftbt", "catalog onclick");
 		// v.reload();
 	}
+	
+	@Override
+	public void onDestroy() {
+		Log.d("ftbt", "Catalog::onDestoy(), System.gc will be called");
+		System.gc(); //GC促す
+		super.onDestroy();
+	}
 
 	// メニュー
 	@Override
