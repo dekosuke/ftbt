@@ -3,6 +3,7 @@ package cx.ath.dekosuke.ftbt;
 import java.security.MessageDigest;
 import android.util.Log;
 
+//ファイル名をハッシュにする
 class FutabaCrypt {
 	public static String createDigest(String source) {
 		MessageDigest md;
@@ -21,6 +22,9 @@ class FutabaCrypt {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < digest.length; i++) {
 			sb.append(Integer.toHexString(0xff & digest[i]));
+		}
+		if( source.substring(Math.max(0, source.length()-4)).equals(".htm") ){
+			return sb.toString()+".htm";
 		}
 		return sb.toString();
 	}
