@@ -81,6 +81,23 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		width = w; // これで幅が取得できる
 		height = h; // これで高さが取得できる
 	}
+	
+	//画像への参照をなくしてメモリを解放させる
+	public void clearImage(){
+		try{
+		super.setImageBitmap(null);
+		if(bm!=null){
+			int size = bm.getWidth() * bm.getHeight();
+			bm = null;
+			if(size>1000000){ //巨大な画像ならGC呼ぶよ
+				Log.d("ftbt", "calling GC");
+				System.gc();
+			}
+		}
+		}catch(Exception e){
+			Log.d("ftbt", "message", e);
+		}
+	}
 
 	public ImageCatalogSingleView(Context context, AttributeSet attrs,
 			int defStyle) {
@@ -378,17 +395,21 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	};
 
 	private void loading() {
-		String imgFile = CircleList.get();
-		setTag(imgFile);
-		Bitmap bmp = ImageCache.getImage(imgFile);
-		if (bmp == null) { // キャッシュない
-			// ImageCache.asyncSetImage(imgFile, imgFile);
-			ImageGetTask task = new ImageGetTask(this);
-			task.execute(imgFile);
-		} else {
-			setImageBitmap(bmp);
-			dismissWaidDialog();
+		try{
+			String imgFile = CircleList.get();
+			setTag(imgFile);
+			Bitmap bmp = ImageCache.getImage(imgFile);
+			if (bmp == null) { // キャッシュない
+				// ImageCache.asyncSetImage(imgFile, imgFile);
+				ImageGetTask task = new ImageGetTask(this);
+				task.execute(imgFile);
+			} else {
+				setImageBitmap(bmp);
+			}
+		}catch(Exception e){
+			Log.d("ftbt", "message", e);
 		}
+		dismissWaidDialog();
 	}
 
 	void dismissWaidDialog() {
@@ -402,7 +423,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	static Object lock = new Object();
 
 	// 画像取得用スレッド
-	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
+	class ImageGetTask extends AsyncTask<String, Void, String> {
 		private ImageCatalogSingleView image;
 		private String tag;
 		private int id;
@@ -419,13 +440,12 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		}
 
 		@Override
-		protected Bitmap doInBackground(String... urls) {
+		protected String doInBackground(String... urls) {
 
-			Bitmap bm = null;
 			try {
 				Log.d("ftbt", "getting" + urls[0]);
-				bm = ImageCache.getImage(urls[0]);
-				if (bm == null) { // does not exist on cache
+				ImageCache.getImage(urls[0]);
+				if (ImageCache.getImage(urls[0]) == null) { // does not exist on cache
 					boolean network_result = ImageCache.setImage(urls[0]);
 					if (!network_result) { // 画像をhttpで取ってくるのに失敗
 						Toast.makeText(
@@ -433,24 +453,26 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 								"画像の取得に失敗しました。\nネットワークがつながっていないか、"
 										+ "画像ファイルが存在しない可能性があります",
 								Toast.LENGTH_SHORT).show();
+						return "";
 					}
-					bm = ImageCache.getImage(urls[0]);
+					return urls[0];
 				}
 			} catch (Exception e) {
 				Log.i("ftbt", "message", e);
 			}
-			return bm;
+			return "";
 		}
 
 		// メインスレッドで実行する処理
 		@Override
-		protected void onPostExecute(Bitmap result) {
+		protected void onPostExecute(String url) {
 			dismissWaidDialog();
 			// Tagが同じものが確認して、同じであれば画像を設定する
-			if (image != null && tag != null & tag.equals(image.getTag())) {
+			if (!url.equals("") && tag != null & tag.equals(image.getTag())) {
 				// image.setImageBitmap(result);
 				try {
-					image.setImageBitmap(result);
+					Bitmap bmp = ImageCache.getImage(url);
+					image.setImageBitmap(bmp);
 				} catch (Exception e) {
 					Log.i("ftbt", "message", e);
 				}

@@ -85,12 +85,16 @@ public class ImageCatalog extends Activity {
 					}
 				}
 			});
+			
+			//これメモリリークがあるっぽいな・・・
+			//Dog Days壁紙スレで落ちる・・
 			Button prev = (Button) findViewById(id.prev_btn);
 			prev.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					try {
-						moveImage(-1);
 						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
+						imageview.clearImage();
+						moveImage(-1);
 						imageview.setImage();
 						setReturnImage();
 					} catch (Exception e) {
@@ -102,8 +106,9 @@ public class ImageCatalog extends Activity {
 			next.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					try {
-						moveImage(+1);
 						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
+						imageview.clearImage();
+						moveImage(+1);
 						imageview.setImage();
 						setReturnImage();
 					} catch (Exception e) {
@@ -118,6 +123,7 @@ public class ImageCatalog extends Activity {
 						ImageCatalogSingleView imageview = 
 							(ImageCatalogSingleView) findViewById(id.image);
 						imageview.rotateImage();
+						//imageview.clearImage(); //debug
 					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
@@ -152,6 +158,11 @@ public class ImageCatalog extends Activity {
 
 	@Override
 	public void onDestroy() {
+		//for GC どうせ参照外れるしあまり意味ないかも
+		ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
+		imageview.clearImage();
+		Log.d("ftbt", "ImageCatalog::onDestroy()");
+		
 		super.onDestroy();
 		// if(isFinishing()){
 		// スレ一覧に戻ったときに渡す情報
