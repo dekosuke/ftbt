@@ -41,8 +41,15 @@
     	android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
     	android:background="#F0E0D6"
-    	android:orientation="vertical"
+    	android:orientation="horizontal"
     	>  
+	        <TextView android:layout_width="50px"  
+	            android:layout_height="wrap_content"
+	            android:id="@+id/nonclickableblank"  
+	            android:textSize="14sp"
+	            android:textColor="#CCCCCC"
+	            android:text="(blank)"
+	            />  
 		<Button
     	    android:id="@+id/favorite_btn"
        	 android:layout_width="fill_parent"

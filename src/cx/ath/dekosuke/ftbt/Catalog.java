@@ -87,9 +87,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		CookieSyncManager.getInstance().stopSync();
 		try {
 			Log.d("ftbt", "Catalog::onResume");
-			adapter.notifyDataSetChanged();
-			ListView listView = (ListView) findViewById(id.cataloglistview);
-			listView.invalidate();
+			if(adapter!=null){
+				adapter.notifyDataSetChanged();
+				ListView listView = (ListView) findViewById(id.cataloglistview);
+				listView.invalidate();
+			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
@@ -159,7 +161,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					network_ok = true;
 				} catch (UnknownHostException e) { // ネット繋がってない
 
-					Log.d("ftbt", "message", e);
+					//Log.d("ftbt", "message", e);
 					network_ok = false;
 					if (SDCard.cacheExist(FutabaCrypt.createDigest(catalogURL))) {
 						Log.d("ftbt",
@@ -175,6 +177,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 				} catch (Exception e) { // その他エラー
 					network_ok = cache_ok = false;
+					Log.d("ftbt", "message", e);
 				}
 				if (!network_ok) {
 					if (cache_ok) {
