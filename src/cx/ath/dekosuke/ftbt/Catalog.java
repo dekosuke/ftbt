@@ -249,11 +249,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		startActivity(intent);
 	}
 
-	int delete_option = 0;
+	private int delete_option = 0;
 	final int DELETE_CHECKED = 0;
 	final int DELETE_NONCHECKED = 1;
 	final int DELETE_ALL = 2;
-
 	// 履歴削除ボタン
 	public void onClickDeleteBtn(View v) {
 		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ", "すべてのスレ" };

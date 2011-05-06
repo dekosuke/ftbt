@@ -1,7 +1,10 @@
 package cx.ath.dekosuke.ftbt;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -83,6 +86,17 @@ public class HistoryManager {
 		while (it.hasNext()) {
 			threads_array.add( threads.get( it.next() ));
 		}
+		//更新日時順ソート
+		Collections.sort(threads_array, comparator);
 		return threads_array;
 	}
+	
+	//スレッド最終閲覧時間順ソート
+	static Comparator comparator = new Comparator() {
+		public int compare(Object o1, Object o2) {
+			FutabaThreadContent f1 = (FutabaThreadContent) o1;
+			FutabaThreadContent f2 = (FutabaThreadContent) o2;
+			return (int) (f2.lastAccessed - f1.lastAccessed);
+		}
+	};
 }

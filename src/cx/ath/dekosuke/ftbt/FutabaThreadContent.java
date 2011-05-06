@@ -21,7 +21,7 @@ public class FutabaThreadContent implements Serializable{
 	public String baseUrl;//historyのときはこれが入っている。内容的にはFutabaThreadに渡すintentと同じ
 	public String resNum;
 	public String BBSName; //どの板か->過去ログ表示のときに使う
-	public int lastAccessed; //最終アクセス時間(UnixTime)
+	public long lastAccessed; //最終アクセス時間(UnixTime)
 
 	// 投稿時刻private date
 	// 画像private

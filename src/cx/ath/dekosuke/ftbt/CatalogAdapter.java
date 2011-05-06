@@ -1,6 +1,7 @@
 package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -92,6 +93,8 @@ public class CatalogAdapter extends ArrayAdapter {
 						if(!activity.mode.equals("history")){ //通常
 							thread.baseUrl = activity.baseUrl;
 						}
+						Calendar calendar = Calendar.getInstance();
+						thread.lastAccessed = calendar.getTimeInMillis();
 						HistoryManager man = new HistoryManager();
 						man.Load();
 						int maxHistoryNum = 5;
@@ -110,7 +113,6 @@ public class CatalogAdapter extends ArrayAdapter {
 						Log.i("ftbt", "message", e);
 					}
 
-					// Log.d ( "ftbt", threadNum );
 					if(!activity.mode.equals("history")){ //通常
 						String baseUrl = activity.baseUrl;
 						intent.putExtra("baseUrl", baseUrl);						
