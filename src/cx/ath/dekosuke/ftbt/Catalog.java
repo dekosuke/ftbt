@@ -373,7 +373,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			startActivity(intent);
 			return true;
 		case R.id.about:
-			Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.about , Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return false;

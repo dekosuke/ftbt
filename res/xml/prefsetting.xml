@@ -16,5 +16,7 @@
     android:inputType="number"
     android:defaultValue="20"
     android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
-    <CheckBoxPreference android:summaryOn="On" android:summary="サマリー" android:summaryOff="Off" android:key="TestCheckBox" android:title="チェックボックスのテスト"></CheckBoxPreference>
+    <CheckBoxPreference android:summaryOn="On" android:summary="画像を逆周りで回転させます" 
+    android:summaryOff="Off" android:key="TestCheckBox" 
+    android:title="(未実装)画像の回転方向を逆に"></CheckBoxPreference>
 </PreferenceScreen>

@@ -31,7 +31,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 public class ftbt extends TabActivity {
 
 	public ArrayList<FutabaBBSContent> favoriteBBSs = new ArrayList<FutabaBBSContent>();
-	
+
 	private TabSpec tab02;
 
 	@Override
@@ -70,7 +70,7 @@ public class ftbt extends TabActivity {
 		try {
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBSContent>();
-			Log.d("ftbt", "favbbs="+favoriteBBSs);
+			Log.d("ftbt", "favbbs=" + favoriteBBSs);
 			favoriteBBSs = FavoriteSettings.getFavorites(this);
 			// タブシートの設定
 			intent = new Intent().setClassName(getPackageName(), getClass()
@@ -86,7 +86,7 @@ public class ftbt extends TabActivity {
 					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "fav");
 			tab02 = tabs.newTabSpec("TabSheet2");
-			//tab02.setIndicator("お気に入り");
+			// tab02.setIndicator("お気に入り");
 			View v2 = new MyView(this, "お気に入り");
 			tab02.setIndicator(v2);
 			tab02.setContent(intent);
@@ -105,8 +105,8 @@ public class ftbt extends TabActivity {
 				Log.d("ftbt", "add " + bbs.toString());
 				favoriteBBSs.add(bbs);
 				FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
-				//adapter.addList(bbs);
-				//adapter.notifyDataSetChanged();
+				// adapter.addList(bbs);
+				// adapter.notifyDataSetChanged();
 			} else {
 				Log.d("ftbt", "thread already exist in favlist");
 			}
@@ -146,30 +146,30 @@ public class ftbt extends TabActivity {
 			startActivity(intent);
 			return true;
 		case R.id.about:
-			Toast.makeText(this, "about", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.about, Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return false;
 	}
-	
-    private class MyView extends FrameLayout {
-        private LayoutInflater inflater;
 
-        public MyView(Context context) {
-            super(context);
-            inflater = LayoutInflater.from(context);
-        }
+	private class MyView extends FrameLayout {
+		private LayoutInflater inflater;
 
-        public MyView(Context context, String title) {
-            this(context);
+		public MyView(Context context) {
+			super(context);
+			inflater = LayoutInflater.from(context);
+		}
 
-            View v = inflater.inflate(R.layout.tabwidget, null);
+		public MyView(Context context, String title) {
+			this(context);
 
-            // テキスト
-            TextView tv = (TextView) v.findViewById(R.id.text);
-            tv.setText(title);
+			View v = inflater.inflate(R.layout.tabwidget, null);
 
-            addView(v);
-        }
-    }
+			// テキスト
+			TextView tv = (TextView) v.findViewById(R.id.text);
+			tv.setText(title);
+
+			addView(v);
+		}
+	}
 }
