@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.TextView;
 import android.graphics.Typeface;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.util.Log;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -86,7 +88,17 @@ public class CatalogAdapter extends ArrayAdapter {
 						FutabaThreadContent thread = item;
 						HistoryManager man = new HistoryManager();
 						man.Load();
-						man.addThread(thread);
+						int maxHistoryNum = 5;
+						try{
+						SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(activity);
+						maxHistoryNum = Integer.parseInt(preferences.getString(
+								activity.getString(R.string.historynum), "5"));
+						}catch(Exception e){
+							Log.d("ftbt", "message", e);
+						}
+
+						man.addThread(thread, maxHistoryNum);
 						man.Save();
 					}catch(Exception e){
 						Log.i("ftbt", "message", e);
@@ -121,6 +133,8 @@ public class CatalogAdapter extends ArrayAdapter {
 				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
 				BBSName.setText("("+item.BBSName+")");
 				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
+				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+				checkbox.setChecked(false);
 			}else{ //
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setVisibility(View.GONE);

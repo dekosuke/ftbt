@@ -40,6 +40,8 @@ import org.apache.http.protocol.HttpContext;
 
 import android.app.ProgressDialog;
 import java.lang.Thread;
+import java.net.UnknownHostException;
+
 import android.os.Handler;
 import android.os.Message;
 
@@ -50,7 +52,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 //板カタログ表示アクティビティ
 public class Catalog extends Activity implements OnClickListener, Runnable {
 
-	private ArrayList<FutabaThreadContent> fthreads = null;
+	private ArrayList<FutabaThreadContent> fthreads = new ArrayList<FutabaThreadContent>();
 	private CatalogParser parser;
 	private CatalogAdapter adapter = null;
 	public String baseUrl = "";
@@ -83,10 +85,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	protected void onResume() {
 		super.onResume();
 		CookieSyncManager.getInstance().stopSync();
-		try{
+		try {
 			Log.d("ftbt", "Catalog::onResume");
 			adapter.notifyDataSetChanged();
-		}catch(Exception e){
+			listView.invalidate();
+		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
 	}
@@ -143,6 +146,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			buttonReload.setOnClickListener(this);
 			parser = new CatalogParser();
 
+			setContentView(R.layout.futaba_catalog);
+			listView = (ListView) findViewById(id.cataloglistview);
+
 			if (!mode.equals("history")) { // 通常
 				String catalogHtml = "";
 				Boolean network_ok = true;
@@ -150,7 +156,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				try {
 					catalogHtml = CatalogHtmlReader.Read(catalogURL);
 					network_ok = true;
-				} catch (Exception e) { // カタログ取得に失敗、キャッシュから
+				} catch (UnknownHostException e) { // ネット繋がってない
+
 					Log.d("ftbt", "message", e);
 					network_ok = false;
 					if (SDCard.cacheExist(FutabaCrypt.createDigest(catalogURL))) {
@@ -165,6 +172,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 										+ "not found");
 						cache_ok = false;
 					}
+				} catch (Exception e) { // その他エラー
+					network_ok = cache_ok = false;
 				}
 				if (!network_ok) {
 					if (cache_ok) {
@@ -177,22 +186,30 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 				}
 
-				parser.parse(catalogHtml);
-				fthreads = parser.getThreads();
+				if (network_ok || cache_ok) {
+					parser.parse(catalogHtml);
+					fthreads = parser.getThreads();
+				}
 
 				// BBS名足す
 				for (int i = 0; i < fthreads.size(); ++i) {
 					fthreads.get(i).BBSName = BBSName;
 				}
+
+				Button historyDeleteButton = (Button) findViewById(id.delete_btn);
+				historyDeleteButton.setVisibility(View.GONE);
 			} else { // 履歴モード。複数板混在なので注意
 				HistoryManager man = new HistoryManager();
 				man.Load();
 				fthreads = man.getThreadsArray();
+				
+				//通常モードのときのボタンを非表示に
+				Button reloadButton = (Button) findViewById(id.reload_btn);
+				reloadButton.setVisibility(View.GONE);
+				Button historyButton = (Button) findViewById(id.history_btn);
+				historyButton.setVisibility(View.GONE);
 			}
 
-			setContentView(R.layout.futaba_catalog);
-
-			listView = (ListView) findViewById(id.cataloglistview);
 			// アダプターを設定します
 			adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
 					fthreads);
@@ -229,6 +246,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	int delete_option = 0;
 	final int DELETE_CHECKED = 0;
 	final int DELETE_NONCHECKED = 1;
+
 	// 履歴削除ボタン
 	public void onClickDeleteBtn(View v) {
 		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ" };
@@ -252,44 +270,46 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		dlg.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Catalog.cancel();
-				//Catalog.this.deleteThreads(false);
+				// Catalog.this.deleteThreads(false);
 			}
 		});
 		dlg.show();
 	}
-	
-	//チェックされたスレッド、もしくはチェックされていないスレッドを削除する
-	public void deleteThreads(){
-		try{
-			Log.d("ftbt", "delete threads with option "+delete_option);
-			if(delete_option == DELETE_CHECKED){
-				for(int i=listView.getCount()-1;i>=0;--i){
+
+	// チェックされたスレッド、もしくはチェックされていないスレッドを削除する
+	public void deleteThreads() {
+		try {
+			Log.d("ftbt", "delete threads with option " + delete_option);
+			if (delete_option == DELETE_CHECKED) {
+				for (int i = listView.getCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
-					CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-					if(checkbox.isChecked()){
-						Log.d("ftbt", "delete element at "+i);
+					CheckBox checkbox = (CheckBox) view
+							.findViewById(R.id.checkbox);
+					if (checkbox.isChecked()) {
+						Log.d("ftbt", "delete element at " + i);
 						adapter.items.remove(i);
 					}
 				}
-			}else if(delete_option == DELETE_NONCHECKED){
-				for(int i=listView.getCount()-1;i>=0;--i){
+			} else if (delete_option == DELETE_NONCHECKED) {
+				for (int i = listView.getCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
-					CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-					if(!checkbox.isChecked()){
-						Log.d("ftbt", "delete element at "+i);
+					CheckBox checkbox = (CheckBox) view
+							.findViewById(R.id.checkbox);
+					if (!checkbox.isChecked()) {
+						Log.d("ftbt", "delete element at " + i);
 						adapter.items.remove(i);
 					}
-				}			
+				}
 			}
 			HistoryManager man = new HistoryManager();
 			man.set(adapter.items);
 			man.Save();
-			//adapter.items = man.getThreadsArray();
-			//DesireHDで動かしてて分かったけど
-			//adapter.itemの参照アドレスが変わる->notifyDataSetChanged で落ちる
+			// adapter.items = man.getThreadsArray();
+			// DesireHDで動かしてて分かったけど
+			// adapter.itemの参照アドレスが変わる->notifyDataSetChanged で落ちる
 			adapter.notifyDataSetChanged();
-			//listView.invalidateViews();
-		}catch(Exception e){
+			listView.invalidateViews();
+		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
 	}
@@ -298,7 +318,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		Log.d("ftbt", "catalog onclick");
 		// v.reload();
 	}
-	
+
 	// メニュー
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

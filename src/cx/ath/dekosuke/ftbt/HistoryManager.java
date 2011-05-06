@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 //過去スレッド一覧マネージャ
@@ -23,14 +25,15 @@ public class HistoryManager {
 	}
 	
 	// スレッドの追加
-	public void addThread(FutabaThreadContent thread) {
+	public void addThread(FutabaThreadContent thread, int maxHistoryNum) {
 		if (!threads.containsKey(thread.threadNum)) {
 			threads.put(thread.threadNum, thread);
 		} else {
 			// すでにある－＞更新
 			threads.put(thread.threadNum, thread);
 		}
-		if(threads.size() > 20){
+		Log.d("ftbt", "maxHistoryNum="+maxHistoryNum);
+		if(threads.size() > maxHistoryNum){
 			threads.remove(threads.firstKey());
 		}
 	}
@@ -69,7 +72,7 @@ public class HistoryManager {
 	public void set(ArrayList<FutabaThreadContent> threads_array){
 		clear();
 		for(int i=0;i<threads_array.size();++i){
-			addThread(threads_array.get(i));
+			addThread(threads_array.get(i), 10000);
 		}
 	}
 

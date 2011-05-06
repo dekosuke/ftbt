@@ -19,7 +19,7 @@
 	            android:layout_gravity="right"
 	            android:gravity="right"
 	            android:id="@+id/bbsname"  
-	            android:textSize="12sp"
+	            android:textSize="14sp"
 	            android:textColor="#117743"
 	            />  
 	        <TextView android:layout_width="fill_parent"  
@@ -27,7 +27,7 @@
 	            android:layout_gravity="right"
 	            android:gravity="right"
 	            android:id="@+id/resnum"  
-	            android:textSize="12sp"
+	            android:textSize="14sp"
 	            android:textColor="#117743"
 	            />  
 	    </LinearLayout>  
@@ -36,7 +36,7 @@
             android:layout_height="fill_parent" android:layout_weight="1"
             android:id="@+id/bottomtext"  
             android:maxLines="2"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textColor="#800000"
             />  
     </LinearLayout>  
