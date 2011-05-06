@@ -61,6 +61,8 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	private PointF p1 = new PointF();
 	private PointF p2 = new PointF();
 	private int point_side = 1;
+	
+	private boolean rotated = false;
 
 	// ダブルクリックのための(ry
 	private GestureDetector gestureDetector;
@@ -226,24 +228,60 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		matrix.setValues(values);
 	}
 
+	// 画像の回転
+	public void rotateImage() {
+		Log.d("ftbt", "rotate called");
+		/*
+		float[] values = new float[9];
+		matrix.getValues(values);
+		values[Matrix] += dx;
+		values[Matrix.MTRANS_Y] += dy;
+		matrix.setValues(values);
+		*/
+		matrix.postRotate(90f, width/2, height/2);
+		setImageMatrix(matrix);
+		rotated = !rotated;
+	}
+		
 	// 画像の拡大縮小
 	public void zoomImage(float scale, float mx, float my) {
-		matrix.set(moveMatrix);
+		//matrix.set(moveMatrix);
 
 		// 現在のスケール取得
 		float[] values = new float[9];
 		matrix.getValues(values);
-		float currentScale = values[Matrix.MSCALE_X];
+		float currentScale = 1f; 
+		if(!rotated){
+			currentScale = Math.abs(values[Matrix.MSCALE_X]);
+		}else{
+			currentScale = Math.abs(values[Matrix.MSKEW_X]);			
+		}
 		float postScale = currentScale * scale;
+		
+		Log.d("ftbt", "current="+currentScale+" scale="+scale);
 
 		// 画面に収まるサイズ
-		float minScale = Math.min((float) width / (float) bm.getWidth(),
-				(float) height / (float) bm.getHeight());
-
+		float minScale = 1f;
+		if(!rotated){
+			minScale = Math.min((float) width / (float) bm.getWidth(),
+					(float) height / (float) bm.getHeight());
+		}else{
+			minScale = Math.min((float) height / (float) bm.getWidth(),
+					(float) width / (float) bm.getHeight());			
+		}
+		minScale = Math.min(minScale, 1f);
+		Log.d("ftbt", "minscale="+minScale);
 		if (postScale < minScale) {
 			scale = minScale / currentScale;
 		}
 		matrix.postScale(scale, scale, mx, my);
+		/*
+		if(!rotated){
+			matrix.postScale(scale, scale, mx, my);
+		}else{
+			matrix.postScale(scale, scale, my, mx);			
+		}
+		*/
 
 		bx = bm.getWidth() * postScale;
 		by = bm.getHeight() * postScale;
@@ -285,6 +323,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		this.bm = bm;
 
 		// フィット+中央配置
+		rotated = false;
 		matrix.set(moveMatrix);
 		zoomImageToWindow();
 		Log.d("ftbt", "bx=" + bx + " by=" + by);

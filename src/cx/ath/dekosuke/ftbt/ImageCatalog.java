@@ -111,6 +111,18 @@ public class ImageCatalog extends Activity {
 					}
 				}
 			});
+			Button rotate = (Button) findViewById(id.rotate_btn);
+			rotate.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					try {
+						ImageCatalogSingleView imageview = 
+							(ImageCatalogSingleView) findViewById(id.image);
+						imageview.rotateImage();
+					} catch (Exception e) {
+						Log.i("ftbt", "message", e);
+					}
+				}
+			});
 
 			moveImage(0);
 			setReturnImage();
