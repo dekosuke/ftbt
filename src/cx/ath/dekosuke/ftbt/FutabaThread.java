@@ -255,6 +255,9 @@ public class FutabaThread extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
+		case R.id.post:
+			onClickPostBtn(null);
+			return true;
 		case R.id.tweet:
 			String thread_title = statuses.get(0).text;
 			thread_title = thread_title.substring(0,

@@ -32,12 +32,6 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
         android:layout_height="wrap_content"
         android:onClick="onClickGoBottomBtn" android:layout_weight="3">
     </Button>
-    <Button android:text="返信"
-        android:id="@+id/post_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickPostBtn" android:layout_weight="3">
-    </Button>
 </LinearLayout>
 
 <ListView android:id="@+id/threadlistview"
