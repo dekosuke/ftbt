@@ -69,10 +69,6 @@ public class ImageCatalog extends Activity {
 						String imgFile = CircleList.get();
 						File file = new File(imgFile);
 						ImageCache.saveImage(imgFile);
-						/*
-						 * SDCard.saveFromURL(file.getName(), new URL(imgFile),
-						 * false);
-						 */
 						if (toast != null) {
 							toast.cancel();
 						}
@@ -86,8 +82,6 @@ public class ImageCatalog extends Activity {
 				}
 			});
 			
-			//これメモリリークがあるっぽいな・・・
-			//Dog Days壁紙スレで落ちる・・
 			Button prev = (Button) findViewById(id.prev_btn);
 			prev.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -185,8 +179,6 @@ public class ImageCatalog extends Activity {
 		switch (item.getItemId()) {
 		case R.id.tweet:
 			String status_encoded = myImageURL; // URIエンコードされた、ツイートしたい文章
-			// Uri uri =
-			// Uri.parse("http://twitter.com/?status="+status_encoded);
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TEXT, status_encoded);

@@ -22,11 +22,11 @@ public class HistoryManager {
 	// キーがスレッドidのlist
 	private TreeMap<String, FutabaThreadContent> threads = new TreeMap<String, FutabaThreadContent>();
 
-	//初期化
-	public void clear(){
+	// 初期化
+	public void clear() {
 		threads = new TreeMap<String, FutabaThreadContent>();
 	}
-	
+
 	// スレッドの追加
 	public void addThread(FutabaThreadContent thread, int maxHistoryNum) {
 		if (!threads.containsKey(thread.threadNum)) {
@@ -35,8 +35,8 @@ public class HistoryManager {
 			// すでにある－＞更新
 			threads.put(thread.threadNum, thread);
 		}
-		Log.d("ftbt", "maxHistoryNum="+maxHistoryNum);
-		if(threads.size() > maxHistoryNum){
+		Log.d("ftbt", "maxHistoryNum=" + maxHistoryNum);
+		if (threads.size() > maxHistoryNum) {
 			threads.remove(threads.firstKey());
 		}
 	}
@@ -71,10 +71,10 @@ public class HistoryManager {
 			Log.i("ftbt", "message", e);
 		}
 	}
-	
-	public void set(ArrayList<FutabaThreadContent> threads_array){
+
+	public void set(ArrayList<FutabaThreadContent> threads_array) {
 		clear();
-		for(int i=0;i<threads_array.size();++i){
+		for (int i = 0; i < threads_array.size(); ++i) {
 			addThread(threads_array.get(i), 10000);
 		}
 	}
@@ -84,14 +84,14 @@ public class HistoryManager {
 		ArrayList<FutabaThreadContent> threads_array = new ArrayList<FutabaThreadContent>();
 		Iterator it = threads.keySet().iterator();
 		while (it.hasNext()) {
-			threads_array.add( threads.get( it.next() ));
+			threads_array.add(threads.get(it.next()));
 		}
-		//更新日時順ソート
+		// 更新日時順ソート
 		Collections.sort(threads_array, comparator);
 		return threads_array;
 	}
-	
-	//スレッド最終閲覧時間順ソート
+
+	// スレッド最終閲覧時間順ソート
 	static Comparator comparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			FutabaThreadContent f1 = (FutabaThreadContent) o1;

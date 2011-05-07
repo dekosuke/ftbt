@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -68,8 +69,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public String mode;
 
 	int position = 0; // 現在位置(リロード時復帰用)
-	
-	boolean onCreateEnd=false;
+
+	boolean onCreateEnd = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -95,8 +96,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				ListView listView = (ListView) findViewById(id.cataloglistview);
 				listView.invalidate();
 			}
-			if (onCreateEnd && mode.equals("history")) { //履歴カター＞スレ－＞履歴カタで履歴の並びが変わっている可能性あり
-				if(adapter!=null){				
+			if (onCreateEnd && mode.equals("history")) { // 履歴カター＞スレ－＞履歴カタで履歴の並びが変わっている可能性あり
+				if (adapter != null) {
 					setWait();
 				}
 			}
@@ -299,33 +300,35 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			Log.d("ftbt", "delete threads with option " + delete_option);
 			// http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
 			// 見えてる場所しか消せないぽいよ？・・
-			int firstPosition = listView.getFirstVisiblePosition();
-			if (delete_option == DELETE_CHECKED) {
+			if (delete_option == DELETE_ALL) {
+				adapter.items.clear();
+			} else {
+				int firstPosition = listView.getFirstVisiblePosition();
+				TreeSet<Integer> checkedThreadList = new TreeSet<Integer>();
 				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
 					View view = listView.getChildAt(i);
 					if (view != null) {
 						CheckBox checkbox = (CheckBox) view
 								.findViewById(R.id.checkbox);
 						if (checkbox.isChecked()) {
-							Log.d("ftbt", "delete element at " + i);
-							adapter.items.remove(i + firstPosition);
+							checkedThreadList.add(i + firstPosition);
 						}
 					}
 				}
-			} else if (delete_option == DELETE_NONCHECKED) {
-				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
-					View view = listView.getChildAt(i);
-					if (view != null) {
-						CheckBox checkbox = (CheckBox) view
-								.findViewById(R.id.checkbox);
-						if (!checkbox.isChecked()) {
-							Log.d("ftbt", "delete element at " + i);
-							adapter.items.remove(i + firstPosition);
+
+				if (delete_option == DELETE_CHECKED) {
+					for (int i = adapter.items.size() - 1; i >= 0; --i) {
+						if(checkedThreadList.contains((Integer)i)){
+							adapter.items.remove(i);
+						}
+					}
+				} else { //チェックされていないアイテム（画面外含む）を削除
+					for (int i = adapter.items.size() - 1; i >= 0; --i) {
+						if(!checkedThreadList.contains((Integer)i)){
+							adapter.items.remove(i);
 						}
 					}
 				}
-			} else if (delete_option == DELETE_ALL) {
-				adapter.items.clear();
 			}
 			HistoryManager man = new HistoryManager();
 			man.set(adapter.items);
@@ -373,7 +376,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			startActivity(intent);
 			return true;
 		case R.id.about:
-			Toast.makeText(this, R.string.about , Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.about, Toast.LENGTH_SHORT).show();
 			return true;
 		}
 		return false;
