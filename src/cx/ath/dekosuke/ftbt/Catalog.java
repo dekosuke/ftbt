@@ -309,12 +309,18 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						Log.d("ftbt", "item "+i+" checked="+adapter.items.get(i).isChecked);
 						if(adapter.items.get(i).isChecked){
 							adapter.items.remove(i);
+						}else{
+							//チェック状態戻す
+							adapter.items.get(i).isChecked=false;							
 						}
 					}
 				} else { //チェックされていないアイテム（画面外含む）を削除
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
 						if(!adapter.items.get(i).isChecked){
 							adapter.items.remove(i);
+						}else{
+							//チェック状態戻す
+							adapter.items.get(i).isChecked=false;							
 						}
 					}
 				}

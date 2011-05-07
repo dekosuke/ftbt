@@ -163,7 +163,7 @@ public class CatalogAdapter extends ArrayAdapter {
 				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-						//Log.d("ftbt", ""+buttonView.isShown());
+						Log.d("ftbt", ""+buttonView.isShown());
 						Log.d("ftbt", "onCheckedChanged called at"+pos+" with"+isChecked);
 						if(buttonView.isShown()){ //画面から外れたときのfalse値回避
 							items.get(pos).isChecked = isChecked;
