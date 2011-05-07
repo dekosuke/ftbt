@@ -161,7 +161,7 @@ public class SDCard {
 
 	}
 
-	// ファイル新しい順ソート
+	// ファイル古いものが先にくるようにソート
 	// HTMLファイルは消えにくいように時間を一日伸ばしている
 	static Comparator comparator = new Comparator() {
 		public int compare(Object o1, Object o2) {
@@ -177,7 +177,7 @@ public class SDCard {
 				f2_lastmodified += additional_days;
 			}
 
-			return (int) (f2_lastmodified - f1_lastmodified);
+			return (int) (f1_lastmodified - f2_lastmodified);
 		}
 	};
 
@@ -199,6 +199,7 @@ public class SDCard {
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
+			//Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
 			// Log.d("ftbt", f.getName() + "," + toCalendarString(f));
 			if (f.isDirectory()) { // 強制ディレクトリ削除
 				// deleteDir(f);

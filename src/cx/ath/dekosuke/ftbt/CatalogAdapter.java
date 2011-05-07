@@ -179,7 +179,7 @@ public class CatalogAdapter extends ArrayAdapter {
 					// iv.setImageBitmap(bm);
 				}
 			} catch (Exception e) {
-				Log.d("ftbt", e.toString());
+				Log.d("ftbt", "message", e);
 			}
 
 		}
