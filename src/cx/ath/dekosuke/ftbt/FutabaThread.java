@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import android.util.Log;
 
@@ -39,6 +40,7 @@ import java.net.UnknownHostException;
 
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 
 import android.widget.ListView;
 import android.widget.Toast;
@@ -128,7 +130,7 @@ public class FutabaThread extends Activity implements Runnable {
 				// Log.d("ftbt", threadHtml);
 				network_ok = true;
 			} catch (IOException e) {
-				Log.d("ftbt", "message", e);
+				network_ok = false;
 				 // ホスト見つからない(ネットワークない) とか
 				// レスポンスコードが2XX以外とか(スレ落ちなど)
 				String cause = "スレッドが存在しません" ;
@@ -144,12 +146,11 @@ public class FutabaThread extends Activity implements Runnable {
 				} else {
 					Toast.makeText(this, cause, Toast.LENGTH_LONG)
 							.show();
+					cache_ok = false;
 				}
-
 			} catch (Exception e) { // ネットワークつながってないときとか
 				network_ok = false;
 				Log.d("ftbt", "message", e);
-				Log.d("ftbt", "failed to get thread html");
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
 					Log.d("ftbt", "getting html from cache");
 					threadHtml = SDCard.loadTextCache(FutabaCrypt
@@ -160,8 +161,19 @@ public class FutabaThread extends Activity implements Runnable {
 				} else {
 					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_LONG)
 							.show();
+					cache_ok = false;
 				}
 			}
+			
+			if((!network_ok) && (!cache_ok)){ //データ取得もキャッシュもないスレッドは消す
+				HistoryManager man = new HistoryManager();
+				FutabaThreadContent thread = new FutabaThreadContent();
+				thread.threadNum = this.threadNum;
+				man.Load();
+				man.removeThread(thread);
+				man.Save();
+			}
+			
 			parser.parse(threadHtml);
 			statuses = parser.getStatuses();
 			Log.d("ftbt", "parse end");

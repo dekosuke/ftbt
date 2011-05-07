@@ -459,6 +459,10 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 					return urls[0];
 				}
 			} catch (Exception e) {
+				Toast.makeText(
+						getContext(),
+						"画像の取得に失敗しました",
+						Toast.LENGTH_SHORT).show();
 				Log.i("ftbt", "message", e);
 			}
 			return "";
