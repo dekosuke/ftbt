@@ -117,7 +117,6 @@ public class ImageCatalog extends Activity {
 						ImageCatalogSingleView imageview = 
 							(ImageCatalogSingleView) findViewById(id.image);
 						imageview.rotateImage();
-						//imageview.clearImage(); //debug
 					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
@@ -152,7 +151,7 @@ public class ImageCatalog extends Activity {
 
 	@Override
 	public void onDestroy() {
-		//for GC どうせ参照外れるしあまり意味ないかも
+		//for GC Imageview.clearImageはSystem.gc呼んでる
 		ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 		imageview.clearImage();
 		Log.d("ftbt", "ImageCatalog::onDestroy()");

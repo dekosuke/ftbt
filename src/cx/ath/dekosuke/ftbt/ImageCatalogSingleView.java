@@ -406,14 +406,14 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 				task.execute(imgFile);
 			} else {
 				setImageBitmap(bmp);
+				dismissWaitDialog();
 			}
 		}catch(Exception e){
 			Log.d("ftbt", "message", e);
 		}
-		dismissWaidDialog();
 	}
 
-	void dismissWaidDialog() {
+	void dismissWaitDialog() {
 		waitDialog.dismiss();
 	}
 
@@ -467,8 +467,8 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		// メインスレッドで実行する処理
 		@Override
 		protected void onPostExecute(String url) {
-			dismissWaidDialog();
 			// Tagが同じものが確認して、同じであれば画像を設定する
+			try{
 			if (!url.equals("") && tag != null & tag.equals(image.getTag())) {
 				// image.setImageBitmap(result);
 				try {
@@ -478,6 +478,10 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 					Log.i("ftbt", "message", e);
 				}
 			}
+			}catch(Exception e){
+				Log.d("ftbt", "message", e);
+			}
+			dismissWaitDialog();
 			Log.d("ftbt", "thread " + id + "end.");
 		}
 

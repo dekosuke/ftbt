@@ -299,7 +299,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			Log.d("ftbt", "count=" + listView.getCount());
 			Log.d("ftbt", "delete threads with option " + delete_option);
 			// http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
-			// 見えてる場所しか消せないぽいよ？・・
+			// 見えてる場所しか消せないぽいよ？・・->とても頑張ればいける
 			if (delete_option == DELETE_ALL) {
 				adapter.items.clear();
 			} else {
@@ -316,8 +316,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 				}
 
-				if (delete_option == DELETE_CHECKED) {
+				if (delete_option == DELETE_CHECKED) { 
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
+						//チェックされたアイテム（画面外はチェック消される）を削除
 						if(checkedThreadList.contains((Integer)i)){
 							adapter.items.remove(i);
 						}
