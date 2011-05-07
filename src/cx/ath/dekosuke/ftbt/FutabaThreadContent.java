@@ -22,6 +22,7 @@ public class FutabaThreadContent implements Serializable{
 	public String resNum;
 	public String BBSName; //どの板か->過去ログ表示のときに使う
 	public long lastAccessed; //最終アクセス時間(UnixTime)
+	public boolean isChecked=false;
 
 	// 投稿時刻private date
 	// 画像private

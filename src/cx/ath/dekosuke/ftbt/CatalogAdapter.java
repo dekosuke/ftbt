@@ -2,6 +2,7 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.TreeSet;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import android.preference.PreferenceManager;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 
 import java.io.InputStream;
@@ -43,6 +46,7 @@ public class CatalogAdapter extends ArrayAdapter {
 	public ArrayList<FutabaThreadContent> items;
 	private LayoutInflater inflater;
 	private Context context;
+	private TreeSet<Integer> checkedSet = new TreeSet<Integer>();
 
 	// 画面サイズ
 	private int width;
@@ -139,6 +143,8 @@ public class CatalogAdapter extends ArrayAdapter {
 		iv.setImageBitmap(bm);
 		Catalog activity = (Catalog) getContext();
 
+		final int pos = position;
+
 		if (item != null) {
 			// テキストをビューにセット
 			TextView text = (TextView) view.findViewById(R.id.bottomtext);
@@ -153,7 +159,18 @@ public class CatalogAdapter extends ArrayAdapter {
 				BBSName.setText("(" + item.BBSName + ")");
 				view.setBackgroundColor(Color.parseColor("#CCBBAA"));
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-				checkbox.setChecked(false);
+				checkbox.setChecked(item.isChecked);
+				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						//Log.d("ftbt", ""+buttonView.isShown());
+						Log.d("ftbt", "onCheckedChanged called at"+pos+" with"+isChecked);
+						if(buttonView.isShown()){ //画面から外れたときのfalse値回避
+							items.get(pos).isChecked = isChecked;
+						}
+					}
+					
+				});
 			} else { // 通常モード
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setVisibility(View.GONE);

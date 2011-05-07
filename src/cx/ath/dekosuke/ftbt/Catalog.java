@@ -303,29 +303,17 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			if (delete_option == DELETE_ALL) {
 				adapter.items.clear();
 			} else {
-				int firstPosition = listView.getFirstVisiblePosition();
-				TreeSet<Integer> checkedThreadList = new TreeSet<Integer>();
-				for (int i = listView.getChildCount() - 1; i >= 0; --i) {
-					View view = listView.getChildAt(i);
-					if (view != null) {
-						CheckBox checkbox = (CheckBox) view
-								.findViewById(R.id.checkbox);
-						if (checkbox.isChecked()) {
-							checkedThreadList.add(i + firstPosition);
-						}
-					}
-				}
-
 				if (delete_option == DELETE_CHECKED) { 
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
 						//チェックされたアイテム（画面外はチェック消される）を削除
-						if(checkedThreadList.contains((Integer)i)){
+						Log.d("ftbt", "item "+i+" checked="+adapter.items.get(i).isChecked);
+						if(adapter.items.get(i).isChecked){
 							adapter.items.remove(i);
 						}
 					}
 				} else { //チェックされていないアイテム（画面外含む）を削除
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
-						if(!checkedThreadList.contains((Integer)i)){
+						if(!adapter.items.get(i).isChecked){
 							adapter.items.remove(i);
 						}
 					}
