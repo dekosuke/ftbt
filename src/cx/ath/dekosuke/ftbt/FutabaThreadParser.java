@@ -22,7 +22,7 @@ public class FutabaThreadParser {
 	private static final String TABLETAG = "table";
 	private static final String IMGTAG = "img";
 	private static final String SRCTAG = "src";
-	
+
 	private String urlStr;
 	private String title;
 	private String titleImgURL;
@@ -40,23 +40,29 @@ public class FutabaThreadParser {
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
 	// TODO:mailtoのパーズ
 	// スレッドの形式:
-	public void parse(String allData) {
+	// / anonymous = true は いもげとか
+	public void parse(String allData, boolean anonymous) {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
 			Pattern honbunPattern = Pattern.compile("<form.*?>.+?</form>",
 					Pattern.DOTALL);
 			Pattern resPattern = Pattern.compile("<table.*?>(.+?)</table>",
 					Pattern.DOTALL);
-			Pattern textAttrPattern = Pattern.compile(
-					"<input[^>]+><font[^>]+><b>(.*?)</b></font>"+
-					".*?<font[^>]+><b>(.*?) ?</b></font>"+
-					"(.*?) (No.[0-9]+).+?<blockquote", Pattern.DOTALL);
-			Pattern textPattern = Pattern.compile("<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
+			Pattern textAttrPattern = Pattern
+					.compile("<input[^>]+><font[^>]+><b>(.*?)</b></font>"
+							+ ".*?<font[^>]+><b>(.*?) ?</b></font>"
+							+ "(.*?) (No.[0-9]+).+?<blockquote", Pattern.DOTALL);
+			Pattern imgTextAttrPattern = Pattern.compile(
+					"<input[^>]+>([^<]*?)<a", Pattern.DOTALL);
+			Pattern textPattern = Pattern.compile(
+					"<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
-					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')", Pattern.DOTALL);
-			Pattern thumbPattern = Pattern.compile(
-					"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
+					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')",
 					Pattern.DOTALL);
+			Pattern thumbPattern = Pattern
+					.compile(
+							"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
+							Pattern.DOTALL);
 
 			// parser.setInput(new StringReader(new String(data, "UTF-8")));
 			Matcher mc = honbunPattern.matcher(allData);
@@ -66,24 +72,31 @@ public class FutabaThreadParser {
 			// ここで画像(img)とテキスト(blockquote)のマッチング
 			FutabaStatus statusTop = new FutabaStatus();
 			Matcher mcImg = thumbPattern.matcher(honbun);
-			if(mcImg.find()){
-				statusTop.imgURL = mcImg.group(1);				
+			if (mcImg.find()) {
+				statusTop.imgURL = mcImg.group(1);
 				statusTop.width = Integer.parseInt(mcImg.group(2));
 				statusTop.height = Integer.parseInt(mcImg.group(3));
 			}
 			// Log.d("ftbt", "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 			Matcher mcBigImg = imgPattern.matcher(honbun);
-			if(mcBigImg.find()){
+			if (mcBigImg.find()) {
 				statusTop.bigImgURL = mcBigImg.group(1);
 			}
 			Matcher mcText = textPattern.matcher(honbun);
 			mcText.find();
-			Matcher mcTextAttr = textAttrPattern.matcher(honbun);
-			if(mcTextAttr.find()){
-				statusTop.title=mcTextAttr.group(1);
-				statusTop.name =normalize(mcTextAttr.group(2)); //メールアドレスが入っていることあり
-				statusTop.datestr =mcTextAttr.group(3);
-				statusTop.idstr =mcTextAttr.group(4);
+			if (!anonymous) {
+				Matcher mcTextAttr = textAttrPattern.matcher(honbun);
+				if (mcTextAttr.find()) {
+					statusTop.title = mcTextAttr.group(1);
+					statusTop.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
+					statusTop.datestr = mcTextAttr.group(3);
+					statusTop.idstr = mcTextAttr.group(4);
+				}
+			} else {
+				Matcher mcTextAttr = imgTextAttrPattern.matcher(honbun);
+				if (mcTextAttr.find()) {
+					statusTop.datestr = mcTextAttr.group(1);
+				}
 			}
 			String text = mcText.group(1);
 			statusTop.text = text;
@@ -92,17 +105,25 @@ public class FutabaThreadParser {
 			// Log.d( "ftbt", honbun );
 			Matcher mcRes = resPattern.matcher(honbun);
 			while (mcRes.find()) {
+				FutabaStatus status = new FutabaStatus();
 				mcText = textPattern.matcher(mcRes.group(1));
 				// Log.d( "ftbt", mcRes.group(1) );
 				mcText.find();
-				mcTextAttr = textAttrPattern.matcher(mcRes.group(1));
-				FutabaStatus status = new FutabaStatus();
-				if(mcTextAttr.find()){
-					status.title=mcTextAttr.group(1);
-					status.name =normalize(mcTextAttr.group(2)); //メールアドレスが入っていることあり
-					status.datestr =mcTextAttr.group(3);
-					status.idstr =mcTextAttr.group(4);
+				if (!anonymous) {
+					Matcher mcTextAttr = textAttrPattern.matcher(mcRes.group(1));
+					if (mcTextAttr.find()) {
+						status.title = mcTextAttr.group(1);
+						status.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
+						status.datestr = mcTextAttr.group(3);
+						status.idstr = mcTextAttr.group(4);
+					}
+				} else {
+					Matcher mcTextAttr = imgTextAttrPattern.matcher(mcRes.group(1));
+					if (mcTextAttr.find()) {
+						status.datestr = mcTextAttr.group(1);
+					}
 				}
+
 				text = mcText.group(1);
 				status.text = text;
 				mcImg = thumbPattern.matcher(mcRes.group(1));

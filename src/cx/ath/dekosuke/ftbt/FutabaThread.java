@@ -174,7 +174,12 @@ public class FutabaThread extends Activity implements Runnable {
 				man.Save();
 			}
 			
-			parser.parse(threadHtml);
+			boolean anonymous = false;
+			//ここでマジックナンバーが・・
+			if(baseURL.contains("http://img.2chan.net/b")){
+				anonymous = true;
+			}
+			parser.parse(threadHtml, anonymous);
 			statuses = parser.getStatuses();
 			Log.d("ftbt", "parse end");
 
