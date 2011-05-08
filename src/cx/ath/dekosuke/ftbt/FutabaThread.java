@@ -115,18 +115,37 @@ public class FutabaThread extends Activity implements Runnable {
 	private void loading() {
 		try {
 			statuses = new ArrayList<FutabaStatus>();
-			FutabaThreadParser parser = new FutabaThreadParser();
-
+			
+			//匿名のBBS
+			boolean anonymous = false;
+			//ここでマジックナンバーが・・
+			if(baseURL.contains("http://img.2chan.net/b")){
+				anonymous = true;
+			}
+			
 			Boolean network_ok = true;
 			Boolean cache_ok = true;
+
+			//キャッシュのHTMLをパーズするパーザ
+			FutabaThreadParser cacheParser = new FutabaThreadParser();
+			//webから取得したデータをパーズするパーザ
+			FutabaThreadParser webParser = new FutabaThreadParser();
+			if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
+				String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
+						.createDigest(threadURL));
+				cacheParser.parse(cacheThreadHtml, anonymous);
+			}else{
+				cache_ok = false;				
+			}
+
 			String threadHtml = "";
 			try {
-				// byte[] data = HttpClient.getByteArrayFromURL(urlStr);
-				// allData = new String(data, "Shift-JIS");
 				SDCard.saveFromURL(FutabaCrypt.createDigest(threadURL),
 						new URL(threadURL), true); // キャッシュに保存
-				threadHtml = SDCard.loadTextCache(FutabaCrypt
+				//これが取得できれば最新のデータ
+				String webThreadHtml = SDCard.loadTextCache(FutabaCrypt
 						.createDigest(threadURL));
+				webParser.parse(webThreadHtml, anonymous);				
 				// Log.d("ftbt", threadHtml);
 				network_ok = true;
 			} catch (IOException e) {
@@ -137,31 +156,23 @@ public class FutabaThread extends Activity implements Runnable {
 				if(e.toString().contains("Incorrect response code ")){
 					cause = "スレッドが存在しません";
 				}
-				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
-					Log.d("ftbt", "getting html from cache");
-					threadHtml = SDCard.loadTextCache(FutabaCrypt
-							.createDigest(threadURL));
+				if (cache_ok) {
 					Toast.makeText(this, cause+"。前回読み込み時のキャッシュを使用します",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					Toast.makeText(this, cause, Toast.LENGTH_SHORT)
 							.show();
-					cache_ok = false;
 				}
 			} catch (Exception e) { // ネットワークつながってないときとか
 				network_ok = false;
 				Log.d("ftbt", "message", e);
-				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
-					Log.d("ftbt", "getting html from cache");
-					threadHtml = SDCard.loadTextCache(FutabaCrypt
-							.createDigest(threadURL));
+				if (cache_ok) {
 					Toast.makeText(this,
 							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_SHORT)
 							.show();
-					cache_ok = false;
 				}
 			}
 			
@@ -174,13 +185,18 @@ public class FutabaThread extends Activity implements Runnable {
 				man.Save();
 			}
 			
-			boolean anonymous = false;
-			//ここでマジックナンバーが・・
-			if(baseURL.contains("http://img.2chan.net/b")){
-				anonymous = true;
+			if(network_ok){
+				statuses = webParser.getStatuses();
+				int num = webParser.getStatuses().size();
+				if(cache_ok){
+					num -= cacheParser.getStatuses().size();					
+					Toast.makeText(this, "新着レス:"+num+"件", Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(this, "新着:"+num+"件", Toast.LENGTH_SHORT).show();
+				}
+			}else if(cache_ok){
+				statuses = cacheParser.getStatuses();				
 			}
-			parser.parse(threadHtml, anonymous);
-			statuses = parser.getStatuses();
 			Log.d("ftbt", "parse end");
 
 			setContentView(R.layout.futaba_thread);
@@ -279,11 +295,7 @@ public class FutabaThread extends Activity implements Runnable {
 			String thread_title = statuses.get(0).text;
 			thread_title = thread_title.substring(0,
 					Math.min(50, thread_title.length()));
-			// threadURL
-			// String hashTag = " #futaba";
 			String status_encoded = thread_title + " " + threadURL; // URIエンコードされた、ツイートしたい文章
-			// Uri uri =
-			// Uri.parse("http://twitter.com/?status="+status_encoded);
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TEXT, status_encoded);
