@@ -16,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 //過去スレッド一覧マネージャ
+//実はスレッドというよりカタログから取ってきてるのよね・・
 public class HistoryManager {
 	private final String OPT_HISTORY = "history";
 

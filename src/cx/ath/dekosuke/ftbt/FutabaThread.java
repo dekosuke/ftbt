@@ -134,18 +134,11 @@ public class FutabaThread extends Activity implements Runnable {
 				String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
 						.createDigest(threadURL));
 				cacheParser.parse(cacheThreadHtml, anonymous);
-
-				//取得に成功した場合、履歴データの件数とかを更新する
-				HistoryManager man = new HistoryManager();
-				FutabaThreadContent thread = new FutabaThreadContent();
-				thread.threadNum = this.threadNum;
-				thread.resNum = ""+cacheParser.getStatuses().size();
-				man.Load();
-				man.updateThread(thread); 
-				man.Save();
-				
+				Log.d("ftbt", "cache  ok  "+ threadURL);
+	
 			}else{
-				cache_ok = false;				
+				cache_ok = false;	
+				Log.d("ftbt", "cache fail "+ threadURL);
 			}
 
 			String threadHtml = "";
@@ -157,6 +150,22 @@ public class FutabaThread extends Activity implements Runnable {
 						.createDigest(threadURL));
 				webParser.parse(webThreadHtml, anonymous);				
 				// Log.d("ftbt", threadHtml);
+
+
+				try{
+					//取得に成功した場合、履歴データの件数とかを更新する
+					HistoryManager man = new HistoryManager();
+					FutabaThreadContent thread = new FutabaThreadContent();
+					thread.threadNum = this.threadNum;
+					thread.resNum = ""+webParser.getStatuses().size();
+					man.Load();
+					man.updateThread(thread); 
+					man.Save();
+				}catch(Exception e){
+					Log.d("ftbt", "message", e);
+				}
+
+				
 				network_ok = true;
 			} catch (IOException e) {
 				network_ok = false;
@@ -200,9 +209,9 @@ public class FutabaThread extends Activity implements Runnable {
 				int num = webParser.getStatuses().size();
 				if(cache_ok){
 					num -= cacheParser.getStatuses().size();					
-					Toast.makeText(this, "新着レス:"+num+"件", Toast.LENGTH_SHORT).show();
-				}else{
 					Toast.makeText(this, "新着:"+num+"件", Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(this, "レス:"+num+"件", Toast.LENGTH_SHORT).show();
 				}
 			}else if(cache_ok){
 				statuses = cacheParser.getStatuses();				
