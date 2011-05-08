@@ -62,6 +62,11 @@ public class FutabaBBSMenuParser {
 				if(bbs.name.equals("二次元裏")){
 					if(bbs.url.contains("may")){
 						bbs.name="二次元裏(may)";
+						//imgを手動追加
+						FutabaBBSContent img_bbs = new FutabaBBSContent();
+						img_bbs.name = "二次元裏(img)";
+						img_bbs.url = "http://img.2chan.net/b/";
+						BBSs.add(img_bbs);
 					}else if(bbs.url.contains("dec")){
 						bbs.name="二次元裏(dec)";						
 					}else if(bbs.url.contains("jun")){
