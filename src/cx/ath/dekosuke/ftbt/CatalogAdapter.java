@@ -157,7 +157,7 @@ public class CatalogAdapter extends ArrayAdapter {
 			if (activity.mode.equals("history")) { // 履歴モード
 				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
 				BBSName.setText("(" + item.BBSName + ")");
-				view.setBackgroundColor(Color.parseColor("#CCBBAA"));
+				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setChecked(item.isChecked);
 				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
