@@ -40,6 +40,20 @@ public class HistoryManager {
 			threads.remove(threads.firstKey());
 		}
 	}
+	
+	// スレッドの更新
+	public void updateThread(FutabaThreadContent thread_a) throws Exception {
+		if (!threads.containsKey(thread_a.threadNum)) {
+			throw new Exception("thread not found in history");
+		} else {
+			// すでにある->一部データ更新
+			FutabaThreadContent thread = threads.get(thread_a.threadNum);
+			if(Integer.parseInt(thread_a.resNum)!=0){
+				thread.resNum = thread_a.resNum;
+			}
+			threads.put(thread.threadNum, thread);
+		}
+	}
 
 	// スレッドの削除
 	public void removeThread(FutabaThreadContent thread) {

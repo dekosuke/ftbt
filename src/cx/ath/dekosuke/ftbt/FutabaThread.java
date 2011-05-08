@@ -134,6 +134,16 @@ public class FutabaThread extends Activity implements Runnable {
 				String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
 						.createDigest(threadURL));
 				cacheParser.parse(cacheThreadHtml, anonymous);
+
+				//取得に成功した場合、履歴データの件数とかを更新する
+				HistoryManager man = new HistoryManager();
+				FutabaThreadContent thread = new FutabaThreadContent();
+				thread.threadNum = this.threadNum;
+				thread.resNum = ""+cacheParser.getStatuses().size();
+				man.Load();
+				man.updateThread(thread); 
+				man.Save();
+				
 			}else{
 				cache_ok = false;				
 			}
