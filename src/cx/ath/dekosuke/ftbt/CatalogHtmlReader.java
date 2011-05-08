@@ -45,14 +45,14 @@ public class CatalogHtmlReader {
 		nameValuePair.add(new BasicNameValuePair("cy", "5"));
 		nameValuePair.add(new BasicNameValuePair("cl", "50"));
 
-		urlStr = urlStr + "?mode=cat"; // カタログです
+		String urlStrAppend = urlStr + "?mode=cat"; // カタログです
 		String data = null;
 		// cookie取得->カタログ取得と2度HTTPアクセスしている
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePair));
 		HttpResponse response = httpClient.execute(httppost);
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		response.getEntity().writeTo(byteArrayOutputStream);
-		HttpGet httpget = new HttpGet(urlStr);
+		HttpGet httpget = new HttpGet(urlStrAppend);
 		HttpResponse httpResponse = null;
 		httpResponse = httpClient.execute(httpget);
 		FutabaCookieManager.saveCookie(httpClient); // クッキー保存

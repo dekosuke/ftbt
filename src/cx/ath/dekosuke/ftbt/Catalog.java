@@ -168,7 +168,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				try {
 					catalogHtml = CatalogHtmlReader.Read(catalogURL);
 					network_ok = true;
-				} catch (UnknownHostException e) { // ネット繋がってない
+				} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
+					Log.d("ftbt", "hoge");
 
 					// Log.d("ftbt", "message", e);
 					network_ok = false;
@@ -185,17 +186,30 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						cache_ok = false;
 					}
 				} catch (Exception e) { // その他エラー
-					network_ok = cache_ok = false;
+					network_ok = false;
+					if (SDCard.cacheExist(FutabaCrypt.createDigest(catalogURL))) {
+						Log.d("ftbt",
+								"getting html from cache"
+										+ FutabaCrypt.createDigest(catalogURL));
+						catalogHtml = SDCard.loadTextCache(FutabaCrypt
+								.createDigest(catalogURL));
+					} else {
+						Log.d("ftbt",
+								"cache " + FutabaCrypt.createDigest(catalogURL)
+										+ "not found");
+						cache_ok = false;
+					}
+					
 					Log.d("ftbt", "message", e);
 				}
 				if (!network_ok) {
 					if (cache_ok) {
 						Toast.makeText(this,
 								"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-								Toast.LENGTH_LONG).show();
+								Toast.LENGTH_SHORT).show();
 					} else {
 						Toast.makeText(this, "ネットワークに繋がっていません",
-								Toast.LENGTH_LONG).show();
+								Toast.LENGTH_SHORT).show();
 					}
 				}
 

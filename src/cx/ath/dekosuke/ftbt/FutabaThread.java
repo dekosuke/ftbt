@@ -133,18 +133,18 @@ public class FutabaThread extends Activity implements Runnable {
 				network_ok = false;
 				 // ホスト見つからない(ネットワークない) とか
 				// レスポンスコードが2XX以外とか(スレ落ちなど)
-				String cause = "スレッドが存在しません" ;
-				if(e.toString().contains("UnknownHost")){
-					cause = "ネットワークに繋がっていません";
+				String cause = "ネットワークに繋がっていません" ;
+				if(e.toString().contains("Incorrect response code ")){
+					cause = "スレッドが存在しません";
 				}
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
 					Log.d("ftbt", "getting html from cache");
 					threadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
 					Toast.makeText(this, cause+"。前回読み込み時のキャッシュを使用します",
-							Toast.LENGTH_LONG).show();
+							Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(this, cause, Toast.LENGTH_LONG)
+					Toast.makeText(this, cause, Toast.LENGTH_SHORT)
 							.show();
 					cache_ok = false;
 				}
@@ -157,9 +157,9 @@ public class FutabaThread extends Activity implements Runnable {
 							.createDigest(threadURL));
 					Toast.makeText(this,
 							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-							Toast.LENGTH_LONG).show();
+							Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_LONG)
+					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_SHORT)
 							.show();
 					cache_ok = false;
 				}
@@ -290,7 +290,7 @@ public class FutabaThread extends Activity implements Runnable {
 			try {
 				startActivityForResult(intent, 0);
 			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(this, "client not found", Toast.LENGTH_LONG)
+				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
 						.show();
 			}
 			return true;

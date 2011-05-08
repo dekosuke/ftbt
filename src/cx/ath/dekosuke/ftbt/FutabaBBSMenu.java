@@ -94,10 +94,10 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 					if (parser.cache_ok) {
 						Toast.makeText(this,
 								"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-								Toast.LENGTH_LONG).show();
+								Toast.LENGTH_SHORT).show();
 					} else {
 						Toast.makeText(this, "ネットワークに繋がっていません",
-								Toast.LENGTH_LONG).show();
+								Toast.LENGTH_SHORT).show();
 					}
 				}
 				BBSs = parser.getBBSs();
