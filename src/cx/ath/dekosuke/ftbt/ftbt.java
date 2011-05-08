@@ -33,16 +33,18 @@ public class ftbt extends TabActivity {
 	public ArrayList<FutabaBBSContent> favoriteBBSs = new ArrayList<FutabaBBSContent>();
 
 	private TabSpec tab02;
-
+    
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		// TabHostのインスタンスを取得
 		TabHost tabs = getTabHost();
-		// レイアウトを設定
+		/*
+		// レイアウトを設定 -> これあると2.1で落ちるよ(2.2だとok)
 		LayoutInflater.from(this).inflate(R.layout.tabmain,
 				tabs.getTabContentView(), true);
+				*/
 		Intent intent;
 
 		// キャッシュを削除する(重い)
@@ -61,7 +63,7 @@ public class ftbt extends TabActivity {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
-			SDCard.limitCache(30);
+			SDCard.limitCache(cacheSize);
 			waitDialog.dismiss();
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
@@ -96,6 +98,7 @@ public class ftbt extends TabActivity {
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
+		Log.d("ftbt", "ftbt start");
 	}
 
 	public void addFavoriteBBSs(FutabaBBSContent bbs) {
@@ -163,6 +166,7 @@ public class ftbt extends TabActivity {
 		public MyView(Context context, String title) {
 			this(context);
 
+			try{
 			View v = inflater.inflate(R.layout.tabwidget, null);
 
 			// テキスト
@@ -170,6 +174,15 @@ public class ftbt extends TabActivity {
 			tv.setText(title);
 
 			addView(v);
+			}catch(Exception e){
+				Log.d("ftbt", "message", e);
+			}
 		}
+	}
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		Log.d("ftbt", "ftbt onresume");
 	}
 }

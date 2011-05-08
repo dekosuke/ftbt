@@ -36,11 +36,15 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Intent intent = getIntent();
-		mode = (String) intent.getSerializableExtra("mode");
+		try {
+			Intent intent = getIntent();
+			mode = (String) intent.getSerializableExtra("mode");
 
-		setWait();
-
+			setWait();
+			//loading();
+		} catch (Exception e) {
+			Log.d("ftbt", "message", e);
+		}
 	}
 
 	public void setWait() {
@@ -76,38 +80,42 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 	};
 
 	private void loading() {
-		setContentView(R.layout.bbsmenu);
 
-		Intent intent = getIntent();
+		try {
+			setContentView(R.layout.bbsmenu);
+			Intent intent = getIntent();
 
-		ArrayList<FutabaBBSContent> BBSs = new ArrayList<FutabaBBSContent>();
-		if (mode.equals("all")) {
-			FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
-					"http://www.2chan.net/bbsmenu.html");
-			parser.parse();
-			if (!parser.network_ok) {
-				if (parser.cache_ok) {
-					Toast.makeText(this,
-							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-							Toast.LENGTH_LONG).show();
-				} else {
-					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_LONG)
-							.show();
+			ArrayList<FutabaBBSContent> BBSs = new ArrayList<FutabaBBSContent>();
+			if (mode==null || mode.equals("all")) {
+				FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
+						"http://www.2chan.net/bbsmenu.html");
+				parser.parse();
+				if (!parser.network_ok) {
+					if (parser.cache_ok) {
+						Toast.makeText(this,
+								"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
+								Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(this, "ネットワークに繋がっていません",
+								Toast.LENGTH_LONG).show();
+					}
 				}
+				BBSs = parser.getBBSs();
+			} else { // fav
+				ftbt parent_activity = (ftbt) this.getParent();
+				BBSs = parent_activity.favoriteBBSs;
 			}
-			BBSs = parser.getBBSs();
-		} else { // fav
-			ftbt parent_activity = (ftbt) this.getParent();
-			BBSs = parent_activity.favoriteBBSs;
+			adapter = new FutabaBBSMenuAdapter(this, R.layout.futaba_bbs_row,
+					BBSs);
+			// アイテムを追加します
+			ListView listView = (ListView) findViewById(id.listview);
+			// アダプターを設定します
+			listView.setAdapter(adapter);
+
+			Log.d("ftbt", "start");
+		} catch (Exception e) {
+			Log.d("ftbt", "message", e);
 		}
-		adapter = new FutabaBBSMenuAdapter(this, R.layout.futaba_bbs_row, BBSs);
-		// アイテムを追加します
-		ListView listView = (ListView) findViewById(id.listview);
-		// アダプターを設定します
-		listView.setAdapter(adapter);
-
-		Log.d("ftbt", "start");
-
 		waitDialog.dismiss();
 	}
 
@@ -122,8 +130,8 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 		intent.putExtra("baseUrl", item.url);
 		intent.putExtra("BBSName", item.name);
 		intent.putExtra("mode", "normal");
-		intent.setClassName(getPackageName(),
-				getClass().getPackage().getName() + ".Catalog");
+		intent.setClassName(getPackageName(), getClass().getPackage().getName()
+				+ ".Catalog");
 		startActivity(intent);
 	}
 
@@ -133,14 +141,14 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 		try {
 			if (mode.equals("fav")) {
 				ftbt parent_activity = (ftbt) this.getParent();
-				if(adapter!=null){
+				if (adapter != null) {
 					adapter.items = parent_activity.favoriteBBSs;
 					adapter.notifyDataSetChanged();
 				}
-				Log.d("ftbt", "read hoge2");
 			}
 		} catch (Exception e) {
 			Log.d("ftbt", "message", e);
 		}
+		Log.d("ftbt", "BBSMenu onResume");
 	}
 }

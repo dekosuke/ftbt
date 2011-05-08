@@ -12,18 +12,5 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:paddingTop="5px"
-        >
-        // <!-- タブ画面1のレイアウト。事実上あまり意味ない -->
-        <LinearLayout android:id="@+id/sheet01_id"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            >
-        </LinearLayout>
-        <!-- タブ画面2のレイアウト -->
-        <LinearLayout android:id="@+id/sheet02_id"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            >
-        </LinearLayout>
-    </FrameLayout>
+        />
 </TabHost>

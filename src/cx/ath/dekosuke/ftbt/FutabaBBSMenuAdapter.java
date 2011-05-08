@@ -48,10 +48,13 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 	public FutabaBBSMenuAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
 		super(context, textViewResourceId, items);
-		this.items = items;
-		this.inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+		try {
+			this.items = items;
+			this.inflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		} catch (Exception e) {
+			Log.i("ftbt", "message", e);
+		}
 	}
 
 	@Override
@@ -69,49 +72,56 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 			}
 
 			// 表示すべきデータの取得
-			final FutabaBBSContent item = (FutabaBBSContent) items.get(position);
+			final FutabaBBSContent item = (FutabaBBSContent) items
+					.get(position);
 			if (item != null) {
 				TextView url = (TextView) view.findViewById(R.id.url);
 				url.setText(item.url);
 				TextView name = (TextView) view.findViewById(R.id.name);
 				name.setText(item.name);
-				final Button buttonFavorite = (Button) view.findViewById(R.id.favorite_btn);
-				final FutabaBBSMenu activity = (FutabaBBSMenu)getContext();
-				if(activity.mode.equals("all")){
+				final Button buttonFavorite = (Button) view
+						.findViewById(R.id.favorite_btn);
+				final FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
+				if (activity.mode.equals("all")) {
 					buttonFavorite.setText("追加");
-				}else{
-					buttonFavorite.setText("削除");					
+				} else {
+					buttonFavorite.setText("削除");
 				}
 
 				final ViewGroup view_parent = parent;
 				buttonFavorite.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
-						if(activity.mode.equals("all")){
-							ftbt ftbt_top = (ftbt)activity.getParent();
-							//ftbt_top.favoriteBBSs.add(item);
-                            ftbt_top.addFavoriteBBSs(item);
-    						Toast.makeText(activity, item.name+"をお気に入りに追加しました", Toast.LENGTH_SHORT).show();
-						}else{
-							ftbt ftbt_top = (ftbt)activity.getParent();
-                            ftbt_top.removeFavoriteBBSs(item);
-    						Toast.makeText(activity, item.name+"をお気に入りから削除しました", Toast.LENGTH_SHORT).show();
+						if (activity.mode.equals("all")) {
+							ftbt ftbt_top = (ftbt) activity.getParent();
+							// ftbt_top.favoriteBBSs.add(item);
+							ftbt_top.addFavoriteBBSs(item);
+							Toast.makeText(activity,
+									item.name + "をお気に入りに追加しました",
+									Toast.LENGTH_SHORT).show();
+						} else {
+							ftbt ftbt_top = (ftbt) activity.getParent();
+							ftbt_top.removeFavoriteBBSs(item);
+							Toast.makeText(activity,
+									item.name + "をお気に入りから削除しました",
+									Toast.LENGTH_SHORT).show();
 						}
 						view_parent.invalidate();
 						notifyDataSetChanged();
 					}
-				});			
-				
-				//非ボタン部分
-				LinearLayout ll_main = (LinearLayout)view.findViewById(R.id.ll_main);
+				});
+
+				// 非ボタン部分
+				LinearLayout ll_main = (LinearLayout) view
+						.findViewById(R.id.ll_main);
 				ll_main.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						Log.d("ftbt", "onclick_bbs");
-						FutabaBBSMenu activity = (FutabaBBSMenu)getContext();
+						FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
 						activity.transSetting(item);
 					}
-				});			
-			}		
-			
+				});
+			}
+
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
 		}
