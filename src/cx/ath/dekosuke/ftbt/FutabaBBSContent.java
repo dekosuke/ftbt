@@ -12,6 +12,7 @@ public class FutabaBBSContent implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public String url;
 	public String name;
+	public boolean faved; 
 
 	public FutabaBBSContent() {
 	}
@@ -20,6 +21,7 @@ public class FutabaBBSContent implements Serializable{
 		String[] elems = s.split(":::");
 		url = elems[0];
 		name = elems[1];
+		faved=false;
 	}
 
 	public String toString(){ //適当文字列化

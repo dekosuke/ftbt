@@ -42,6 +42,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.view.View;
@@ -211,7 +213,7 @@ public class FutabaThread extends Activity implements Runnable {
 					num -= cacheParser.getStatuses().size();					
 					Toast.makeText(this, "新着:"+num+"件", Toast.LENGTH_SHORT).show();
 				}else{
-					Toast.makeText(this, "レス:"+num+"件", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, "レス"+num+"件", Toast.LENGTH_SHORT).show();
 				}
 			}else if(cache_ok){
 				statuses = cacheParser.getStatuses();				

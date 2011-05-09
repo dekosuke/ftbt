@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,7 +62,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private String catalogURL;
 	private ProgressDialog waitDialog;
 	private Thread thread;
-	private Button buttonReload;
 	// private ListView listView;
 	private String BBSName = ""; // 板名
 
@@ -153,9 +153,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			BBSName = (String) intent.getSerializableExtra("BBSName");
 			mode = (String) intent.getSerializableExtra("mode");
 			catalogURL = baseUrl + "futaba.php";
-			buttonReload = new Button(this);
-			buttonReload.setText("Reload");
-			buttonReload.setOnClickListener(this);
 			parser = new CatalogParser();
 
 			setContentView(R.layout.futaba_catalog);
@@ -255,6 +252,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "catalog onclick-reload");
 		ListView listView = (ListView) findViewById(id.cataloglistview);
+		//Button reloadButton = (Button) findViewById(R.id.reload_btn);
+		//reloadButton.setPressed(true);//setgetResources().getDrawable(R.drawable.ic_popup_sync));
 		position = listView.getFirstVisiblePosition();
 		; // 現在位置（リロードで復帰）
 		setWait();

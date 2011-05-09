@@ -53,7 +53,6 @@ public class ftbt extends TabActivity {
 					.getDefaultSharedPreferences(this);
 			int cacheSize = Integer.parseInt(preferences.getString(
 					getString(R.string.cachesize), "5"));
-			Log.d("ftbt", "cachesize=" + cacheSize);
 			ProgressDialog waitDialog = new ProgressDialog(this);
 			waitDialog.setMessage("キャッシュの整理中・・・");
 			waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -63,6 +62,7 @@ public class ftbt extends TabActivity {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
+			Log.d("ftbt", "cachesize=" + cacheSize);
 			SDCard.limitCache(cacheSize);
 			waitDialog.dismiss();
 		} catch (Exception e) {

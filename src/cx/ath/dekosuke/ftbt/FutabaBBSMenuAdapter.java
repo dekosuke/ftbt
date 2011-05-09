@@ -82,28 +82,53 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				final Button buttonFavorite = (Button) view
 						.findViewById(R.id.favorite_btn);
 				final FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
+				Log.d("ftbt", "pos=" + position + " faved=" + item.faved);
 				if (activity.mode.equals("all")) {
-					buttonFavorite.setText("追加");
+					if (!item.faved) {
+						// buttonFavorite.setText("追加");
+						buttonFavorite.setBackgroundDrawable(getContext()
+								.getResources().getDrawable(
+										R.drawable.star_big_off));
+					} else {
+						buttonFavorite.setBackgroundDrawable(getContext()
+								.getResources().getDrawable(
+										R.drawable.star_big_on));
+						// buttonFavorite.setText("削除");
+					}
 				} else {
-					buttonFavorite.setText("削除");
+					buttonFavorite.setVisibility(View.GONE);
 				}
 
 				final ViewGroup view_parent = parent;
 				buttonFavorite.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
 						if (activity.mode.equals("all")) {
-							ftbt ftbt_top = (ftbt) activity.getParent();
-							// ftbt_top.favoriteBBSs.add(item);
-							ftbt_top.addFavoriteBBSs(item);
-							Toast.makeText(activity,
-									item.name + "をお気に入りに追加しました",
-									Toast.LENGTH_SHORT).show();
+							if (!item.faved) {
+								ftbt ftbt_top = (ftbt) activity.getParent();
+								// ftbt_top.favoriteBBSs.add(item);
+								item.faved = true;
+								ftbt_top.addFavoriteBBSs(item);
+								FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
+								activity.adapter.notifyDataSetChanged();
+								Toast.makeText(activity,
+										item.name + "をお気に入りに追加しました",
+										Toast.LENGTH_SHORT).show();
+							} else {
+								ftbt ftbt_top = (ftbt) activity.getParent();
+								item.faved = false;
+								ftbt_top.removeFavoriteBBSs(item);
+								Toast.makeText(activity,
+										item.name + "をお気に入りから削除しました",
+										Toast.LENGTH_SHORT).show();
+							}
 						} else {
-							ftbt ftbt_top = (ftbt) activity.getParent();
-							ftbt_top.removeFavoriteBBSs(item);
-							Toast.makeText(activity,
-									item.name + "をお気に入りから削除しました",
-									Toast.LENGTH_SHORT).show();
+							/*
+							 * ftbt ftbt_top = (ftbt) activity.getParent();
+							 * item.faved = false;
+							 * ftbt_top.removeFavoriteBBSs();
+							 * Toast.makeText(activity, item.name +
+							 * "をお気に入りから削除しました", Toast.LENGTH_SHORT).show();
+							 */
 						}
 						view_parent.invalidate();
 						notifyDataSetChanged();
@@ -128,5 +153,4 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 
 		return view;
 	}
-
 }

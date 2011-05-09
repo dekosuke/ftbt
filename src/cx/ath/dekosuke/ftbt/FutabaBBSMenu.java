@@ -21,6 +21,8 @@ import android.os.Handler;
 import android.os.Message;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.TreeMap;
 
 import cx.ath.dekosuke.ftbt.R.id;
 
@@ -28,7 +30,8 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 
-	private FutabaBBSMenuAdapter adapter = null;
+	public FutabaBBSMenuAdapter adapter = null;
+	public boolean initial_loading = true;
 	String mode;
 
 	/** Called when the activity is first created. */
@@ -100,7 +103,21 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 								Toast.LENGTH_SHORT).show();
 					}
 				}
-				BBSs = parser.getBBSs();
+				BBSs = parser.getBBSs();	
+				if(initial_loading){
+					initial_loading = false;
+					ftbt parent_activity = (ftbt) this.getParent();
+					ArrayList<FutabaBBSContent> BBSs_faved = parent_activity.favoriteBBSs;
+					HashSet<String> BBS_urls=new HashSet<String>();
+					for(int i=0;i<BBSs_faved.size();i++){
+						BBS_urls.add(BBSs_faved.get(i).url);
+					}
+					for(int i=0;i<BBSs.size();i++){
+						if(BBS_urls.contains(BBSs.get(i).url)){
+							BBSs.get(i).faved=true;
+						}
+					}
+				}
 			} else { // fav
 				ftbt parent_activity = (ftbt) this.getParent();
 				BBSs = parent_activity.favoriteBBSs;

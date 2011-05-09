@@ -15,6 +15,7 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     android:layout_alignParentBottom="true"
     android:id="@+id/bottom_control_bar" android:orientation="horizontal">
     <Button android:text="リロード"
+        android:drawableLeft="@drawable/sync_button"
         android:id="@+id/reload_btn"
         android:layout_height="wrap_content"
         android:onClick="onClickReloadBtn" android:layout_width="fill_parent" android:layout_weight="2">

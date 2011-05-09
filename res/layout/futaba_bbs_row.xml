@@ -39,7 +39,7 @@
 	</LinearLayout>  
 	<LinearLayout
     	android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+	    android:layout_height="fill_parent"
     	android:background="#F0E0D6"
     	android:orientation="horizontal"
     	>  
@@ -51,11 +51,20 @@
 	            android:text=""
 	            />  
 		<Button
+			android:background="@drawable/star_big_off"
     	    android:id="@+id/favorite_btn"
-       	 android:layout_width="fill_parent"
-       	 android:layout_height="wrap_content"
+       	 android:layout_width="57px"
+       	 android:layout_height="57px"
+       	 android:layout_gravity="center_vertical"
+       	 android:gravity="center_vertical"
     	    android:onClick="onClickFavoriteBtn"
-    	    >
-	    </Button>
+    	    />
+	        <TextView android:layout_width="20px"  
+	            android:layout_height="wrap_content"
+	            android:id="@+id/nonclickableblank"  
+	            android:textSize="14sp"
+				android:textColor="#117743"
+	            android:text=""
+	            />  
 	</LinearLayout>  
 </LinearLayout>  
