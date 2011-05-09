@@ -79,6 +79,8 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				url.setText(item.url);
 				TextView name = (TextView) view.findViewById(R.id.name);
 				name.setText(item.name);
+				//ここでスレURL表示を消してる!!!
+				//url.setVisibility(View.GONE); 
 				final Button buttonFavorite = (Button) view
 						.findViewById(R.id.favorite_btn);
 				final FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
