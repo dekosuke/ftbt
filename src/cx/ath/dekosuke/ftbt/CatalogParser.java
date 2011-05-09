@@ -43,7 +43,8 @@ public class CatalogParser {
 					Pattern.DOTALL);
 			Pattern resPattern = Pattern.compile("<td.*?>(.+?)</td>",
 					Pattern.DOTALL);
-			Pattern textPattern = Pattern.compile("<small.*?>(.+?)</small>.+?<font[^>]+>(.+?)</font>",
+			Pattern textPattern = Pattern.compile("<small.*?>(.+?)</small>.*?<font[^>]+>" +
+					".*([0-9]+).*?</font>",
 					Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
 					"<img.*?src=(?:\"|')(.+?)(?:\"|')", Pattern.DOTALL);
