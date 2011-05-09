@@ -255,12 +255,16 @@ public class FutabaThread extends Activity implements Runnable {
 	}
 
 	public void onClickReloadBtn(View v) {
-		Log.d("ftbt", "fthread onclick-reload");
-		position = listView.getFirstVisiblePosition();
-		positionY = listView.getChildAt(0).getTop();
-		; // 現在位置（リロードで復帰）
-		Log.d("ftbt", "position=" + position);
-		setWait();
+		try{
+			Log.d("ftbt", "fthread onclick-reload");
+			position = listView.getFirstVisiblePosition();
+			positionY = listView.getChildAt(0).getTop();
+			; // 現在位置（リロードで復帰）
+			Log.d("ftbt", "position=" + position);
+			setWait();
+		}catch(Exception e){
+			Log.d("ftbt", "message", e);
+		}
 	}
 
 	public void onClickGoTopBtn(View v) {

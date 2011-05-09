@@ -169,9 +169,9 @@ public class SDCard {
 			File f1 = (File) o1;
 			File f2 = (File) o2;
 			long f1_lastmodified = f1.lastModified();
-			Log.d("ftbt", f1.toString()+" is "+FutabaCrypt.isHTMLName(f1.toString()));
+			//Log.d("ftbt", f1.toString()+" is "+FutabaCrypt.isHTMLName(f1.toString()));
 			if (FutabaCrypt.isHTMLName(f1.toString())) {
-				Log.d("ftbt", f1.toString()+" is HTML");
+				//Log.d("ftbt", f1.toString()+" is HTML");
 				f1_lastmodified += additional_days;
 			}
 			long f2_lastmodified = f2.lastModified();
@@ -201,7 +201,7 @@ public class SDCard {
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
-			Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
+			//Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
 			// Log.d("ftbt", f.getName() + "," + toCalendarString(f));
 			if (f.isDirectory()) { // 強制ディレクトリ削除
 				// deleteDir(f);

@@ -82,7 +82,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				final Button buttonFavorite = (Button) view
 						.findViewById(R.id.favorite_btn);
 				final FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
-				Log.d("ftbt", "pos=" + position + " faved=" + item.faved);
+				//Log.d("ftbt", "pos=" + position + " faved=" + item.faved);
 				if (activity.mode.equals("all")) {
 					if (!item.faved) {
 						// buttonFavorite.setText("追加");
