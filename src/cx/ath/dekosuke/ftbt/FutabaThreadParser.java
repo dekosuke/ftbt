@@ -246,4 +246,14 @@ public class FutabaThreadParser {
 	public ArrayList<FutabaStatus> getStatuses() {
 		return statuses;
 	}
+	
+	//タイトルを取得する(最大num文字)
+	public String getTitle(int num){
+		if(statuses.size()>0){
+			String text = statuses.get(0).title;
+			text = tagPattern.matcher(text).replaceAll(""); // タグ除去
+			return text.substring(0, Math.min(text.length(), num));
+		}
+		return "(no title)";
+	}
 }

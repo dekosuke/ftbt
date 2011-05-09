@@ -36,6 +36,8 @@ public class ImageCatalog extends Activity {
 		try {
 
 			// linearLayout.addView(gallery, createParam(WC, FP));
+			
+			setTitle("画像ビューワ - "+getString(R.string.app_name));
 
 			Log.d("ftbt", "ImageCatalog.onCreate start");
 			Intent intent = getIntent();

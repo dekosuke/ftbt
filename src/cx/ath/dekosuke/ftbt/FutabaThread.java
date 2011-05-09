@@ -215,8 +215,10 @@ public class FutabaThread extends Activity implements Runnable {
 				}else{
 					Toast.makeText(this, "レス"+num+"件", Toast.LENGTH_SHORT).show();
 				}
+				setTitle(webParser.getTitle(20)+" - "+getString(R.string.app_name));
 			}else if(cache_ok){
 				statuses = cacheParser.getStatuses();				
+				setTitle(cacheParser.getTitle(20)+" - "+getString(R.string.app_name));
 			}
 			Log.d("ftbt", "parse end");
 

@@ -154,7 +154,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			mode = (String) intent.getSerializableExtra("mode");
 			catalogURL = baseUrl + "futaba.php";
 			parser = new CatalogParser();
-
+			
 			setContentView(R.layout.futaba_catalog);
 			ListView listView = (ListView) findViewById(id.cataloglistview);
 
@@ -222,6 +222,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 				Button historyDeleteButton = (Button) findViewById(id.delete_btn);
 				historyDeleteButton.setVisibility(View.GONE);
+
+				setTitle(BBSName+" - "+getString(R.string.app_name));
+
 			} else { // 履歴モード。複数板混在なので注意
 				HistoryManager man = new HistoryManager();
 				man.Load();
@@ -232,6 +235,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				reloadButton.setVisibility(View.GONE);
 				Button historyButton = (Button) findViewById(id.history_btn);
 				historyButton.setVisibility(View.GONE);
+
+				setTitle("履歴 - "+getString(R.string.app_name));
 			}
 
 			// アダプターを設定します
