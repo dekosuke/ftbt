@@ -171,7 +171,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			historyButton.setVisibility(View.GONE);
 		}
 
-		adapter.items.clear();
 		listView.setAdapter(adapter);
 
 		new Thread(new FutabaCatalogContentGetter()).start();
@@ -268,6 +267,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 * if (position != 0) { listView.setSelection(Math.min(position,
 				 * listView.getCount())); }
 				 */
+				adapter.items.clear();
 				for (int i = 0; i < fthreads.size(); ++i) {
 					adapter.items.add(fthreads.get(i));
 				}
@@ -282,6 +282,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						setTitle(title_text_f);
 						waitDialog.dismiss();
 						adapter.notifyDataSetChanged();
+						listView.invalidate();
 					}
 				});
 				onCreateEnd = true;

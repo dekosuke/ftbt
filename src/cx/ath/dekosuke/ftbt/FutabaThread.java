@@ -131,7 +131,6 @@ public class FutabaThread extends Activity implements Runnable {
 		// アダプターを設定します
 		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 				statuses);
-		adapter.items.clear();
 		listView.setAdapter(adapter);
 
 		FutabaThreadContentGetter getterThread = new FutabaThreadContentGetter();
@@ -390,6 +389,7 @@ public class FutabaThread extends Activity implements Runnable {
 				} else if (cache_ok) {
 					statuses = cacheParser.getStatuses();
 				}
+				adapter.items.clear();
 				for (int i = 0; i < statuses.size(); ++i) {
 					adapter.items.add(statuses.get(i));
 				}
@@ -406,6 +406,7 @@ public class FutabaThread extends Activity implements Runnable {
 						setTitle(title);							
 						waitDialog.dismiss();
 						adapter.notifyDataSetChanged();
+						listView.invalidate();
 					}
 				});
 
