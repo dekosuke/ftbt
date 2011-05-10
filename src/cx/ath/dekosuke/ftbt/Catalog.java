@@ -174,11 +174,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		adapter.items.clear();
 		listView.setAdapter(adapter);
 
-		new Thread(new Runnable() {
-			public void run() {
-				handler2.post(new FutabaCatalogContentGetter());
-			}
-		}).start();
+		new Thread(new FutabaCatalogContentGetter()).start();
 		// FutabaThreadContentGetter getterThread = new
 		// FutabaThreadContentGetter();
 		// getterThread.start();
@@ -191,6 +187,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				ArrayList<FutabaThreadContent> fthreads = new ArrayList<FutabaThreadContent>();
 
 				parser = new CatalogParser();
+
+				String title_text = "";
+				String toast_text = "";
 
 				if (!mode.equals("history")) { // 通常
 					String catalogHtml = "";
@@ -239,13 +238,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 					if (!network_ok) {
 						if (cache_ok) {
-							Toast.makeText(adapter.getContext(),
-									"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-									Toast.LENGTH_SHORT).show();
+							toast_text = "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します";
 						} else {
-							Toast.makeText(adapter.getContext(),
-									"ネットワークに繋がっていません", Toast.LENGTH_SHORT)
-									.show();
+							toast_text = "ネットワークに繋がっていません";
 						}
 					}
 
@@ -259,27 +254,36 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						fthreads.get(i).BBSName = BBSName;
 					}
 
-					setTitle(BBSName + " - " + getString(R.string.app_name));
+					title_text = BBSName + " - " + getString(R.string.app_name);
 
 				} else { // 履歴モード。複数板混在なので注意
 					HistoryManager man = new HistoryManager();
 					man.Load();
 					fthreads = man.getThreadsArray();
 
-
-					setTitle("履歴 - " + getString(R.string.app_name));
+					title_text = "履歴 - " + getString(R.string.app_name);
 				}
 
 				/*
 				 * if (position != 0) { listView.setSelection(Math.min(position,
 				 * listView.getCount())); }
 				 */
-
-				waitDialog.dismiss();
 				for (int i = 0; i < fthreads.size(); ++i) {
 					adapter.items.add(fthreads.get(i));
 				}
-				adapter.notifyDataSetChanged();
+				final String title_text_f = title_text;
+				final String toast_text_f = toast_text;
+				handler2.post(new Runnable() {
+					public void run() {
+						if (!toast_text_f.equals("")) {
+							Toast.makeText(adapter.getContext(), toast_text_f,
+									Toast.LENGTH_SHORT).show();
+						}
+						setTitle(title_text_f);
+						waitDialog.dismiss();
+						adapter.notifyDataSetChanged();
+					}
+				});
 				onCreateEnd = true;
 			} catch (Exception e) {
 				Log.i("ftbt", "message", e);
