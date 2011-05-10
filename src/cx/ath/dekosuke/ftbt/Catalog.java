@@ -64,6 +64,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private Thread thread;
 	// private ListView listView;
 	private String BBSName = ""; // 板名
+	private ListView listView;
 
 	// 履歴モードか通常モードか
 	public String mode;
@@ -146,119 +147,147 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		}
 	};
 
+	final Handler handler2 = new Handler();
+
 	private void loading() {
-		try {
-			Intent intent = getIntent();
-			baseUrl = (String) intent.getSerializableExtra("baseUrl");
-			BBSName = (String) intent.getSerializableExtra("BBSName");
-			mode = (String) intent.getSerializableExtra("mode");
-			catalogURL = baseUrl + "futaba.php";
-			parser = new CatalogParser();
-			
-			setContentView(R.layout.futaba_catalog);
-			ListView listView = (ListView) findViewById(id.cataloglistview);
+		Intent intent = getIntent();
+		baseUrl = (String) intent.getSerializableExtra("baseUrl");
+		BBSName = (String) intent.getSerializableExtra("BBSName");
+		mode = (String) intent.getSerializableExtra("mode");
+		catalogURL = baseUrl + "futaba.php";
+		setContentView(R.layout.futaba_catalog);
+		listView = (ListView) findViewById(id.cataloglistview);
+		adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
+				fthreads);
+		listView.setAdapter(adapter);
 
-			if (!mode.equals("history")) { // 通常
-				String catalogHtml = "";
-				Boolean network_ok = true;
-				Boolean cache_ok = true;
-				try {
-					catalogHtml = CatalogHtmlReader.Read(catalogURL);
-					network_ok = true;
-				} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
-					Log.d("ftbt", "hoge");
-
-					// Log.d("ftbt", "message", e);
-					network_ok = false;
-					if (SDCard.cacheExist(FutabaCrypt.createDigest(catalogURL))) {
-						Log.d("ftbt",
-								"getting html from cache"
-										+ FutabaCrypt.createDigest(catalogURL));
-						catalogHtml = SDCard.loadTextCache(FutabaCrypt
-								.createDigest(catalogURL));
-					} else {
-						Log.d("ftbt",
-								"cache " + FutabaCrypt.createDigest(catalogURL)
-										+ "not found");
-						cache_ok = false;
-					}
-				} catch (Exception e) { // その他エラー
-					network_ok = false;
-					if (SDCard.cacheExist(FutabaCrypt.createDigest(catalogURL))) {
-						Log.d("ftbt",
-								"getting html from cache"
-										+ FutabaCrypt.createDigest(catalogURL));
-						catalogHtml = SDCard.loadTextCache(FutabaCrypt
-								.createDigest(catalogURL));
-					} else {
-						Log.d("ftbt",
-								"cache " + FutabaCrypt.createDigest(catalogURL)
-										+ "not found");
-						cache_ok = false;
-					}
-					
-					Log.d("ftbt", "message", e);
-				}
-				if (!network_ok) {
-					if (cache_ok) {
-						Toast.makeText(this,
-								"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-								Toast.LENGTH_SHORT).show();
-					} else {
-						Toast.makeText(this, "ネットワークに繋がっていません",
-								Toast.LENGTH_SHORT).show();
-					}
-				}
-
-				if (network_ok || cache_ok) {
-					parser.parse(catalogHtml);
-					fthreads = parser.getThreads();
-				}
-
-				// BBS名足す
-				for (int i = 0; i < fthreads.size(); ++i) {
-					fthreads.get(i).BBSName = BBSName;
-				}
-
-				Button historyDeleteButton = (Button) findViewById(id.delete_btn);
-				historyDeleteButton.setVisibility(View.GONE);
-
-				setTitle(BBSName+" - "+getString(R.string.app_name));
-
-			} else { // 履歴モード。複数板混在なので注意
-				HistoryManager man = new HistoryManager();
-				man.Load();
-				fthreads = man.getThreadsArray();
-
-				// 通常モードのときのボタンを非表示に
-				Button reloadButton = (Button) findViewById(id.reload_btn);
-				reloadButton.setVisibility(View.GONE);
-				Button historyButton = (Button) findViewById(id.history_btn);
-				historyButton.setVisibility(View.GONE);
-
-				setTitle("履歴 - "+getString(R.string.app_name));
+		new Thread(new Runnable() {
+			public void run() {
+				handler2.post(new FutabaCatalogContentGetter());
 			}
+		}).start();
+		// FutabaThreadContentGetter getterThread = new
+		// FutabaThreadContentGetter();
+		// getterThread.start();
+	}
 
-			// アダプターを設定します
-			adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
-					fthreads);
-			listView.setAdapter(adapter);
-			if (position != 0) {
-				listView.setSelection(Math.min(position, listView.getCount()));
+	private class FutabaCatalogContentGetter extends Thread {
+		@Override
+		public void run() {
+			try {
+				ArrayList<FutabaThreadContent> fthreads = new ArrayList<FutabaThreadContent>();
+
+				parser = new CatalogParser();
+
+				if (!mode.equals("history")) { // 通常
+					String catalogHtml = "";
+					Boolean network_ok = true;
+					Boolean cache_ok = true;
+					try {
+						catalogHtml = CatalogHtmlReader.Read(catalogURL);
+						network_ok = true;
+					} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
+						Log.d("ftbt", "hoge");
+
+						// Log.d("ftbt", "message", e);
+						network_ok = false;
+						if (SDCard.cacheExist(FutabaCrypt
+								.createDigest(catalogURL))) {
+							Log.d("ftbt", "getting html from cache"
+									+ FutabaCrypt.createDigest(catalogURL));
+							catalogHtml = SDCard.loadTextCache(FutabaCrypt
+									.createDigest(catalogURL));
+						} else {
+							Log.d("ftbt",
+									"cache "
+											+ FutabaCrypt
+													.createDigest(catalogURL)
+											+ "not found");
+							cache_ok = false;
+						}
+					} catch (Exception e) { // その他エラー
+						network_ok = false;
+						if (SDCard.cacheExist(FutabaCrypt
+								.createDigest(catalogURL))) {
+							Log.d("ftbt", "getting html from cache"
+									+ FutabaCrypt.createDigest(catalogURL));
+							catalogHtml = SDCard.loadTextCache(FutabaCrypt
+									.createDigest(catalogURL));
+						} else {
+							Log.d("ftbt",
+									"cache "
+											+ FutabaCrypt
+													.createDigest(catalogURL)
+											+ "not found");
+							cache_ok = false;
+						}
+
+						Log.d("ftbt", "message", e);
+					}
+					if (!network_ok) {
+						if (cache_ok) {
+							Toast.makeText(adapter.getContext(),
+									"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
+									Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(adapter.getContext(),
+									"ネットワークに繋がっていません", Toast.LENGTH_SHORT)
+									.show();
+						}
+					}
+
+					if (network_ok || cache_ok) {
+						parser.parse(catalogHtml);
+						fthreads = parser.getThreads();
+					}
+
+					// BBS名足す
+					for (int i = 0; i < fthreads.size(); ++i) {
+						fthreads.get(i).BBSName = BBSName;
+					}
+
+					Button historyDeleteButton = (Button) findViewById(id.delete_btn);
+					historyDeleteButton.setVisibility(View.GONE);
+
+					setTitle(BBSName + " - " + getString(R.string.app_name));
+
+				} else { // 履歴モード。複数板混在なので注意
+					HistoryManager man = new HistoryManager();
+					man.Load();
+					fthreads = man.getThreadsArray();
+
+					// 通常モードのときのボタンを非表示に
+					Button reloadButton = (Button) findViewById(id.reload_btn);
+					reloadButton.setVisibility(View.GONE);
+					Button historyButton = (Button) findViewById(id.history_btn);
+					historyButton.setVisibility(View.GONE);
+
+					setTitle("履歴 - " + getString(R.string.app_name));
+				}
+
+				/*
+				 * if (position != 0) { listView.setSelection(Math.min(position,
+				 * listView.getCount())); }
+				 */
+				
+
+				waitDialog.dismiss();
+				for(int i=0;i<fthreads.size();++i){
+					adapter.items.add(fthreads.get(i));
+				}
+				adapter.notifyDataSetChanged();
+				onCreateEnd = true;
+			} catch (Exception e) {
+				Log.i("ftbt", "message", e);
 			}
-
-			waitDialog.dismiss();
-			onCreateEnd = true;
-		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
 		}
 	}
 
 	public void onClickReloadBtn(View v) {
 		Log.d("ftbt", "catalog onclick-reload");
 		ListView listView = (ListView) findViewById(id.cataloglistview);
-		//Button reloadButton = (Button) findViewById(R.id.reload_btn);
-		//reloadButton.setPressed(true);//setgetResources().getDrawable(R.drawable.ic_popup_sync));
+		// Button reloadButton = (Button) findViewById(R.id.reload_btn);
+		// reloadButton.setPressed(true);//setgetResources().getDrawable(R.drawable.ic_popup_sync));
 		position = listView.getFirstVisiblePosition();
 		; // 現在位置（リロードで復帰）
 		setWait();
@@ -321,24 +350,26 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			if (delete_option == DELETE_ALL) {
 				adapter.items.clear();
 			} else {
-				if (delete_option == DELETE_CHECKED) { 
+				if (delete_option == DELETE_CHECKED) {
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
-						//チェックされたアイテム（画面外はチェック消される）を削除
-						Log.d("ftbt", "item "+i+" checked="+adapter.items.get(i).isChecked);
-						if(adapter.items.get(i).isChecked){
+						// チェックされたアイテム（画面外はチェック消される）を削除
+						Log.d("ftbt",
+								"item " + i + " checked="
+										+ adapter.items.get(i).isChecked);
+						if (adapter.items.get(i).isChecked) {
 							adapter.items.remove(i);
-						}else{
-							//チェック状態戻す
-							adapter.items.get(i).isChecked=false;							
+						} else {
+							// チェック状態戻す
+							adapter.items.get(i).isChecked = false;
 						}
 					}
-				} else { //チェックされていないアイテム（画面外含む）を削除
+				} else { // チェックされていないアイテム（画面外含む）を削除
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
-						if(!adapter.items.get(i).isChecked){
+						if (!adapter.items.get(i).isChecked) {
 							adapter.items.remove(i);
-						}else{
-							//チェック状態戻す
-							adapter.items.get(i).isChecked=false;							
+						} else {
+							// チェック状態戻す
+							adapter.items.get(i).isChecked = false;
 						}
 					}
 				}

@@ -343,8 +343,8 @@ public class FutabaThread extends Activity implements Runnable {
 										cause + "。前回読み込み時のキャッシュを使用します",
 										Toast.LENGTH_SHORT).show();
 							} else {
-								Toast.makeText(adapter.getContext(), cause, Toast.LENGTH_SHORT)
-										.show();
+								Toast.makeText(adapter.getContext(), cause,
+										Toast.LENGTH_SHORT).show();
 							}
 
 						} catch (Exception e) { // ネットワークつながってないときとか
@@ -356,8 +356,9 @@ public class FutabaThread extends Activity implements Runnable {
 										"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
 										Toast.LENGTH_SHORT).show();
 							} else {
-								Toast.makeText(adapter.getContext(), "ネットワークに繋がっていません",
-										Toast.LENGTH_SHORT).show();
+								Toast.makeText(adapter.getContext(),
+										"ネットワークに繋がっていません", Toast.LENGTH_SHORT)
+										.show();
 							}
 
 						}
@@ -377,11 +378,13 @@ public class FutabaThread extends Activity implements Runnable {
 							int num = webParser.getStatuses().size();
 							if (cache_ok) {
 								num -= cacheParser.getStatuses().size();
-								Toast.makeText(adapter.getContext(), "新着:" + num + "件",
-										Toast.LENGTH_SHORT).show();
+								Toast.makeText(adapter.getContext(),
+										"新着:" + num + "件", Toast.LENGTH_SHORT)
+										.show();
 							} else {
-								Toast.makeText(adapter.getContext(), "レス" + num + "件",
-										Toast.LENGTH_SHORT).show();
+								Toast.makeText(adapter.getContext(),
+										"レス" + num + "件", Toast.LENGTH_SHORT)
+										.show();
 							}
 							setTitle(webParser.getTitle(20) + " - "
 									+ getString(R.string.app_name));
@@ -396,6 +399,11 @@ public class FutabaThread extends Activity implements Runnable {
 						Log.d("ftbt", "parse end" + statuses.size());
 						waitDialog.dismiss();
 						adapter.notifyDataSetChanged();
+						if (position != 0) {
+							listView.setSelectionFromTop(
+									Math.min(position, listView.getCount()),
+									positionY);
+						}
 					} catch (Exception e) {
 						Log.i("ftbt", "message", e);
 					}
