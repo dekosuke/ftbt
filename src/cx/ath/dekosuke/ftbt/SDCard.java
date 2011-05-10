@@ -140,7 +140,7 @@ public class SDCard {
 		return file.exists();
 	}
 
-	public static void copyCacheToFile(String urlhash, String url)
+	public static String copyCacheToFile(String urlhash, String url)
 			throws IOException {
 		String srcfilename = getCacheDir() + urlhash;
 		String dstfilename = getSaveDir() + url;
@@ -158,7 +158,7 @@ public class SDCard {
 		}
 		input.close();
 		output.close();
-
+		return dstfilename;
 	}
 
 	// ファイル古いものが先にくるようにソート

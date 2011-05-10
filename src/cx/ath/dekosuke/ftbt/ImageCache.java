@@ -34,12 +34,12 @@ public class ImageCache {
 		return false;
 	}
 
-	public static void saveImage(String url) {
+	public static String saveImage(String url) {
 		String urlHash = FutabaCrypt.createDigest(url);
 		File file = new File(url);
 		if (SDCard.cacheExist(urlHash)) {
 			try {
-				SDCard.copyCacheToFile(urlHash, file.getName());
+				return SDCard.copyCacheToFile(urlHash, file.getName());
 			} catch (Exception e) {
 				Log.i("ftbt", "message", e);
 			}
@@ -50,7 +50,7 @@ public class ImageCache {
 			 * setImage(url); //再帰 saveImage(url);
 			 */
 		}
-
+		return "";
 	}
 
 	public static void GC() {

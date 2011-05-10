@@ -231,7 +231,7 @@ public class FutabaThread extends Activity implements Runnable {
 		case R.id.tweet:
 			String thread_title = statuses.get(0).title;
 			thread_title = FutabaThreadParser.removeTag(thread_title); //HTMLタグ除去
-			thread_title = "みてる:" + thread_title.substring(0,
+			thread_title = "見てる:" + thread_title.substring(0,
 					Math.min(30, thread_title.length()));
 			if(thread_title.length()==30){
 				thread_title = thread_title + "...";
@@ -239,7 +239,8 @@ public class FutabaThread extends Activity implements Runnable {
 			String status_encoded = thread_title + " " + threadURL; // URIエンコードされた、ツイートしたい文章
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, status_encoded);
+			//intent.putExtra(Intent.EXTRA_SUBJECT  , );
+			intent.putExtra(Intent.EXTRA_TEXT   , status_encoded+" #ftbt");
 			try {
 				startActivityForResult(intent, 0);
 			} catch (android.content.ActivityNotFoundException ex) {

@@ -70,12 +70,12 @@ public class ImageCatalog extends Activity {
 						// 画像を保存する
 						String imgFile = CircleList.get();
 						File file = new File(imgFile);
-						ImageCache.saveImage(imgFile);
+						String name = ImageCache.saveImage(imgFile);
 						if (toast != null) {
 							toast.cancel();
 						}
 						toast = Toast.makeText(v.getContext(),
-								"画像" + file.getName() + "を保存しました",
+								name + "に保存しました",
 								Toast.LENGTH_SHORT);
 						toast.show();
 					} catch (Exception e) {
