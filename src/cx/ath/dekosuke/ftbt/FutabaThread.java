@@ -85,6 +85,17 @@ public class FutabaThread extends Activity implements Runnable {
 		threadNum = (String) intent.getSerializableExtra("threadNum");
 		threadURL = baseURL + threadNum;
 		Log.d("ftbt", "threadurl=" + threadURL);
+
+		statuses = new ArrayList<FutabaStatus>();
+
+		setContentView(R.layout.futaba_thread);
+
+		listView = (ListView) findViewById(id.threadlistview);
+		// アダプターを設定します
+		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
+				statuses);
+		listView.setAdapter(adapter);
+
 		setWait();
 	}
 
@@ -123,16 +134,6 @@ public class FutabaThread extends Activity implements Runnable {
 	final Handler handler2 = new Handler();
 
 	private void loading() {
-		statuses = new ArrayList<FutabaStatus>();
-
-		setContentView(R.layout.futaba_thread);
-
-		listView = (ListView) findViewById(id.threadlistview);
-		// アダプターを設定します
-		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
-				statuses);
-		listView.setAdapter(adapter);
-
 		FutabaThreadContentGetter getterThread = new FutabaThreadContentGetter();
 		getterThread.start();
 	}
@@ -295,9 +296,9 @@ public class FutabaThread extends Activity implements Runnable {
 				if (baseURL.contains("http://img.2chan.net/b")) {
 					anonymous = true;
 				}
-				
-				//Toastに表示するtext
-				String toast_text="";
+
+				// Toastに表示するtext
+				String toast_text = "";
 
 				Boolean network_ok = true;
 				Boolean cache_ok = true;
@@ -384,7 +385,7 @@ public class FutabaThread extends Activity implements Runnable {
 						num -= cacheParser.getStatuses().size();
 						toast_text = "新着:" + num + "件";
 					} else {
-						toast_text = "レス" + (num-1) + "件";
+						toast_text = "レス" + (num - 1) + "件";
 					}
 				} else if (cache_ok) {
 					statuses = cacheParser.getStatuses();
@@ -395,25 +396,28 @@ public class FutabaThread extends Activity implements Runnable {
 				}
 				Log.d("ftbt", "parse end" + statuses.size());
 				FutabaThreadParser parser = webParser;
-				if(!network_ok){ parser = cacheParser; }
+				if (!network_ok) {
+					parser = cacheParser;
+				}
 				final String title = parser.getTitle(20) + " - "
 						+ getString(R.string.app_name);
 				final String toast_text_f = toast_text;
 				handler2.post(new Runnable() {
 					public void run() {
-						Toast.makeText(adapter.getContext(), toast_text_f, 
+						Toast.makeText(adapter.getContext(), toast_text_f,
 								Toast.LENGTH_SHORT).show();
-						setTitle(title);							
+						setTitle(title);
 						waitDialog.dismiss();
 						adapter.notifyDataSetChanged();
 						listView.invalidate();
+						if (position != 0) {
+							listView.setSelectionFromTop(
+									Math.min(position, listView.getCount()),
+									positionY);
+						}
 					}
 				});
 
-				if (position != 0) {
-					listView.setSelectionFromTop(
-							Math.min(position, listView.getCount()), positionY);
-				}
 			} catch (Exception e) {
 				Log.i("ftbt", "message", e);
 			}
