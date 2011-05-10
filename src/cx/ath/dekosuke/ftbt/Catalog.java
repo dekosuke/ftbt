@@ -159,6 +159,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		listView = (ListView) findViewById(id.cataloglistview);
 		adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
 				fthreads);
+		adapter.items.clear();
 		listView.setAdapter(adapter);
 
 		new Thread(new Runnable() {
