@@ -2,7 +2,8 @@
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="スレに返信する" android:id="@+id/post"></item>
-    <item android:title="外部アプリに送る" android:id="@+id/tweet"></item>
+    <item android:title="タイトルとURLを共有" android:id="@+id/tweet"></item>
+    <item android:title="URLを共有" android:id="@+id/share"></item>
     <item android:title="設定" android:id="@+id/settings"></item>
     <item android:title="このアプリについて" android:id="@+id/about"></item>
 </menu>

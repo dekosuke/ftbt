@@ -256,4 +256,8 @@ public class FutabaThreadParser {
 		}
 		return "(no title)";
 	}
+	
+	public static String removeTag(String str){
+		return tagPattern.matcher(str).replaceAll("");
+	}
 }

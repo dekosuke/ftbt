@@ -217,10 +217,25 @@ public class FutabaThread extends Activity implements Runnable {
 		case R.id.post:
 			onClickPostBtn(null);
 			return true;
+		case R.id.share:
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, threadURL);
+			try {
+				startActivityForResult(intent, 0);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
+						.show();
+			}
+			return true;
 		case R.id.tweet:
-			String thread_title = statuses.get(0).text;
-			thread_title = thread_title.substring(0,
-					Math.min(50, thread_title.length()));
+			String thread_title = statuses.get(0).title;
+			thread_title = FutabaThreadParser.removeTag(thread_title); //HTMLタグ除去
+			thread_title = "みてる:" + thread_title.substring(0,
+					Math.min(30, thread_title.length()));
+			if(thread_title.length()==30){
+				thread_title = thread_title + "...";
+			}
 			String status_encoded = thread_title + " " + threadURL; // URIエンコードされた、ツイートしたい文章
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
