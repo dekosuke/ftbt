@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 
 import android.util.Log;
 
@@ -35,18 +36,23 @@ import org.apache.http.protocol.HttpContext;
 
 import android.app.ProgressDialog;
 import java.lang.Thread;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
+import cx.ath.dekosuke.ftbt.FutabaThreadAdapter.ImageGetTask;
 import cx.ath.dekosuke.ftbt.R.id;
 
 //スレッド表示アクティビティ
@@ -64,7 +70,7 @@ public class FutabaThread extends Activity implements Runnable {
 	private ListView listView;
 
 	// 現在位置(リロード時復帰用)
-	int position = 0; 
+	int position = 0;
 	int positionY = 0;
 
 	// 画像カタログから戻ってきたときにどの画像から戻ってきたか判定用
@@ -114,129 +120,21 @@ public class FutabaThread extends Activity implements Runnable {
 		}
 	};
 
+	final Handler handler2 = new Handler();
+
 	private void loading() {
-		try {
-			statuses = new ArrayList<FutabaStatus>();
-			
-			//匿名のBBS
-			boolean anonymous = false;
-			//ここでマジックナンバーが・・
-			if(baseURL.contains("http://img.2chan.net/b")){
-				anonymous = true;
-			}
-			
-			Boolean network_ok = true;
-			Boolean cache_ok = true;
+		statuses = new ArrayList<FutabaStatus>();
 
-			//キャッシュのHTMLをパーズするパーザ
-			FutabaThreadParser cacheParser = new FutabaThreadParser();
-			//webから取得したデータをパーズするパーザ
-			FutabaThreadParser webParser = new FutabaThreadParser();
-			if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
-				String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
-						.createDigest(threadURL));
-				cacheParser.parse(cacheThreadHtml, anonymous);
-				Log.d("ftbt", "cache  ok  "+ threadURL);
-	
-			}else{
-				cache_ok = false;	
-				Log.d("ftbt", "cache fail "+ threadURL);
-			}
+		setContentView(R.layout.futaba_thread);
 
-			String threadHtml = "";
-			try {
-				SDCard.saveFromURL(FutabaCrypt.createDigest(threadURL),
-						new URL(threadURL), true); // キャッシュに保存
-				//これが取得できれば最新のデータ
-				String webThreadHtml = SDCard.loadTextCache(FutabaCrypt
-						.createDigest(threadURL));
-				webParser.parse(webThreadHtml, anonymous);				
-				// Log.d("ftbt", threadHtml);
+		listView = (ListView) findViewById(id.threadlistview);
+		// アダプターを設定します
+		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
+				statuses);
+		listView.setAdapter(adapter);
 
-
-				try{
-					//取得に成功した場合、履歴データの件数とかを更新する
-					HistoryManager man = new HistoryManager();
-					FutabaThreadContent thread = new FutabaThreadContent();
-					thread.threadNum = this.threadNum;
-					thread.resNum = ""+webParser.getStatuses().size();
-					man.Load();
-					man.updateThread(thread); 
-					man.Save();
-				}catch(Exception e){
-					Log.d("ftbt", "message", e);
-				}
-
-				
-				network_ok = true;
-			} catch (IOException e) {
-				network_ok = false;
-				 // ホスト見つからない(ネットワークない) とか
-				// レスポンスコードが2XX以外とか(スレ落ちなど)
-				String cause = "ネットワークに繋がっていません" ;
-				if(e.toString().contains("Incorrect response code ")){
-					cause = "スレッドが存在しません";
-				}
-				if (cache_ok) {
-					Toast.makeText(this, cause+"。前回読み込み時のキャッシュを使用します",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(this, cause, Toast.LENGTH_SHORT)
-							.show();
-				}
-			} catch (Exception e) { // ネットワークつながってないときとか
-				network_ok = false;
-				Log.d("ftbt", "message", e);
-				if (cache_ok) {
-					Toast.makeText(this,
-							"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(this, "ネットワークに繋がっていません", Toast.LENGTH_SHORT)
-							.show();
-				}
-			}
-			
-			if((!network_ok) && (!cache_ok)){ //データ取得もキャッシュもないスレッドは消す
-				HistoryManager man = new HistoryManager();
-				FutabaThreadContent thread = new FutabaThreadContent();
-				thread.threadNum = this.threadNum;
-				man.Load();
-				man.removeThread(thread);
-				man.Save();
-			}
-			
-			if(network_ok){
-				statuses = webParser.getStatuses();
-				int num = webParser.getStatuses().size();
-				if(cache_ok){
-					num -= cacheParser.getStatuses().size();					
-					Toast.makeText(this, "新着:"+num+"件", Toast.LENGTH_SHORT).show();
-				}else{
-					Toast.makeText(this, "レス"+num+"件", Toast.LENGTH_SHORT).show();
-				}
-				setTitle(webParser.getTitle(20)+" - "+getString(R.string.app_name));
-			}else if(cache_ok){
-				statuses = cacheParser.getStatuses();				
-				setTitle(cacheParser.getTitle(20)+" - "+getString(R.string.app_name));
-			}
-			Log.d("ftbt", "parse end");
-
-			setContentView(R.layout.futaba_thread);
-
-			listView = (ListView) findViewById(id.threadlistview);
-			// アダプターを設定します
-			adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
-					statuses);
-			listView.setAdapter(adapter);
-			if (position != 0) {
-				listView.setSelectionFromTop(Math.min(position, listView.getCount()), positionY);
-			}
-
-		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
-		}
-		waitDialog.dismiss();
+		FutabaThreadContentGetter getterThread = new FutabaThreadContentGetter();
+		getterThread.start();
 	}
 
 	// スレッドに存在するすべての画像のURLを配列にして返す
@@ -257,14 +155,14 @@ public class FutabaThread extends Activity implements Runnable {
 	}
 
 	public void onClickReloadBtn(View v) {
-		try{
+		try {
 			Log.d("ftbt", "fthread onclick-reload");
 			position = listView.getFirstVisiblePosition();
 			positionY = listView.getChildAt(0).getTop();
 			; // 現在位置（リロードで復帰）
 			Log.d("ftbt", "position=" + position);
 			setWait();
-		}catch(Exception e){
+		} catch (Exception e) {
 			Log.d("ftbt", "message", e);
 		}
 	}
@@ -346,7 +244,6 @@ public class FutabaThread extends Activity implements Runnable {
 		return false;
 	}
 
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 		try {
@@ -366,6 +263,144 @@ public class FutabaThread extends Activity implements Runnable {
 			}
 		} catch (Exception e) {
 			Log.i("ftbt", "message", e);
+		}
+	}
+
+	private class FutabaThreadContentGetter extends Thread {
+
+		@Override
+		public void run() {
+			handler2.post(new Runnable() {
+
+				public void run() {
+					try {
+						// 匿名のBBS
+						boolean anonymous = false;
+						// ここでマジックナンバーが・・
+						if (baseURL.contains("http://img.2chan.net/b")) {
+							anonymous = true;
+						}
+
+						Boolean network_ok = true;
+						Boolean cache_ok = true;
+
+						// キャッシュのHTMLをパーズするパーザ
+						FutabaThreadParser cacheParser = new FutabaThreadParser();
+						// webから取得したデータをパーズするパーザ
+						FutabaThreadParser webParser = new FutabaThreadParser();
+						if (SDCard.cacheExist(FutabaCrypt
+								.createDigest(threadURL))) {
+							String cacheThreadHtml = SDCard
+									.loadTextCache(FutabaCrypt
+											.createDigest(threadURL));
+							cacheParser.parse(cacheThreadHtml, anonymous);
+							Log.d("ftbt", "cache  ok  " + threadURL);
+
+						} else {
+							cache_ok = false;
+							Log.d("ftbt", "cache fail " + threadURL);
+						}
+
+						String threadHtml = "";
+						try {
+							SDCard.saveFromURL(
+									FutabaCrypt.createDigest(threadURL),
+									new URL(threadURL), true); // キャッシュに保存
+							// これが取得できれば最新のデータ
+							String webThreadHtml = SDCard
+									.loadTextCache(FutabaCrypt
+											.createDigest(threadURL));
+							webParser.parse(webThreadHtml, anonymous);
+							// Log.d("ftbt", threadHtml);
+
+							try {
+								// 取得に成功した場合、履歴データの件数とかを更新する
+								HistoryManager man = new HistoryManager();
+								FutabaThreadContent thread = new FutabaThreadContent();
+								thread.threadNum = threadNum;
+								thread.resNum = ""
+										+ webParser.getStatuses().size();
+								man.Load();
+								man.updateThread(thread);
+								man.Save();
+							} catch (Exception e) {
+								Log.d("ftbt", "message", e);
+							}
+
+							network_ok = true;
+						} catch (IOException e) {
+							network_ok = false;
+							// ホスト見つからない(ネットワークない) とか
+							// レスポンスコードが2XX以外とか(スレ落ちなど)
+							String cause = "ネットワークに繋がっていません";
+							if (e.toString().contains(
+									"Incorrect response code ")) {
+								cause = "スレッドが存在しません";
+							}
+
+							if (cache_ok) {
+								Toast.makeText(adapter.getContext(),
+										cause + "。前回読み込み時のキャッシュを使用します",
+										Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(adapter.getContext(), cause, Toast.LENGTH_SHORT)
+										.show();
+							}
+
+						} catch (Exception e) { // ネットワークつながってないときとか
+							network_ok = false;
+							Log.d("ftbt", "message", e);
+							if (cache_ok) {
+								Toast.makeText(
+										adapter.getContext(),
+										"ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します",
+										Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(adapter.getContext(), "ネットワークに繋がっていません",
+										Toast.LENGTH_SHORT).show();
+							}
+
+						}
+
+						if ((!network_ok) && (!cache_ok)) { // データ取得もキャッシュもないスレッドは消す
+							HistoryManager man = new HistoryManager();
+							FutabaThreadContent thread = new FutabaThreadContent();
+							thread.threadNum = threadNum;
+							man.Load();
+							man.removeThread(thread);
+							man.Save();
+						}
+
+						ArrayList<FutabaStatus> statuses = new ArrayList<FutabaStatus>();
+						if (network_ok) {
+							statuses = webParser.getStatuses();
+							int num = webParser.getStatuses().size();
+							if (cache_ok) {
+								num -= cacheParser.getStatuses().size();
+								Toast.makeText(adapter.getContext(), "新着:" + num + "件",
+										Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(adapter.getContext(), "レス" + num + "件",
+										Toast.LENGTH_SHORT).show();
+							}
+							setTitle(webParser.getTitle(20) + " - "
+									+ getString(R.string.app_name));
+						} else if (cache_ok) {
+							statuses = cacheParser.getStatuses();
+							setTitle(cacheParser.getTitle(20) + " - "
+									+ getString(R.string.app_name));
+						}
+						for (int i = 0; i < statuses.size(); ++i) {
+							adapter.items.add(statuses.get(i));
+						}
+						Log.d("ftbt", "parse end" + statuses.size());
+						waitDialog.dismiss();
+						adapter.notifyDataSetChanged();
+					} catch (Exception e) {
+						Log.i("ftbt", "message", e);
+					}
+				}
+			});
 		}
 	}
 }

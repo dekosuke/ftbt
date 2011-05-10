@@ -39,7 +39,7 @@ import java.lang.Thread; //To call Thread.sleep
 
 public class FutabaThreadAdapter extends ArrayAdapter {
 
-	private ArrayList items;
+	public ArrayList items;
 	private LayoutInflater inflater;
 
 	// 画面サイズ
