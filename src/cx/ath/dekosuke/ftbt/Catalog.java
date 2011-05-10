@@ -159,6 +159,18 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		listView = (ListView) findViewById(id.cataloglistview);
 		adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
 				fthreads);
+		// 通常モード・履歴モードの片方でしか使わないボタンを消す
+		if (!mode.equals("history")) { // 通常モード
+			Button historyDeleteButton = (Button) findViewById(id.delete_btn);
+			historyDeleteButton.setVisibility(View.GONE);
+		} else { // 履歴モード
+			// 通常モードのときのボタンを非表示に
+			Button reloadButton = (Button) findViewById(id.reload_btn);
+			reloadButton.setVisibility(View.GONE);
+			Button historyButton = (Button) findViewById(id.history_btn);
+			historyButton.setVisibility(View.GONE);
+		}
+
 		adapter.items.clear();
 		listView.setAdapter(adapter);
 
@@ -247,9 +259,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						fthreads.get(i).BBSName = BBSName;
 					}
 
-					Button historyDeleteButton = (Button) findViewById(id.delete_btn);
-					historyDeleteButton.setVisibility(View.GONE);
-
 					setTitle(BBSName + " - " + getString(R.string.app_name));
 
 				} else { // 履歴モード。複数板混在なので注意
@@ -257,11 +266,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					man.Load();
 					fthreads = man.getThreadsArray();
 
-					// 通常モードのときのボタンを非表示に
-					Button reloadButton = (Button) findViewById(id.reload_btn);
-					reloadButton.setVisibility(View.GONE);
-					Button historyButton = (Button) findViewById(id.history_btn);
-					historyButton.setVisibility(View.GONE);
 
 					setTitle("履歴 - " + getString(R.string.app_name));
 				}
@@ -270,10 +274,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 * if (position != 0) { listView.setSelection(Math.min(position,
 				 * listView.getCount())); }
 				 */
-				
 
 				waitDialog.dismiss();
-				for(int i=0;i<fthreads.size();++i){
+				for (int i = 0; i < fthreads.size(); ++i) {
 					adapter.items.add(fthreads.get(i));
 				}
 				adapter.notifyDataSetChanged();
