@@ -256,7 +256,15 @@ public class FutabaThread extends Activity implements Runnable {
 			startActivity(intent);
 			return true;
 		case R.id.about:
-			Toast.makeText(this, R.string.about, Toast.LENGTH_SHORT).show();
+			Uri uri = Uri.parse(getString(R.string.helpurl));
+			intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+			try {
+				startActivity(intent);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT)
+						.show();
+			}
 			return true;
 		}
 		return false;

@@ -9,6 +9,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -198,7 +199,15 @@ public class ImageCatalog extends Activity {
 			startActivity(intent);
 			return true;
 		case R.id.about:
-			Toast.makeText(this, R.string.about , Toast.LENGTH_SHORT).show();
+			Uri uri = Uri.parse(getString(R.string.helpurl));
+			intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+			try {
+				startActivity(intent);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT)
+						.show();
+			}
 			return true;
 		}
 		return false;

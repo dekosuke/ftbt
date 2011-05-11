@@ -3,6 +3,7 @@ package cx.ath.dekosuke.ftbt;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -421,7 +422,15 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			startActivity(intent);
 			return true;
 		case R.id.about:
-			Toast.makeText(this, R.string.about, Toast.LENGTH_SHORT).show();
+			Uri uri = Uri.parse(getString(R.string.helpurl));
+			intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+			try {
+				startActivity(intent);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT)
+						.show();
+			}
 			return true;
 		}
 		return false;
