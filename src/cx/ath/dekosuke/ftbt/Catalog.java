@@ -273,6 +273,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				}
 				final String title_text_f = title_text;
 				final String toast_text_f = toast_text;
+				
+				//描画に関わる処理はここに集約(メインスレッド実行)
 				handler2.post(new Runnable() {
 					public void run() {
 						if (!toast_text_f.equals("")) {

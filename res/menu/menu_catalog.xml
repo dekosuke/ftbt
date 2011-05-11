@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Tweet" android:id="@+id/tweet"></item>
-    <item android:title="共有" android:id="@+id/share"></item>
-    <item android:title="設定" android:id="@+id/settings"></item>
-    <item android:title="このアプリについて" android:id="@+id/about"></item>
+    <item android:title="Tweet" android:id="@+id/tweet"
+    android:icon="@drawable/ic_menu_dialog"></item>
+    <item android:title="共有" android:id="@+id/share"
+    android:icon="@android:drawable/ic_menu_share"></item>
+    <item android:title="設定" android:id="@+id/settings"
+    android:icon="@android:drawable/ic_menu_preferences"></item>
+    <item android:title="このアプリについて" android:id="@+id/about" 
+    android:icon="@android:drawable/ic_menu_help"></item>
 </menu>

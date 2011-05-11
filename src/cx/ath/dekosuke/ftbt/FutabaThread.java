@@ -402,6 +402,8 @@ public class FutabaThread extends Activity implements Runnable {
 				final String title = parser.getTitle(20) + " - "
 						+ getString(R.string.app_name);
 				final String toast_text_f = toast_text;
+				
+				//描画に関わる処理はここに集約(メインスレッド実行)
 				handler2.post(new Runnable() {
 					public void run() {
 						Toast.makeText(adapter.getContext(), toast_text_f,
