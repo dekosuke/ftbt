@@ -94,8 +94,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		FLog.d("Catalog::onResume");
 			if (adapter != null) {
 				adapter.notifyDataSetChanged();
-				ListView listView = (ListView) findViewById(id.cataloglistview);
-				listView.invalidate();
 			}
 			if (onCreateEnd && mode.equals("history")) { // 履歴カター＞スレ－＞履歴カタで履歴の並びが変わっている可能性あり
 				if (adapter != null) {
