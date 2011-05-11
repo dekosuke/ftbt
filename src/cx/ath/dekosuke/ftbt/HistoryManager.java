@@ -38,7 +38,7 @@ public class HistoryManager {
 		}
 	FLog.d("maxHistoryNum=" + maxHistoryNum);
 		if (threads.size() > maxHistoryNum) {
-			threads.remove(threads.firstKey());
+			threads.remove(threads.lastKey());
 		}
 	}
 	

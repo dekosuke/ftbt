@@ -87,11 +87,14 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		FLog.d("potision="+position+" datestr="+item.datestr);
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
-				title.setText(item.title + " ");// item.getImgURL());
-				TextView name = (TextView) view.findViewById(R.id.name);
-				if (item.name != null) {
-					name.setText(item.name);// item.getImgURL());
+				String title_base = item.title;//StringUtil.safeCut(, 30);
+				if (item.name != null) { //こういう風に足さないと改行時に消えてしまうのでやむなく
+					title_base+=" <font color=\"#117743\">"+item.name+"</font>";
+					//name.setText(item.name);// item.getImgURL());
 				}
+				CharSequence cs_title = Html.fromHtml(title_base); //HTML表示
+				title.setText(cs_title);// item.getImgURL());
+				//TextView name = (TextView) view.findViewById(R.id.name);
 
 				// スクリーンネームをビューにセット
 				TextView text = (TextView) view.findViewById(R.id.maintext);
