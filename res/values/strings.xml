@@ -5,4 +5,5 @@
     <string name="historynum">myHistoryNum</string>
     <string name="fontsize">fontSize</string>
     <string name="about">ブラウザを起動し、ヘルプページを表示する予定です（まだ完成してません）</string>
+    <string name="helpurl">http://mobileconv.appspot.com/futabat.html</string>
 </resources>
