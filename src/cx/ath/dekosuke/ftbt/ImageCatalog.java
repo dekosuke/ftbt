@@ -39,15 +39,15 @@ public class ImageCatalog extends Activity {
 			
 			setTitle("画像ビューワ - "+getString(R.string.app_name));
 
-			Log.d("ftbt", "ImageCatalog.onCreate start");
+		FLog.d("ImageCatalog.onCreate start");
 			Intent intent = getIntent();
-			Log.d("ftbt", "hoge");
+		FLog.d("hoge");
 			ArrayList<String> imgURLs = (ArrayList<String>) intent
 					.getSerializableExtra("imgURLs");
 
-			Log.d("ftbt", "hoge-" + imgURLs.size());
+		FLog.d("hoge-" + imgURLs.size());
 			myImageURL = (String) intent.getSerializableExtra("myImgURL");
-			Log.d("ftbt", myImageURL);
+		FLog.d(myImageURL);
 
 			// ここでIntentによる追加情報からCircleListを構築する
 			CircleList.clear();
@@ -79,7 +79,7 @@ public class ImageCatalog extends Activity {
 								Toast.LENGTH_SHORT);
 						toast.show();
 					} catch (Exception e) {
-						Log.i("ftbt", "message", e);
+					FLog.d("message", e);
 					}
 				}
 			});
@@ -94,7 +94,7 @@ public class ImageCatalog extends Activity {
 						imageview.setImage();
 						setReturnImage();
 					} catch (Exception e) {
-						Log.i("ftbt", "message", e);
+					FLog.d("message", e);
 					}
 				}
 			});
@@ -108,7 +108,7 @@ public class ImageCatalog extends Activity {
 						imageview.setImage();
 						setReturnImage();
 					} catch (Exception e) {
-						Log.i("ftbt", "message", e);
+					FLog.d("message", e);
 					}
 				}
 			});
@@ -120,7 +120,7 @@ public class ImageCatalog extends Activity {
 							(ImageCatalogSingleView) findViewById(id.image);
 						imageview.rotateImage();
 					} catch (Exception e) {
-						Log.i("ftbt", "message", e);
+					FLog.d("message", e);
 					}
 				}
 			});
@@ -129,7 +129,7 @@ public class ImageCatalog extends Activity {
 			setReturnImage();
 
 		} catch (Exception e) {
-			Log.d("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -156,7 +156,7 @@ public class ImageCatalog extends Activity {
 		//for GC Imageview.clearImageはSystem.gc呼んでる
 		ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 		imageview.clearImage();
-		Log.d("ftbt", "ImageCatalog::onDestroy()");
+	FLog.d("ImageCatalog::onDestroy()");
 		
 		super.onDestroy();
 		// if(isFinishing()){

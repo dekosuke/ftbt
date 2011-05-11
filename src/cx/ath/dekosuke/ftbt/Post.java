@@ -69,7 +69,7 @@ public class Post extends Activity implements Runnable {
 		super.onCreate(savedInstanceState);
 		
 		try {
-			Log.d("ftbt", "start Post activity");
+		FLog.d("start Post activity");
 			Intent intent = getIntent();
 			// urlStr = (String) intent.getSerializableExtra("urlStr");
 			String baseURL = (String) intent.getSerializableExtra("baseURL");
@@ -110,7 +110,7 @@ public class Post extends Activity implements Runnable {
 			FutabaCookieManager.PrintCookie();
 
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -153,7 +153,7 @@ public class Post extends Activity implements Runnable {
 			try {
 				loading();
 			} catch (Exception e) {
-				Log.d("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		}
 	};
@@ -222,13 +222,13 @@ public class Post extends Activity implements Runnable {
 		 * activity.threadNum; String urlStr = activity.urlStr;
 		 */
 
-		Log.d("ftbt", "threadNum=" + threadNum);
-		Log.d("ftbt", "urlStr=" + urlStr);
-		Log.d("ftbt", "comment=" + comment);
-		Log.d("ftbt", "deletekey=" + deletekey);
-		Log.d("ftbt", "email=" + email);
-		Log.d("ftbt", "name=" + name);
-		Log.d("ftbt", "threadURL=" + threadURL);
+	FLog.d("threadNum=" + threadNum);
+	FLog.d("urlStr=" + urlStr);
+	FLog.d("comment=" + comment);
+	FLog.d("deletekey=" + deletekey);
+	FLog.d("email=" + email);
+	FLog.d("name=" + name);
+	FLog.d("threadURL=" + threadURL);
 
 		if (false) {
 			return;
@@ -237,7 +237,7 @@ public class Post extends Activity implements Runnable {
 		// というわけでリクエストの作成
 		// スレッドに一度アクセスしてcookieセット－＞書き込みの２度アクセス
 		try {
-			Log.d("ftbt", "start post!");
+		FLog.d("start post!");
 
 			DefaultHttpClient httpClient;
 			httpClient = new DefaultHttpClient();
@@ -256,10 +256,10 @@ public class Post extends Activity implements Runnable {
 			 * ByteArrayOutputStream();
 			 * httpResponse.getEntity().writeTo(byteArrayOutputStream); String
 			 * retData = byteArrayOutputStream.toString("Shift-JIS");
-			 * Log.d("ftbt", retData); Log.d("ftbt", "1st access end");
+			 *FLog.d(retData);FLog.d("1st access end");
 			 * 
 			 * try { // 操作間隔を置く Thread.sleep(3000); } catch (Exception e) {
-			 * Log.i("ftbt", "message", e); }
+			 *FLog.d("message", e); }
 			 */
 
 			try {
@@ -268,15 +268,15 @@ public class Post extends Activity implements Runnable {
 					List<Cookie> cookies = httpClient.getCookieStore()
 							.getCookies();
 					if (cookies.isEmpty()) {
-						Log.d("ftbt", "Cookie None");
+					FLog.d("Cookie None");
 					} else {
 						for (int i = 0; i < cookies.size(); i++) {
-							Log.d("ftbt", "" + cookies.get(i).toString());
+						FLog.d("" + cookies.get(i).toString());
 						}
 					}
 				}
 			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 
 			HttpPost httppost = new HttpPost(urlStr);
@@ -311,13 +311,13 @@ public class Post extends Activity implements Runnable {
 			entity.addPart("sub", new StringBody(""));
 			entity.addPart("pwd", new StringBody(deletekey));
 			if(imageContent!=null){ // content:// -> file://
-				Log.d("ftbt", "imageContent="+imageContent);
-				Log.d("ftbt", "getPath="+imageContent.getPath());
+			FLog.d("imageContent="+imageContent);
+			FLog.d("getPath="+imageContent.getPath());
 				//if(true) return;
 				Cursor c = getContentResolver().query(imageContent, null, null, null, null);
 				c.moveToFirst();	
 				String filename = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA)); 
-				Log.d("ftbt", "filename="+filename);
+			FLog.d("filename="+filename);
 				FileBody fileBody = new FileBody(new File(filename));//new File(imageContent.getPath()));
 				entity.addPart("upfile", fileBody);
 			}
@@ -332,7 +332,7 @@ public class Post extends Activity implements Runnable {
 			// SDCard.saveBin("retdata2", retData2.getBytes("Shift-JIS"),
 			// false);
 			Log.v("ftbt", retData2);
-			Log.d("ftbt", "2nd access end");
+		FLog.d("2nd access end");
 
 			PostParser parser = new PostParser();
 			String contents = parser.parse(this, retData2);
@@ -342,7 +342,7 @@ public class Post extends Activity implements Runnable {
 				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 		waitDialog.dismiss();
 

@@ -84,7 +84,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
-			Log.d("ftbt", "potision="+position+" datestr="+item.datestr);
+		FLog.d("potision="+position+" datestr="+item.datestr);
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
 				title.setText(item.title + " ");// item.getImgURL());
@@ -117,13 +117,13 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						// title.setText("(画像あり)");
 					} else { // 画像なし
 						/*
-						 * Log.d("ftbt", "w="+item.width+" h="+item.height ); bm
+						 *FLog.d("w="+item.width+" h="+item.height ); bm
 						 * = Bitmap.createBitmap(item.width, item.height,
 						 * Bitmap.Config.ALPHA_8); iv.setImageBitmap(bm);
 						 */
 					}
 				} catch (Exception e) {
-					Log.i("ftbt", "message", e);
+				FLog.d("message", e);
 				}
 
 				// テキストをビューにセット
@@ -134,7 +134,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			}
 
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 
 		return view;
@@ -171,7 +171,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		public ImageGetTask(ImageView _image) {
 			image = _image;
 			if (_image == null) {
-				Log.d("ftbt", "imageview is null!!!");
+			FLog.d("imageview is null!!!");
 			}
 			tag = image.getTag().toString();
 			synchronized (FutabaThreadAdapter.lock_id) {
@@ -185,19 +185,19 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			Bitmap bm = ImageCache.getImage(urls[0]);
 			HttpURLConnection con = null;
 			InputStream is = null;
-			Log.d("ftbt", "futabaAdapter thread start");
+		FLog.d("futabaAdapter thread start");
 			if (bm == null) { // does not exist on cache
 				// synchronized (FutabaAdapter.lock){
 				try {
 					ImageCache.setImage(urls[0]);
 					bm = ImageCache.getImage(urls[0]);
 				} catch (Exception e) {
-					Log.i("ftbt", "message", e);
-					Log.d("ftbt", "fail with " + urls[0]);
+				FLog.d("message", e);
+				FLog.d("fail with " + urls[0]);
 					try {
 						Thread.sleep(1 * 1000);
 					} catch (Exception e2) {
-						Log.i("ftbt", "message", e2);
+					FLog.d("message", e2);
 					}
 				} finally {
 					try {
@@ -208,7 +208,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							is.close();
 						}
 					} catch (Exception e) {
-						Log.e("ftbt", "doInBackground", e);
+					FLog.d("doInBackground", e);
 					}
 					// }
 				}
@@ -219,7 +219,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		// メインスレッドで実行する処理
 		@Override
 		protected void onPostExecute(Bitmap result) {
-			// Log.d( "ftbt",
+			//FLog.d(,
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			try {
 				// Tagが同じものが確認して、同じであれば画像を設定する
@@ -237,7 +237,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						image.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
 								try {
-									Log.d("ftbt",
+								FLog.d(
 											"intent calling thread activity");
 									Intent intent = new Intent();
 									FutabaThread activity = (FutabaThread) getContext();
@@ -254,7 +254,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 									//http://android.roof-balcony.com/intent/intent/
 									activity.startActivityForResult(intent, activity.TO_IMAGECATALOG);
 								} catch (Exception e) {
-									Log.i("ftbt", "message", e);
+								FLog.d("message", e);
 								}
 							}
 						});
@@ -263,7 +263,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				}
 
 			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		}
 

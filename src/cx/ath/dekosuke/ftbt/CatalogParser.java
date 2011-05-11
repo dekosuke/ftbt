@@ -48,8 +48,8 @@ public class CatalogParser {
 					Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
 					"<img.*?src=(?:\"|')(.+?)(?:\"|')", Pattern.DOTALL);
-			Pattern threadNumPattern = // numといいつつres/部分（スレによる）も入ってる
-			Pattern.compile("<a.*?href=(?:\"|')([a-zA-Z0-9/]+[.]htm)(?:\"|')",
+			Pattern threadNumPattern = 
+			Pattern.compile("<a.*?href=(?:\"|')res[/]([0-9]+)[.]htm(?:\"|')",
 					Pattern.DOTALL);
 			Pattern tagPattern = Pattern.compile("<.+?>", Pattern.DOTALL);
 
@@ -57,7 +57,7 @@ public class CatalogParser {
 			mc.find();
 			mc.find(); // 2つ目
 			String honbun = mc.group(0);
-			// Log.d( "ftbt", honbun );
+			//FLog.d(honbun );
 			Matcher mcRes = resPattern.matcher(honbun);
 			while (mcRes.find()) {
 				Matcher mcText = textPattern.matcher(mcRes.group(1));
@@ -71,16 +71,16 @@ public class CatalogParser {
 				Matcher mcThreadNum = threadNumPattern.matcher(mcRes.group(1));
 				mcThreadNum.find();
 				String threadNum = mcThreadNum.group(1);
-				thread.threadNum = threadNum;
+				thread.threadNum = Integer.parseInt(threadNum);
 				Matcher mcImg = imgPattern.matcher(mcRes.group(1));
 				if (mcImg.find()) {
 					thread.imgURL = mcImg.group(1);
 				}
-				// Log.d( "ftbt", text );
+				//FLog.d(text );
 				fthreads.add(thread);
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "parser error", e);
+		FLog.d("parser error", e);
 			throw new RuntimeException(e);
 		}
 		// return list;

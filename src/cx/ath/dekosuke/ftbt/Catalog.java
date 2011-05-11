@@ -77,7 +77,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.d("ftbt", "catalog start");
+	FLog.d("catalog start");
 
 		CookieSyncManager.createInstance(this);
 		CookieSyncManager.getInstance().startSync();
@@ -91,7 +91,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		super.onResume();
 		CookieSyncManager.getInstance().stopSync();
 		try {
-			Log.d("ftbt", "Catalog::onResume");
+		FLog.d("Catalog::onResume");
 			if (adapter != null) {
 				adapter.notifyDataSetChanged();
 				ListView listView = (ListView) findViewById(id.cataloglistview);
@@ -103,7 +103,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				}
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 				// プログレスダイアログ終了
 			} catch (Exception e) {
-				Log.d("ftbt", "message", e);
+				FLog.d("message", e);
 			}
 		}
 	};
@@ -198,42 +198,38 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						catalogHtml = CatalogHtmlReader.Read(catalogURL);
 						network_ok = true;
 					} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
-						Log.d("ftbt", "hoge");
+						FLog.d("hoge");
 
-						// Log.d("ftbt", "message", e);
+						//FLog.d("message", e);
 						network_ok = false;
 						if (SDCard.cacheExist(FutabaCrypt
 								.createDigest(catalogURL))) {
-							Log.d("ftbt", "getting html from cache"
+							FLog.d("getting html from cache"
 									+ FutabaCrypt.createDigest(catalogURL));
 							catalogHtml = SDCard.loadTextCache(FutabaCrypt
 									.createDigest(catalogURL));
 						} else {
-							Log.d("ftbt",
-									"cache "
-											+ FutabaCrypt
-													.createDigest(catalogURL)
-											+ "not found");
+							FLog.d("cache "
+									+ FutabaCrypt.createDigest(catalogURL)
+									+ "not found");
 							cache_ok = false;
 						}
 					} catch (Exception e) { // その他エラー
 						network_ok = false;
 						if (SDCard.cacheExist(FutabaCrypt
 								.createDigest(catalogURL))) {
-							Log.d("ftbt", "getting html from cache"
+							FLog.d("getting html from cache"
 									+ FutabaCrypt.createDigest(catalogURL));
 							catalogHtml = SDCard.loadTextCache(FutabaCrypt
 									.createDigest(catalogURL));
 						} else {
-							Log.d("ftbt",
-									"cache "
-											+ FutabaCrypt
-													.createDigest(catalogURL)
-											+ "not found");
+							FLog.d("cache "
+									+ FutabaCrypt.createDigest(catalogURL)
+									+ "not found");
 							cache_ok = false;
 						}
 
-						Log.d("ftbt", "message", e);
+						FLog.d("message", e);
 					}
 					if (!network_ok) {
 						if (cache_ok) {
@@ -269,12 +265,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 */
 				adapter.items.clear();
 				for (int i = 0; i < fthreads.size(); ++i) {
+					FLog.d(fthreads.get(i).toString());
 					adapter.items.add(fthreads.get(i));
 				}
 				final String title_text_f = title_text;
 				final String toast_text_f = toast_text;
-				
-				//描画に関わる処理はここに集約(メインスレッド実行)
+
+				// 描画に関わる処理はここに集約(メインスレッド実行)
 				handler2.post(new Runnable() {
 					public void run() {
 						if (!toast_text_f.equals("")) {
@@ -289,13 +286,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				});
 				onCreateEnd = true;
 			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
+				FLog.i("message", e);
 			}
 		}
 	}
 
 	public void onClickReloadBtn(View v) {
-		Log.d("ftbt", "catalog onclick-reload");
+		FLog.d("catalog onclick-reload");
 		ListView listView = (ListView) findViewById(id.cataloglistview);
 		// Button reloadButton = (Button) findViewById(R.id.reload_btn);
 		// reloadButton.setPressed(true);//setgetResources().getDrawable(R.drawable.ic_popup_sync));
@@ -354,8 +351,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void deleteThreads() {
 		try {
 			ListView listView = (ListView) findViewById(id.cataloglistview);
-			Log.d("ftbt", "count=" + listView.getCount());
-			Log.d("ftbt", "delete threads with option " + delete_option);
 			// http://stackoverflow.com/questions/257514/android-access-child-views-from-a-listview
 			// 見えてる場所しか消せないぽいよ？・・->とても頑張ればいける
 			if (delete_option == DELETE_ALL) {
@@ -364,9 +359,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				if (delete_option == DELETE_CHECKED) {
 					for (int i = adapter.items.size() - 1; i >= 0; --i) {
 						// チェックされたアイテム（画面外はチェック消される）を削除
-						Log.d("ftbt",
-								"item " + i + " checked="
-										+ adapter.items.get(i).isChecked);
 						if (adapter.items.get(i).isChecked) {
 							adapter.items.remove(i);
 						} else {
@@ -394,18 +386,18 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			adapter.notifyDataSetChanged();
 			listView.invalidateViews();
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+			FLog.i("message", e);
 		}
 	}
 
 	public void onClick(View v) {
-		Log.d("ftbt", "catalog onclick");
+		FLog.d("catalog onclick");
 		// v.reload();
 	}
 
 	@Override
 	public void onDestroy() {
-		Log.d("ftbt", "Catalog::onDestoy(), System.gc will be called");
+		FLog.d("Catalog::onDestoy(), System.gc will be called");
 		System.gc(); // GC促す
 		super.onDestroy();
 	}

@@ -44,10 +44,10 @@ public class FutabaBBSMenuParser {
 						.loadTextCache(FutabaCrypt.createDigest(urlStr));
 				network_ok = true;
 			} catch (Exception e) { // ネットワークつながってないときとか
-				Log.d("ftbt", "failed to get catalog html");
+			FLog.d("failed to get catalog html");
 				network_ok = false;
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
-					Log.d("ftbt", "getting html from cache");
+				FLog.d("getting html from cache");
 					allData = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(urlStr));
 				} else { // キャッシュもない
@@ -76,7 +76,7 @@ public class FutabaBBSMenuParser {
 				BBSs.add(bbs);
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "failure in FutabaBBSMenuParser", e);
+		FLog.d("failure in FutabaBBSMenuParser", e);
 		}
 		// return list;
 	}

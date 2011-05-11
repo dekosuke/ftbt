@@ -46,7 +46,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			setWait();
 			//loading();
 		} catch (Exception e) {
-			Log.d("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -77,7 +77,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			try {
 				loading();
 			} catch (Exception e) {
-				Log.d("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		}
 	};
@@ -129,9 +129,9 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			// アダプターを設定します
 			listView.setAdapter(adapter);
 
-			Log.d("ftbt", "start");
+		FLog.d("start");
 		} catch (Exception e) {
-			Log.d("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 		waitDialog.dismiss();
 	}
@@ -143,7 +143,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 		 * intent.setClassName(getPackageName(),
 		 * getClass().getPackage().getName()+".catalog");
 		 */
-		Log.d("ftbt", item.url);
+	FLog.d(item.url);
 		intent.putExtra("baseUrl", item.url);
 		intent.putExtra("BBSName", item.name);
 		intent.putExtra("mode", "normal");
@@ -164,8 +164,8 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			Log.d("ftbt", "message", e);
+		FLog.d("message", e);
 		}
-		Log.d("ftbt", "BBSMenu onResume");
+	FLog.d("BBSMenu onResume");
 	}
 }

@@ -61,16 +61,16 @@ public class SDCard {
 		} else {
 			filename = getCacheDir() + name;
 		}
-		Log.d("ftbt", "length=" + bytes.length);
+	FLog.d("length=" + bytes.length);
 		File file = new File(filename);
-		Log.d("ftbt", filename);
+	FLog.d(filename);
 		file.getParentFile().mkdir();
 		try {
 			BufferedOutputStream fos = new BufferedOutputStream(
 					new FileOutputStream(file));
 			fos.write(bytes);
 		} catch (Exception e) {
-			Log.d("ftbt", "failed to write file" + name);
+		FLog.d("failed to write file" + name);
 		}
 		// Environment.getDataDirectory().getPath(); // /dataなど
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
@@ -94,7 +94,7 @@ public class SDCard {
 						+ conn.getResponseCode());
 			}
 
-			Log.d("ftbt", "HTTP Response code="+conn.getResponseCode());
+		FLog.d("HTTP Response code="+conn.getResponseCode());
 			InputStream is = conn.getInputStream();
 
 			// OutputStream os = new FileOutputStream(filename);
@@ -113,7 +113,7 @@ public class SDCard {
 		} catch (IOException e) { // 2XX代以外のレスポンスコードとか
 			throw new IOException(e.toString());
 		} catch (Exception e) {
-			Log.d("ftbt", "failed to write file" + name);
+		FLog.d("failed to write file" + name);
 		}
 	}
 
@@ -202,16 +202,16 @@ public class SDCard {
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
 			//Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
-			// Log.d("ftbt", f.getName() + "," + toCalendarString(f));
+			//FLog.d(f.getName() + "," + toCalendarString(f));
 			if (f.isDirectory()) { // 強制ディレクトリ削除
 				// deleteDir(f);
-				// Log.d("ftbt", "deleted directory "+f.getName());
+				//FLog.d("deleted directory "+f.getName());
 			} else {
-				// Log.d("ftbt", "size="+f.length());
+				//FLog.d("size="+f.length());
 				sizeSum += f.length();
 				if (sizeSum > num * 1000000) { // 強制ファイル削除
 					f.delete();
-					Log.d("ftbt", "deleted file " + f.getName());
+				FLog.d("deleted file " + f.getName());
 				}
 			}
 		}

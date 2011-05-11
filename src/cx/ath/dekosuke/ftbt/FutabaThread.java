@@ -62,7 +62,7 @@ public class FutabaThread extends Activity implements Runnable {
 	private FutabaThreadAdapter adapter = null;
 	public String threadURL = null;
 	public String baseURL = null;
-	public String threadNum = null;
+	public int threadNum;
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
@@ -82,9 +82,9 @@ public class FutabaThread extends Activity implements Runnable {
 
 		Intent intent = getIntent();
 		baseURL = (String) intent.getSerializableExtra("baseUrl");
-		threadNum = (String) intent.getSerializableExtra("threadNum");
-		threadURL = baseURL + threadNum;
-		Log.d("ftbt", "threadurl=" + threadURL);
+		threadNum = Integer.parseInt( (String) intent.getSerializableExtra("threadNum") );
+		threadURL = baseURL + "res/" + threadNum + ".htm";
+	FLog.d("threadurl=" + threadURL);
 
 		statuses = new ArrayList<FutabaStatus>();
 
@@ -126,7 +126,7 @@ public class FutabaThread extends Activity implements Runnable {
 			try {
 				loading();
 			} catch (Exception e) {
-				Log.d("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		}
 	};
@@ -147,7 +147,7 @@ public class FutabaThread extends Activity implements Runnable {
 		while (iterator.hasNext()) {
 			FutabaStatus status = (FutabaStatus) iterator.next();
 			if (status.bigImgURL != null) {
-				Log.d("ftbt", "image" + status.bigImgURL);
+			FLog.d("image" + status.bigImgURL);
 				list.add(status.bigImgURL);
 			}
 			i++;
@@ -157,14 +157,14 @@ public class FutabaThread extends Activity implements Runnable {
 
 	public void onClickReloadBtn(View v) {
 		try {
-			Log.d("ftbt", "fthread onclick-reload");
+		FLog.d("fthread onclick-reload");
 			position = listView.getFirstVisiblePosition();
 			positionY = listView.getChildAt(0).getTop();
 			; // 現在位置（リロードで復帰）
-			Log.d("ftbt", "position=" + position);
+		FLog.d("position=" + position);
 			setWait();
 		} catch (Exception e) {
-			Log.d("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -266,21 +266,21 @@ public class FutabaThread extends Activity implements Runnable {
 			Intent intent) {
 		try {
 			String imgURL = (String) intent.getSerializableExtra("imgURL");
-			// Log.d("ftbt", "return intent imgURL="+imgURL);
+			//FLog.d("return intent imgURL="+imgURL);
 			if (requestCode == TO_IMAGECATALOG) {
 				for (int i = 0; i < statuses.size(); ++i) {
-					// Log.d("ftbt", "image"+i+"="+statuses.get(i).bigImgURL);
+					//FLog.d("image"+i+"="+statuses.get(i).bigImgURL);
 					if (imgURL.equals(statuses.get(i).bigImgURL)) {
-						// Log.d("ftbt", "hit="+i);
+						//FLog.d("hit="+i);
 						listView.setSelection(Math.min(i, listView.getCount()));
 						break;
 					}
 				}
 			} else {
-				Log.d("ftbt", "unknown result code");
+			FLog.d("unknown result code");
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -311,11 +311,11 @@ public class FutabaThread extends Activity implements Runnable {
 					String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
 					cacheParser.parse(cacheThreadHtml, anonymous);
-					Log.d("ftbt", "cache  ok  " + threadURL);
+				FLog.d("cache  ok  " + threadURL);
 
 				} else {
 					cache_ok = false;
-					Log.d("ftbt", "cache fail " + threadURL);
+				FLog.d("cache fail " + threadURL);
 				}
 
 				String threadHtml = "";
@@ -326,7 +326,7 @@ public class FutabaThread extends Activity implements Runnable {
 					String webThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
 					webParser.parse(webThreadHtml, anonymous);
-					// Log.d("ftbt", threadHtml);
+					//FLog.d(threadHtml);
 
 					try {
 						// 取得に成功した場合、履歴データの件数とかを更新する
@@ -338,7 +338,7 @@ public class FutabaThread extends Activity implements Runnable {
 						man.updateThread(thread);
 						man.Save();
 					} catch (Exception e) {
-						Log.d("ftbt", "message", e);
+					FLog.d("message", e);
 					}
 
 					network_ok = true;
@@ -359,7 +359,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 				} catch (Exception e) { // ネットワークつながってないときとか
 					network_ok = false;
-					Log.d("ftbt", "message", e);
+				FLog.d("message", e);
 					if (cache_ok) {
 						toast_text = "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します";
 					} else {
@@ -392,9 +392,10 @@ public class FutabaThread extends Activity implements Runnable {
 				}
 				adapter.items.clear();
 				for (int i = 0; i < statuses.size(); ++i) {
+					FLog.d(statuses.get(i).toString());
 					adapter.items.add(statuses.get(i));
 				}
-				Log.d("ftbt", "parse end" + statuses.size());
+			FLog.d("parse end" + statuses.size());
 				FutabaThreadParser parser = webParser;
 				if (!network_ok) {
 					parser = cacheParser;
@@ -421,7 +422,7 @@ public class FutabaThread extends Activity implements Runnable {
 				});
 
 			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		}
 	}

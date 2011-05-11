@@ -65,7 +65,7 @@ public class CatalogHtmlReader {
 			data = outputStream.toString("SHIFT-JIS");
 			// parse(outputStream.toString());
 		} else {
-			Log.d("ftbt", "NON-OK Status" + status);
+		FLog.d("NON-OK Status" + status);
 			throw new Exception("HTTP BAD RESULT");
 		}
 		return data;

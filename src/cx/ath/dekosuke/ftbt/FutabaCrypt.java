@@ -6,12 +6,12 @@ import android.util.Log;
 //ファイル名をハッシュにする
 class FutabaCrypt {
 	public static String createDigest(String source) {
-		Log.d("ftbt", "crypt source=" + source + " html=" + isHTMLName(source));
+	FLog.d("crypt source=" + source + " html=" + isHTMLName(source));
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 			return "";
 		}
 

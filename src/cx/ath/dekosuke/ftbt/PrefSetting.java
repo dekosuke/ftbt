@@ -36,7 +36,7 @@ public class PrefSetting extends PreferenceActivity {
 			});
 
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 

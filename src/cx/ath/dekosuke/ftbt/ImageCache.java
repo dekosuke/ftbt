@@ -18,7 +18,7 @@ public class ImageCache {
 				return SDCard.loadBitmapCache(urlHash);
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 		return null;
 	}
@@ -29,7 +29,7 @@ public class ImageCache {
 			SDCard.saveFromURL(urlHash, new URL(url), true);
 			return true;
 		} catch (Exception e) {
-			Log.d("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 		return false;
 	}
@@ -41,7 +41,7 @@ public class ImageCache {
 			try {
 				return SDCard.copyCacheToFile(urlHash, file.getName());
 			} catch (Exception e) {
-				Log.i("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		} else {
 			// キャッシュがない(通常あまりないはずだが・・)

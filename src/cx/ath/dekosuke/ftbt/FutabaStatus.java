@@ -31,5 +31,17 @@ public class FutabaStatus {
 		height = 0;
 	}
 
-
+	public String toString(){
+		return "FTC userName="+userName+
+		" title="+title+
+		" text="+text+
+		" name="+name+
+		" datestr="+datestr+
+		" mailTo="+mailTo+
+		" idstr="+idstr+
+		" imgURL="+imgURL+
+		" bigImgURL="+bigImgURL+
+		" width="+width+
+		" height="+height;
+	}
 }

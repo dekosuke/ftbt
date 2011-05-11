@@ -24,7 +24,7 @@ public class FavoriteSettings {
                 bbss = (ArrayList<FutabaBBSContent>) SDCard.getSerialized(OPT_FAVORITES).readObject();
             }
         }catch(Exception e){
-            Log.i("ftbt", "message", e);
+           FLog.d("message", e);
         }
 		return bbss;
 	}
@@ -41,7 +41,7 @@ public class FavoriteSettings {
 				serializeStr += " ";
 			}
 		}
-        Log.d("ftbt", "write serializeStr=|"+serializeStr+"|");
+       FLog.d("write serializeStr=|"+serializeStr+"|");
         SDCard.saveString(OPT_FAVORITES, serializeStr, true);
         */
         SDCard.setSerialized(OPT_FAVORITES, futabaBBSs);

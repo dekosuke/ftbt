@@ -17,9 +17,9 @@ public class FutabaCookieManager {
 	
 	public static void loadCookie(DefaultHttpClient httpClient){
 		if(data != null){
-			Log.d("ftbt", "adding cookies");
+		FLog.d("adding cookies");
 			for (int i = 0; i < data.size(); i++) {
-				Log.d("ftbt", "cookie: " + data.get(i).toString());
+			FLog.d("cookie: " + data.get(i).toString());
 				httpClient.getCookieStore().addCookie(data.get(i));
 			}
 		}
@@ -28,11 +28,11 @@ public class FutabaCookieManager {
 	//デバッグ用
 	public static void PrintCookie(){
 		if (data==null || data.isEmpty()) {
-			Log.d("ftbt", "Cookie(in FutabaCookieManager) None");
+		FLog.d("Cookie(in FutabaCookieManager) None");
 		} else {
-			Log.d("ftbt", "Show Cookies(in FutabaCookieManager)");
+		FLog.d("Show Cookies(in FutabaCookieManager)");
 			for (int i = 0; i < data.size(); i++) {
-				Log.d("ftbt", "1 " + data.get(i).toString());
+			FLog.d("1 " + data.get(i).toString());
 			}
 		}
 	}

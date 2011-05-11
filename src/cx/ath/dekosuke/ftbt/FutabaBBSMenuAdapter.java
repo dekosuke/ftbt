@@ -53,7 +53,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 			this.inflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -142,7 +142,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 						.findViewById(R.id.ll_main);
 				ll_main.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
-						Log.d("ftbt", "onclick_bbs");
+					FLog.d("onclick_bbs");
 						FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
 						activity.transSetting(item);
 					}
@@ -150,7 +150,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 			}
 
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 
 		return view;

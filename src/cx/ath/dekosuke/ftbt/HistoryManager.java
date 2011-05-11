@@ -21,11 +21,11 @@ public class HistoryManager {
 	private final String OPT_HISTORY = "history";
 
 	// キーがスレッドidのlist
-	private TreeMap<String, FutabaThreadContent> threads = new TreeMap<String, FutabaThreadContent>();
+	private TreeMap<Integer, FutabaThreadContent> threads = new TreeMap<Integer, FutabaThreadContent>();
 
 	// 初期化
 	public void clear() {
-		threads = new TreeMap<String, FutabaThreadContent>();
+		threads = new TreeMap<Integer, FutabaThreadContent>();
 	}
 
 	// スレッドの追加
@@ -36,7 +36,7 @@ public class HistoryManager {
 			// すでにある－＞更新
 			threads.put(thread.threadNum, thread);
 		}
-		Log.d("ftbt", "maxHistoryNum=" + maxHistoryNum);
+	FLog.d("maxHistoryNum=" + maxHistoryNum);
 		if (threads.size() > maxHistoryNum) {
 			threads.remove(threads.firstKey());
 		}
@@ -79,11 +79,11 @@ public class HistoryManager {
 	public void Load() {
 		try {
 			if (SDCard.existSeriarized(OPT_HISTORY)) {
-				threads = (TreeMap<String, FutabaThreadContent>) SDCard
+				threads = (TreeMap<Integer, FutabaThreadContent>) SDCard
 						.getSerialized(OPT_HISTORY).readObject();
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 

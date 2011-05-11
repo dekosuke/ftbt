@@ -17,7 +17,7 @@ public class FutabaThreadContent implements Serializable{
 	public String mailTo;
 	public int id;
 	public String imgURL;
-	public String threadNum;
+	public int threadNum;
 	public String baseUrl;//historyのときはこれが入っている。内容的にはFutabaThreadに渡すintentと同じ
 	public String resNum;
 	public String BBSName; //どの板か->過去ログ表示のときに使う
@@ -38,5 +38,20 @@ public class FutabaThreadContent implements Serializable{
 		BBSName="";
 		baseUrl = "";
 		lastAccessed = 0;
+	}
+	
+	public String toString(){
+		return "FTC userName="+userName+
+		" title="+title+
+		" text="+text+
+		" mailTo="+mailTo+
+		" id="+id+
+		" imgURL="+imgURL+
+		" threadNum="+threadNum+
+		" baseUrl="+baseUrl+
+		" resNum="+resNum+
+		" BBSName="+BBSName+
+		" lastAccessed="+lastAccessed+
+		" isChecked="+isChecked;
 	}
 }

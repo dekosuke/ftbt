@@ -16,7 +16,7 @@ public class PostParser {
 			mc.find();
 			return mc.group(1);
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 		return "";
 	}

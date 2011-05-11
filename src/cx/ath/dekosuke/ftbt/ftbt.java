@@ -63,17 +63,17 @@ public class ftbt extends TabActivity {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
-			Log.d("ftbt", "cachesize=" + cacheSize);
+		FLog.d("cachesize=" + cacheSize);
 			SDCard.limitCache(cacheSize);
 			waitDialog.dismiss();
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 
 		try {
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBSContent>();
-			Log.d("ftbt", "favbbs=" + favoriteBBSs);
+		FLog.d("favbbs=" + favoriteBBSs);
 			favoriteBBSs = FavoriteSettings.getFavorites(this);
 			// タブシートの設定
 			intent = new Intent().setClassName(getPackageName(), getClass()
@@ -97,25 +97,25 @@ public class ftbt extends TabActivity {
 			// 初期表示のタブ設定
 			tabs.setCurrentTab(0);
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
-		Log.d("ftbt", "ftbt start");
+	FLog.d("ftbt start");
 	}
 
 	public void addFavoriteBBSs(FutabaBBSContent bbs) {
-		Log.d("ftbt", "favoriteBBSs=" + favoriteBBSs.toString());
+	FLog.d("favoriteBBSs=" + favoriteBBSs.toString());
 		try {
 			if (favoriteBBSs.indexOf(bbs) == -1) {
-				Log.d("ftbt", "add " + bbs.toString());
+			FLog.d("add " + bbs.toString());
 				favoriteBBSs.add(bbs);
 				FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
 				// adapter.addList(bbs);
 				// adapter.notifyDataSetChanged();
 			} else {
-				Log.d("ftbt", "thread already exist in favlist");
+			FLog.d("thread already exist in favlist");
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -123,9 +123,9 @@ public class ftbt extends TabActivity {
 		try {
 			favoriteBBSs.remove(bbs);
 			FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
-			Log.d("ftbt", "remove " + bbs.toString());
+		FLog.d("remove " + bbs.toString());
 		} catch (Exception e) {
-			Log.i("ftbt", "message", e);
+		FLog.d("message", e);
 		}
 	}
 
@@ -184,7 +184,7 @@ public class ftbt extends TabActivity {
 
 			addView(v);
 			}catch(Exception e){
-				Log.d("ftbt", "message", e);
+			FLog.d("message", e);
 			}
 		}
 	}
@@ -192,6 +192,6 @@ public class ftbt extends TabActivity {
 	@Override
 	public void onResume(){
 		super.onResume();
-		Log.d("ftbt", "ftbt onresume");
+	FLog.d("ftbt onresume");
 	}
 }

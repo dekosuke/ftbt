@@ -77,7 +77,7 @@ public class FutabaThreadParser {
 				statusTop.width = Integer.parseInt(mcImg.group(2));
 				statusTop.height = Integer.parseInt(mcImg.group(3));
 			}
-			// Log.d("ftbt", "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
+			//FLog.d("parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 			Matcher mcBigImg = imgPattern.matcher(honbun);
 			if (mcBigImg.find()) {
 				statusTop.bigImgURL = mcBigImg.group(1);
@@ -102,12 +102,12 @@ public class FutabaThreadParser {
 			statusTop.text = text;
 			statuses.add(statusTop);
 
-			// Log.d( "ftbt", honbun );
+			//FLog.d(honbun );
 			Matcher mcRes = resPattern.matcher(honbun);
 			while (mcRes.find()) {
 				FutabaStatus status = new FutabaStatus();
 				mcText = textPattern.matcher(mcRes.group(1));
-				// Log.d( "ftbt", mcRes.group(1) );
+				//FLog.d(mcRes.group(1) );
 				mcText.find();
 				if (!anonymous) {
 					Matcher mcTextAttr = textAttrPattern.matcher(mcRes.group(1));
@@ -131,18 +131,18 @@ public class FutabaThreadParser {
 					status.imgURL = mcImg.group(1);
 					status.width = Integer.parseInt(mcImg.group(2));
 					status.height = Integer.parseInt(mcImg.group(3));
-					// Log.d("ftbt",
+					//FLog.d(,
 					// "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 				}
 				mcBigImg = imgPattern.matcher(mcRes.group(1));
 				if (mcBigImg.find()) {
 					status.bigImgURL = mcBigImg.group(1);
 				}
-				// Log.d( "ftbt", text );
+				//FLog.d(text );
 				statuses.add(status);
 			}
 		} catch (Exception e) {
-			Log.i("ftbt", "failure in FutabaThreadParser", e);
+		FLog.d("failure in FutabaThreadParser", e);
 		}
 		// return list;
 	}
@@ -199,49 +199,7 @@ public class FutabaThreadParser {
 		}
 		return "";
 	}
-	
-	public FutabaThreadContent buildThreadInfo(){
-		/*
-		public String userName;
-		public String title;
-		public String text;
-		public String mailTo;
-		public int id;
-		public String imgURL;
-		public String threadNum;
-		public String baseUrl;//historyのときはこれが入っている。内容的にはFutabaThreadに渡すintentと同じ
-		public String resNum;
-		public String BBSName; //どの板か->過去ログ表示のときに使う
-		public long lastAccessed; //最終アクセス時間(UnixTime)
-		public boolean isChecked=false;		
-		
-						Matcher mcText = textPattern.matcher(mcRes.group(1));
-				mcText.find();
-				FutabaThreadContent thread = new FutabaThreadContent();
-				String text = mcText.group(1);
-				String resNum = mcText.group(2);
-				//text = tagPattern.matcher(text).replaceAll(""); // タグ除去
-				thread.text=text;
-				thread.resNum=resNum;
-				Matcher mcThreadNum = threadNumPattern.matcher(mcRes.group(1));
-				mcThreadNum.find();
-				String threadNum = mcThreadNum.group(1);
-				thread.threadNum = threadNum;
-				Matcher mcImg = imgPattern.matcher(mcRes.group(1));
-				if (mcImg.find()) {
-					thread.imgURL = mcImg.group(1);
-				}
-		*/
-		if(statuses.size()==0){ return null; }
-		FutabaThreadContent thread = new FutabaThreadContent();
-		thread.userName = statuses.get(0).userName;
-		thread.title = statuses.get(0).title;
-		thread.text  = statuses.get(0).text;
-		thread.resNum = ""+(statuses.size()-1);
-		thread.threadNum = "res/" + statuses.get(0).idstr;
-		//カタログ画像が抜けてしまうけど仕方ないね
-		return thread;
-	}
+
 
 	public ArrayList<FutabaStatus> getStatuses() {
 		return statuses;
