@@ -15,20 +15,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cx.ath.dekosuke.ftbt.Catalog.FutabaCatalogContentGetter;
-import cx.ath.dekosuke.ftbt.FutabaThread.FutabaThreadContentGetter;
 import cx.ath.dekosuke.ftbt.R.id;
 
 public class ThumbGrid extends Activity implements Runnable {
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
+
+	private ArrayList<String> thumbURLs = new ArrayList<String>();
 
 	// private CatalogAdapter adapter = null;
 	public String baseUrl = "";
@@ -38,6 +40,13 @@ public class ThumbGrid extends Activity implements Runnable {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setTitle("サムネイル一覧");
+
+		FLog.d("ThumbGrid.onCreate start");
+		Intent intent = getIntent();
+		thumbURLs = (ArrayList<String>) intent
+				.getSerializableExtra("thumbURLs");
 
 		setWait();
 
@@ -79,9 +88,28 @@ public class ThumbGrid extends Activity implements Runnable {
 
 	final Handler handler2 = new Handler();
 
+	private final int FP = ViewGroup.LayoutParams.FILL_PARENT;
+    private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
+
 	private void loading() {
-		//インテントでサムネイルリストをもらう？
+		
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        setContentView(linearLayout);
+
+		GridView grid  = new GridView(this);
+		linearLayout.addView(grid, createParam(WC, FP));
+
+		grid.setNumColumns(2);
+		ThumbGridAdapter adapter = new ThumbGridAdapter(this,
+				R.layout.thumbgridelement, thumbURLs);
+		grid.setAdapter(adapter);
 	}
+	
+    private LinearLayout.LayoutParams createParam(int w, int h){
+        return new LinearLayout.LayoutParams(w, h);
+    }
+
 	/*
 	 * ArrayList<String> urls = new ArrayList<String>(); ArrayAdapter<String>
 	 * arrayAdapter = new ArrayAdapter<String>(this, R.layout.thumbgridelement,

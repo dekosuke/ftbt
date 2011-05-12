@@ -20,6 +20,12 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
         android:layout_height="wrap_content"
         android:onClick="onClickReloadBtn" android:layout_width="fill_parent" android:layout_weight="2">
     </Button>
+    <Button android:text="画像一覧"
+        android:id="@+id/gridview_btn"
+        android:layout_height="wrap_content"
+        android:onClick="onClickGridViewBtn"
+         android:layout_width="fill_parent" android:layout_weight="2">
+    </Button>
     <Button android:text="最初"
         android:id="@+id/gotop_btn"
         android:layout_width="fill_parent"

@@ -50,6 +50,12 @@
             <intent-filter>
             </intent-filter>
         </activity>
+        <activity android:name="GridView"
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
+            <intent-filter>
+            </intent-filter>
+        </activity>
     </application>
 
 <uses-permission android:name="android.permission.INTERNET"/>

@@ -84,17 +84,18 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
-		FLog.d("potision="+position+" datestr="+item.datestr);
+			FLog.d("potision=" + position + " datestr=" + item.datestr);
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
-				String title_base = item.title;//StringUtil.safeCut(, 30);
-				if (item.name != null) { //こういう風に足さないと改行時に消えてしまうのでやむなく
-					title_base+=" <font color=\"#117743\">"+item.name+"</font>";
-					//name.setText(item.name);// item.getImgURL());
+				String title_base = item.title;// StringUtil.safeCut(, 30);
+				if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
+					title_base += " <font color=\"#117743\">" + item.name
+							+ "</font>";
+					// name.setText(item.name);// item.getImgURL());
 				}
-				CharSequence cs_title = Html.fromHtml(title_base); //HTML表示
+				CharSequence cs_title = Html.fromHtml(title_base); // HTML表示
 				title.setText(cs_title);// item.getImgURL());
-				//TextView name = (TextView) view.findViewById(R.id.name);
+				// TextView name = (TextView) view.findViewById(R.id.name);
 
 				// スクリーンネームをビューにセット
 				TextView text = (TextView) view.findViewById(R.id.maintext);
@@ -120,24 +121,24 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						// title.setText("(画像あり)");
 					} else { // 画像なし
 						/*
-						 *FLog.d("w="+item.width+" h="+item.height ); bm
-						 * = Bitmap.createBitmap(item.width, item.height,
+						 * FLog.d("w="+item.width+" h="+item.height ); bm =
+						 * Bitmap.createBitmap(item.width, item.height,
 						 * Bitmap.Config.ALPHA_8); iv.setImageBitmap(bm);
 						 */
 					}
 				} catch (Exception e) {
-				FLog.d("message", e);
+					FLog.d("message", e);
 				}
 
 				// テキストをビューにセット
 				if (text != null) {
-					CharSequence cs = Html.fromHtml(item.text); //HTML表示
+					CharSequence cs = Html.fromHtml(item.text); // HTML表示
 					text.setText(cs);
 				}
 			}
 
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 
 		return view;
@@ -174,7 +175,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		public ImageGetTask(ImageView _image) {
 			image = _image;
 			if (_image == null) {
-			FLog.d("imageview is null!!!");
+				FLog.d("imageview is null!!!");
 			}
 			tag = image.getTag().toString();
 			synchronized (FutabaThreadAdapter.lock_id) {
@@ -188,19 +189,19 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			Bitmap bm = ImageCache.getImage(urls[0]);
 			HttpURLConnection con = null;
 			InputStream is = null;
-		FLog.d("futabaAdapter thread start");
+			FLog.d("futabaAdapter thread start");
 			if (bm == null) { // does not exist on cache
 				// synchronized (FutabaAdapter.lock){
 				try {
 					ImageCache.setImage(urls[0]);
 					bm = ImageCache.getImage(urls[0]);
 				} catch (Exception e) {
-				FLog.d("message", e);
-				FLog.d("fail with " + urls[0]);
+					FLog.d("message", e);
+					FLog.d("fail with " + urls[0]);
 					try {
 						Thread.sleep(1 * 1000);
 					} catch (Exception e2) {
-					FLog.d("message", e2);
+						FLog.d("message", e2);
 					}
 				} finally {
 					try {
@@ -211,7 +212,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							is.close();
 						}
 					} catch (Exception e) {
-					FLog.d("doInBackground", e);
+						FLog.d("doInBackground", e);
 					}
 					// }
 				}
@@ -222,7 +223,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		// メインスレッドで実行する処理
 		@Override
 		protected void onPostExecute(Bitmap result) {
-			//FLog.d(,
+			// FLog.d(,
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			try {
 				// Tagが同じものが確認して、同じであれば画像を設定する
@@ -240,8 +241,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						image.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
 								try {
-								FLog.d(
-											"intent calling thread activity");
+									FLog.d("intent calling thread activity");
 									Intent intent = new Intent();
 									FutabaThread activity = (FutabaThread) getContext();
 									// Log.d ( "ftbt", threadNum );
@@ -254,10 +254,11 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 													.getClass().getPackage()
 													.getName()
 													+ ".ImageCatalog");
-									//http://android.roof-balcony.com/intent/intent/
-									activity.startActivityForResult(intent, activity.TO_IMAGECATALOG);
+									// http://android.roof-balcony.com/intent/intent/
+									activity.startActivityForResult(intent,
+											activity.TO_IMAGECATALOG);
 								} catch (Exception e) {
-								FLog.d("message", e);
+									FLog.d("message", e);
 								}
 							}
 						});
@@ -266,7 +267,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				}
 
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 		}
 

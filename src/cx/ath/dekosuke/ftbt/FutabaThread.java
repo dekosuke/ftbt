@@ -82,9 +82,10 @@ public class FutabaThread extends Activity implements Runnable {
 
 		Intent intent = getIntent();
 		baseURL = (String) intent.getSerializableExtra("baseUrl");
-		threadNum = Integer.parseInt( (String) intent.getSerializableExtra("threadNum") );
+		threadNum = Integer.parseInt((String) intent
+				.getSerializableExtra("threadNum"));
 		threadURL = baseURL + "res/" + threadNum + ".htm";
-	FLog.d("threadurl=" + threadURL);
+		FLog.d("threadurl=" + threadURL);
 
 		statuses = new ArrayList<FutabaStatus>();
 
@@ -126,7 +127,7 @@ public class FutabaThread extends Activity implements Runnable {
 			try {
 				loading();
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 		}
 	};
@@ -147,7 +148,7 @@ public class FutabaThread extends Activity implements Runnable {
 		while (iterator.hasNext()) {
 			FutabaStatus status = (FutabaStatus) iterator.next();
 			if (status.bigImgURL != null) {
-			FLog.d("image" + status.bigImgURL);
+				FLog.d("image" + status.bigImgURL);
 				list.add(status.bigImgURL);
 			}
 			i++;
@@ -155,22 +156,54 @@ public class FutabaThread extends Activity implements Runnable {
 		return list;
 	}
 
+
+	// スレッドに存在するすべての画像のURLを配列にして返す
+	public ArrayList<String> getThumbURLs() {
+		Iterator iterator = statuses.iterator();
+		int i = 0;
+		ArrayList<String> list = new ArrayList<String>();
+		// ループ
+		while (iterator.hasNext()) {
+			FutabaStatus status = (FutabaStatus) iterator.next();
+			if (status.imgURL != null) {
+				FLog.d("thumbimage" + status.imgURL);
+				list.add(status.imgURL);
+			}
+			i++;
+		}
+		return list;
+	}
+	
 	public void onClickReloadBtn(View v) {
 		try {
-		FLog.d("fthread onclick-reload");
+			FLog.d("fthread onclick-reload");
 			position = listView.getFirstVisiblePosition();
 			positionY = listView.getChildAt(0).getTop();
 			; // 現在位置（リロードで復帰）
-		FLog.d("position=" + position);
+			FLog.d("position=" + position);
 			setWait();
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
 	public void onClickGoTopBtn(View v) {
 		// 最後へ
 		listView.setSelection(0);
+	}
+
+	public void onClickGridViewBtn(View v) {
+		FLog.d("intent calling gridview activity");
+		Intent intent = new Intent();
+		// Log.d ( "ftbt", threadNum );
+		// これスレッドごとに作られているのが結構ひどい気がする
+		intent.putExtra("thumbURLs", getThumbURLs());
+		intent.setClassName(getPackageName(), getClass().getPackage().getName()
+				+ ".GridView");
+		// http://android.roof-balcony.com/intent/intent/
+		/*
+		 * activity.startActivityForResult(intent, activity.TO_IMAGECATALOG);
+		 */
 	}
 
 	public void onClickGoBottomBtn(View v) {
@@ -258,12 +291,12 @@ public class FutabaThread extends Activity implements Runnable {
 		case R.id.about:
 			Uri uri = Uri.parse(getString(R.string.helpurl));
 			intent = new Intent(Intent.ACTION_VIEW, uri);
-			intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+			intent.setClassName("com.android.browser",
+					"com.android.browser.BrowserActivity");
 			try {
 				startActivity(intent);
 			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}
@@ -274,21 +307,21 @@ public class FutabaThread extends Activity implements Runnable {
 			Intent intent) {
 		try {
 			String imgURL = (String) intent.getSerializableExtra("imgURL");
-			//FLog.d("return intent imgURL="+imgURL);
+			// FLog.d("return intent imgURL="+imgURL);
 			if (requestCode == TO_IMAGECATALOG) {
 				for (int i = 0; i < statuses.size(); ++i) {
-					//FLog.d("image"+i+"="+statuses.get(i).bigImgURL);
+					// FLog.d("image"+i+"="+statuses.get(i).bigImgURL);
 					if (imgURL.equals(statuses.get(i).bigImgURL)) {
-						//FLog.d("hit="+i);
+						// FLog.d("hit="+i);
 						listView.setSelection(Math.min(i, listView.getCount()));
 						break;
 					}
 				}
 			} else {
-			FLog.d("unknown result code");
+				FLog.d("unknown result code");
 			}
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -319,11 +352,11 @@ public class FutabaThread extends Activity implements Runnable {
 					String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
 					cacheParser.parse(cacheThreadHtml, anonymous);
-				FLog.d("cache  ok  " + threadURL);
+					FLog.d("cache  ok  " + threadURL);
 
 				} else {
 					cache_ok = false;
-				FLog.d("cache fail " + threadURL);
+					FLog.d("cache fail " + threadURL);
 				}
 
 				String threadHtml = "";
@@ -334,7 +367,7 @@ public class FutabaThread extends Activity implements Runnable {
 					String webThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
 					webParser.parse(webThreadHtml, anonymous);
-					//FLog.d(threadHtml);
+					// FLog.d(threadHtml);
 
 					try {
 						// 取得に成功した場合、履歴データの件数とかを更新する
@@ -346,7 +379,7 @@ public class FutabaThread extends Activity implements Runnable {
 						man.updateThread(thread);
 						man.Save();
 					} catch (Exception e) {
-					FLog.d("message", e);
+						FLog.d("message", e);
 					}
 
 					network_ok = true;
@@ -367,7 +400,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 				} catch (Exception e) { // ネットワークつながってないときとか
 					network_ok = false;
-				FLog.d("message", e);
+					FLog.d("message", e);
 					if (cache_ok) {
 						toast_text = "ネットワークに繋がっていません。代わりに前回読み込み時のキャッシュを使用します";
 					} else {
@@ -403,7 +436,7 @@ public class FutabaThread extends Activity implements Runnable {
 					FLog.d(statuses.get(i).toString());
 					adapter.items.add(statuses.get(i));
 				}
-			FLog.d("parse end" + statuses.size());
+				FLog.d("parse end" + statuses.size());
 				FutabaThreadParser parser = webParser;
 				if (!network_ok) {
 					parser = cacheParser;
@@ -411,8 +444,8 @@ public class FutabaThread extends Activity implements Runnable {
 				final String title = parser.getTitle(20) + " - "
 						+ getString(R.string.app_name);
 				final String toast_text_f = toast_text;
-				
-				//描画に関わる処理はここに集約(メインスレッド実行)
+
+				// 描画に関わる処理はここに集約(メインスレッド実行)
 				handler2.post(new Runnable() {
 					public void run() {
 						Toast.makeText(adapter.getContext(), toast_text_f,
@@ -430,7 +463,7 @@ public class FutabaThread extends Activity implements Runnable {
 				});
 
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 		}
 	}
