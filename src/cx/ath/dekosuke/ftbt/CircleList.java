@@ -2,7 +2,7 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 
-//円状のリスト。カタログに載っているファイルのリスト。
+//円状のリスト。大きい画像のURLリストを持つのに使われている。グローバルオブジェクト
 class CircleList {
 	private static ArrayList<String> list = new ArrayList<String>();
 	private static int pointer = -1; // 基本的に-1になるときは0件のときのみ。
