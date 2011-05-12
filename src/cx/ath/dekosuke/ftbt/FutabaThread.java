@@ -156,7 +156,6 @@ public class FutabaThread extends Activity implements Runnable {
 		return list;
 	}
 
-
 	// スレッドに存在するすべての画像のURLを配列にして返す
 	public ArrayList<String> getThumbURLs() {
 		Iterator iterator = statuses.iterator();
@@ -173,7 +172,7 @@ public class FutabaThread extends Activity implements Runnable {
 		}
 		return list;
 	}
-	
+
 	public void onClickReloadBtn(View v) {
 		try {
 			FLog.d("fthread onclick-reload");
@@ -196,7 +195,7 @@ public class FutabaThread extends Activity implements Runnable {
 		FLog.d("intent calling gridview activity");
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
-		// これスレッドごとに作られているのが結構ひどい気がする
+		intent.putExtra("imgURLs", getImageURLs());
 		intent.putExtra("thumbURLs", getThumbURLs());
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
 				+ ".ThumbGrid");

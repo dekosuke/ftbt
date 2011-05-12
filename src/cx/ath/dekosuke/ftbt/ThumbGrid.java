@@ -30,7 +30,8 @@ public class ThumbGrid extends Activity implements Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 
-	private ArrayList<String> thumbURLs = new ArrayList<String>();
+	public ArrayList<String> thumbURLs = new ArrayList<String>();
+	public ArrayList<String> imgURLs = new ArrayList<String>();
 
 	// private CatalogAdapter adapter = null;
 	public String baseUrl = "";
@@ -46,7 +47,9 @@ public class ThumbGrid extends Activity implements Runnable {
 		FLog.d("ThumbGrid.onCreate start");
 		Intent intent = getIntent();
 		thumbURLs = (ArrayList<String>) intent
-				.getSerializableExtra("thumbURLs");
+		.getSerializableExtra("thumbURLs");
+		imgURLs = (ArrayList<String>) intent
+		.getSerializableExtra("imgURLs");
 
 		setWait();
 

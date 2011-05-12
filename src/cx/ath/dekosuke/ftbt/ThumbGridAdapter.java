@@ -24,7 +24,7 @@ import android.widget.ImageView.ScaleType;
 public class ThumbGridAdapter extends ArrayAdapter {
 	ArrayList<String> urls;
 	private LayoutInflater inflater;
-	
+
 	private int width;
 	private int height;
 	private int itemSize;
@@ -35,14 +35,14 @@ public class ThumbGridAdapter extends ArrayAdapter {
 		this.urls = items;
 		this.inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
+
 		// 画面サイズの取得
 		WindowManager wm = ((WindowManager) context
 				.getSystemService(Context.WINDOW_SERVICE));
 		Display display = wm.getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
-		itemSize = width/3 - 10;
+		itemSize = width / 3 - 10;
 	}
 
 	@Override
@@ -65,11 +65,10 @@ public class ThumbGridAdapter extends ArrayAdapter {
 				try {
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 
-					iv.setTag(url);
-					/*
-					 * Bitmap bm = Bitmap.createBitmap(0, 0,
-					 * Bitmap.Config.ALPHA_8); iv.setImageBitmap(bm);
-					 */
+					iv.setTag("" + position);
+					Bitmap bm = Bitmap.createBitmap(itemSize, itemSize,
+							Bitmap.Config.ALPHA_8);
+					iv.setImageBitmap(bm);
 					ImageGetTask task = new ImageGetTask(iv);
 					task.execute(url);
 					// title.setText("(画像あり)");
@@ -88,7 +87,6 @@ public class ThumbGridAdapter extends ArrayAdapter {
 	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
 		private ImageView image;
 		private String tag;
-		private int id;
 
 		public ImageGetTask(ImageView _image) {
 			image = _image;
@@ -96,10 +94,7 @@ public class ThumbGridAdapter extends ArrayAdapter {
 				FLog.d("imageview is null!!!");
 			}
 			tag = image.getTag().toString();
-			synchronized (FutabaThreadAdapter.lock_id) {
-				FutabaThreadAdapter.LastTaskID += 1;
-				id = FutabaThreadAdapter.LastTaskID;
-			}
+			FLog.d("tag=" + tag);
 		}
 
 		@Override
@@ -150,19 +145,46 @@ public class ThumbGridAdapter extends ArrayAdapter {
 						return;
 					}
 					/*
-					image.setScaleType(ScaleType.MATRIX);
-					Matrix matrix = new Matrix();
-					matrix.setScale(.5f, .5f);
-					image.setImageMatrix(matrix);
-					*/
+					 * image.setScaleType(ScaleType.MATRIX); Matrix matrix = new
+					 * Matrix(); matrix.setScale(.5f, .5f);
+					 * image.setImageMatrix(matrix);
+					 */
 					result = ImageResizer.ResizeCenter(result, itemSize);
 					image.setImageBitmap(result);
+					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
+						image.setOnClickListener(new View.OnClickListener() {
+							public void onClick(View v) {
+								try {
+									FLog.d("intent calling imageCatalog activity");
+									Intent intent = new Intent();
+									ThumbGrid activity = (ThumbGrid) getContext();
+									// Log.d ( "ftbt", threadNum );
+									// これスレッドごとに作られているのが結構ひどい気がする
+									intent.putExtra("imgURLs", activity.imgURLs);
+									intent.putExtra("thumbURLs",
+											activity.thumbURLs);
+									intent.putExtra("myImgURL",
+											activity.imgURLs.get(Integer
+													.parseInt(tag)));
+									intent.setClassName(
+											activity.getPackageName(), activity
+													.getClass().getPackage()
+													.getName()
+													+ ".ImageCatalog");
+									// http://android.roof-balcony.com/intent/intent/
+									activity.startActivity(intent);
+								} catch (Exception e) {
+									FLog.d("message", e);
+								}
+							}
+						});
+					}
+
 				}
 
 			} catch (Exception e) {
 				FLog.d("message", e);
 			}
 		}
-
 	}
 }

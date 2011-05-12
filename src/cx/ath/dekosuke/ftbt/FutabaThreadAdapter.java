@@ -248,6 +248,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 									// これスレッドごとに作られているのが結構ひどい気がする
 									intent.putExtra("imgURLs",
 											activity.getImageURLs());
+									intent.putExtra("thumbURLs", activity.getThumbURLs());
 									intent.putExtra("myImgURL", tag);
 									intent.setClassName(
 											activity.getPackageName(), activity
