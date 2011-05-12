@@ -89,26 +89,36 @@ public class ThumbGrid extends Activity implements Runnable {
 	final Handler handler2 = new Handler();
 
 	private final int FP = ViewGroup.LayoutParams.FILL_PARENT;
-    private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
+	private final int WC = ViewGroup.LayoutParams.WRAP_CONTENT;
 
 	private void loading() {
-		
-        LinearLayout linearLayout = new LinearLayout(this);
-        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        setContentView(linearLayout);
 
-		GridView grid  = new GridView(this);
+		/*
+		LinearLayout linearLayout = new LinearLayout(this);
+		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+		setContentView(linearLayout);
+		*/
+		setContentView(R.layout.thumbgrid);
+
+		GridView grid = (GridView) findViewById(id.gridview);
+		/*
+		GridView grid = new GridView(this);
 		linearLayout.addView(grid, createParam(WC, FP));
+		*/
 
-		grid.setNumColumns(2);
+		grid.setNumColumns(3);
+		grid.setVerticalSpacing(10);
+		// grid.setStretchMode(GridView.STRETCH_SPACING);
 		ThumbGridAdapter adapter = new ThumbGridAdapter(this,
 				R.layout.thumbgridelement, thumbURLs);
 		grid.setAdapter(adapter);
+
+		waitDialog.dismiss();
 	}
-	
-    private LinearLayout.LayoutParams createParam(int w, int h){
-        return new LinearLayout.LayoutParams(w, h);
-    }
+
+	private LinearLayout.LayoutParams createParam(int w, int h) {
+		return new LinearLayout.LayoutParams(w, h);
+	}
 
 	/*
 	 * ArrayList<String> urls = new ArrayList<String>(); ArrayAdapter<String>

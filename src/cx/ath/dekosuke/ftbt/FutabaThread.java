@@ -199,7 +199,8 @@ public class FutabaThread extends Activity implements Runnable {
 		// これスレッドごとに作られているのが結構ひどい気がする
 		intent.putExtra("thumbURLs", getThumbURLs());
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
-				+ ".GridView");
+				+ ".ThumbGrid");
+		startActivity(intent);
 		// http://android.roof-balcony.com/intent/intent/
 		/*
 		 * activity.startActivityForResult(intent, activity.TO_IMAGECATALOG);

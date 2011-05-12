@@ -9,6 +9,7 @@ import cx.ath.dekosuke.ftbt.FutabaThreadAdapter.ImageGetTask;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -18,10 +19,15 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 
 public class ThumbGridAdapter extends ArrayAdapter {
 	ArrayList<String> urls;
 	private LayoutInflater inflater;
+	
+	private int width;
+	private int height;
+	private int itemSize;
 
 	public ThumbGridAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
@@ -29,6 +35,14 @@ public class ThumbGridAdapter extends ArrayAdapter {
 		this.urls = items;
 		this.inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
+		// 画面サイズの取得
+		WindowManager wm = ((WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE));
+		Display display = wm.getDefaultDisplay();
+		width = display.getWidth();
+		height = display.getHeight();
+		itemSize = width/3 - 10;
 	}
 
 	@Override
@@ -52,9 +66,10 @@ public class ThumbGridAdapter extends ArrayAdapter {
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 
 					iv.setTag(url);
-					Bitmap bm = Bitmap.createBitmap(0, 0,
-							Bitmap.Config.ALPHA_8);
-					iv.setImageBitmap(bm);
+					/*
+					 * Bitmap bm = Bitmap.createBitmap(0, 0,
+					 * Bitmap.Config.ALPHA_8); iv.setImageBitmap(bm);
+					 */
 					ImageGetTask task = new ImageGetTask(iv);
 					task.execute(url);
 					// title.setText("(画像あり)");
@@ -68,7 +83,7 @@ public class ThumbGridAdapter extends ArrayAdapter {
 
 		return view;
 	}
-	
+
 	// 画像取得用スレッド
 	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
 		private ImageView image;
@@ -132,41 +147,16 @@ public class ThumbGridAdapter extends ArrayAdapter {
 				// Tagが同じものが確認して、同じであれば画像を設定する
 				if (tag.equals(image.getTag())) {
 					if (result == null) { // 画像読み込み失敗時
-						TextView screenName = (TextView) image
-								.findViewById(R.id.title);
-						if (screenName != null) {
-							screenName.setText("(画像読み込み失敗)");// item.getImgURL());
-						}
 						return;
 					}
+					/*
+					image.setScaleType(ScaleType.MATRIX);
+					Matrix matrix = new Matrix();
+					matrix.setScale(.5f, .5f);
+					image.setImageMatrix(matrix);
+					*/
+					result = ImageResizer.ResizeCenter(result, itemSize);
 					image.setImageBitmap(result);
-					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
-						image.setOnClickListener(new View.OnClickListener() {
-							public void onClick(View v) {
-								try {
-									FLog.d("intent calling thread activity");
-									Intent intent = new Intent();
-									FutabaThread activity = (FutabaThread) getContext();
-									// Log.d ( "ftbt", threadNum );
-									// これスレッドごとに作られているのが結構ひどい気がする
-									intent.putExtra("imgURLs",
-											activity.getImageURLs());
-									intent.putExtra("myImgURL", tag);
-									intent.setClassName(
-											activity.getPackageName(), activity
-													.getClass().getPackage()
-													.getName()
-													+ ".ImageCatalog");
-									// http://android.roof-balcony.com/intent/intent/
-									activity.startActivityForResult(intent,
-											activity.TO_IMAGECATALOG);
-								} catch (Exception e) {
-									FLog.d("message", e);
-								}
-							}
-						});
-					}
-
 				}
 
 			} catch (Exception e) {
