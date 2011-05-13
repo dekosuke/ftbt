@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,20 +31,60 @@ import cx.ath.dekosuke.ftbt.R.id;
 
 //タブ式トップページ
 
-public class ftbt extends TabActivity {
+public class ftbt extends TabActivity implements Runnable {
 
 	public ArrayList<FutabaBBSContent> favoriteBBSs = new ArrayList<FutabaBBSContent>();
+
+	ProgressDialog waitDialog;
+	Thread thread;
 
 	private TabSpec tab02;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
+		setWait();
+
+	}
+
+	public void setWait() {
+		waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("キャッシュ整理中...");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
+
+		thread = new Thread(this);
+		thread.start();
+	}
+
+	public void run() {
+		try { // 細かい時間を置いて、ダイアログを確実に表示させる
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
+		}
+		handler.sendEmptyMessage(0);
+	}
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			// HandlerクラスではActivityを継承してないため
+			// 別の親クラスのメソッドにて処理を行うようにした。
+			try {
+				loading();
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
+		}
+	};
+
+	public void loading() {
 		// キャッシュを削除する(重い)
 		try {
 			//ダイアログ出すの大変なのでToastに
-			Toast.makeText(this, "キャッシュを整理しています・・・", Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, "キャッシュを整理しています・・・", Toast.LENGTH_LONG).show();
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			int cacheSize = Integer.parseInt(preferences.getString(
@@ -54,7 +96,15 @@ public class ftbt extends TabActivity {
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
-
+		
+		try {
+			waitDialog.dismiss();
+			Thread.sleep(100);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		// TabHostのインスタンスを取得
 		TabHost tabs = getTabHost();
 		/*
