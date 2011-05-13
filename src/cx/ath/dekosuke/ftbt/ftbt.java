@@ -34,11 +34,22 @@ public class ftbt extends Activity implements Runnable {
 
 	ProgressDialog waitDialog;
 	Thread thread;
+	boolean initialStart=true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initialStart=false;
 		setWait();
+	}
+	
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if(!initialStart){
+			setWait();
+		}
 	}
 
 	public void setWait() {
