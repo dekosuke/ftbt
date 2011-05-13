@@ -42,7 +42,7 @@ public class ThumbGridAdapter extends ArrayAdapter {
 		Display display = wm.getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
-		itemSize = width / 3 - 10;
+		itemSize = width / 3 - 10;		
 	}
 
 	@Override
@@ -99,36 +99,35 @@ public class ThumbGridAdapter extends ArrayAdapter {
 
 		@Override
 		protected Bitmap doInBackground(String... urls) {
-			Bitmap bm = ImageCache.getImage(urls[0]);
-			HttpURLConnection con = null;
-			InputStream is = null;
-			FLog.d("futabaAdapter thread start");
-			if (bm == null) { // does not exist on cache
-				// synchronized (FutabaAdapter.lock){
-				try {
-					ImageCache.setImage(urls[0]);
-					bm = ImageCache.getImage(urls[0]);
-				} catch (Exception e) {
-					FLog.d("message", e);
-					FLog.d("fail with " + urls[0]);
+			Bitmap bm = ImageCache.getImage(urls[0] + "_t"); // リサイズ後の画像キャッシュをとってくる
+			if (bm == null) { // ないならリサイズ前の画像キャッシュを取ってくる
+				bm = ImageCache.getImage(urls[0]);
+				if (bm == null) { // does not exist on cache
+					FLog.d("ThumbGridAdapter image cache not found");
+					// synchronized (FutabaAdapter.lock){
 					try {
-						Thread.sleep(1 * 1000);
-					} catch (Exception e2) {
-						FLog.d("message", e2);
-					}
-				} finally {
-					try {
-						if (con != null) {
-							con.disconnect();
-						}
-						if (is != null) {
-							is.close();
-						}
+						ImageCache.setImage(urls[0]);
+						bm = ImageCache.getImage(urls[0]);
+						bm = ImageResizer.ResizeCenter(bm, itemSize);
+						ImageCache.setImageFromBitmap(urls[0] + "_t", bm); // リサイズ後の画像もキャッシュ
 					} catch (Exception e) {
-						FLog.d("doInBackground", e);
+						FLog.d("message", e);
+						FLog.d("fail with " + urls[0]);
+						try {
+							Thread.sleep(1 * 1000);
+						} catch (Exception e2) {
+							FLog.d("message", e2);
+						}
+					} finally {
+
 					}
-					// }
+				} else { // リサイズ前の画像のキャッシュはあった（リサイズ後はない）
+					FLog.d("ThumbGridAdapter image at snd cache");
+					bm = ImageResizer.ResizeCenter(bm, itemSize);
+					ImageCache.setImageFromBitmap(urls[0] + "_t", bm); // リサイズ後の画像もキャッシュ
 				}
+			} else {
+				FLog.d("ThumbGridAdapter image at fst cache");
 			}
 			return bm;
 		}
@@ -149,7 +148,6 @@ public class ThumbGridAdapter extends ArrayAdapter {
 					 * Matrix(); matrix.setScale(.5f, .5f);
 					 * image.setImageMatrix(matrix);
 					 */
-					result = ImageResizer.ResizeCenter(result, itemSize);
 					image.setImageBitmap(result);
 					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
 						image.setOnClickListener(new View.OnClickListener() {

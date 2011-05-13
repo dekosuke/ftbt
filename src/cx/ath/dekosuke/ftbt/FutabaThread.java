@@ -72,6 +72,10 @@ public class FutabaThread extends Activity implements Runnable {
 	// 現在位置(リロード時復帰用)
 	int position = 0;
 	int positionY = 0;
+	
+	//前回との更新を色分け表示するため
+	int currentSize = 0;
+	int prevSize = 0;
 
 	// 画像カタログから戻ってきたときにどの画像から戻ってきたか判定用
 	final int TO_IMAGECATALOG = 0;
@@ -195,6 +199,7 @@ public class FutabaThread extends Activity implements Runnable {
 		FLog.d("intent calling gridview activity");
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
+		intent.putExtra("position", 0);
 		intent.putExtra("imgURLs", getImageURLs());
 		intent.putExtra("thumbURLs", getThumbURLs());
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
@@ -337,6 +342,8 @@ public class FutabaThread extends Activity implements Runnable {
 				if (baseURL.contains("http://img.2chan.net/b")) {
 					anonymous = true;
 				}
+				
+				currentSize=prevSize=0;
 
 				// Toastに表示するtext
 				String toast_text = "";
@@ -422,11 +429,14 @@ public class FutabaThread extends Activity implements Runnable {
 				if (network_ok) {
 					statuses = webParser.getStatuses();
 					int num = webParser.getStatuses().size();
+					currentSize=num;
 					if (cache_ok) {
 						num -= cacheParser.getStatuses().size();
+						prevSize = cacheParser.getStatuses().size();
 						toast_text = "新着:" + num + "件";
 					} else {
 						toast_text = "レス" + (num - 1) + "件";
+						currentSize=prevSize=num;
 					}
 				} else if (cache_ok) {
 					statuses = cacheParser.getStatuses();

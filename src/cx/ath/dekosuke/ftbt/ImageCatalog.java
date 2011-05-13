@@ -29,6 +29,8 @@ public class ImageCatalog extends Activity {
 
 	Toast toast = null;
 	String myImageURL = null;
+	ArrayList<String> imgURLs = new ArrayList<String>();
+	ArrayList<String> thumbURLs = new ArrayList<String>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,18 +39,19 @@ public class ImageCatalog extends Activity {
 		try {
 
 			// linearLayout.addView(gallery, createParam(WC, FP));
-			
-			setTitle("画像ビューワ - "+getString(R.string.app_name));
 
-		FLog.d("ImageCatalog.onCreate start");
+			setTitle("画像ビューワ - " + getString(R.string.app_name));
+
+			FLog.d("ImageCatalog.onCreate start");
 			Intent intent = getIntent();
-		FLog.d("hoge");
-			ArrayList<String> imgURLs = (ArrayList<String>) intent
+			FLog.d("hoge");
+			imgURLs = (ArrayList<String>) intent
 					.getSerializableExtra("imgURLs");
-
-		FLog.d("hoge-" + imgURLs.size());
+			thumbURLs = (ArrayList<String>) intent
+					.getSerializableExtra("thumbURLs");
+			FLog.d("hoge-" + imgURLs.size());
 			myImageURL = (String) intent.getSerializableExtra("myImgURL");
-		FLog.d(myImageURL);
+			FLog.d(myImageURL);
 
 			// ここでIntentによる追加情報からCircleListを構築する
 			CircleList.clear();
@@ -63,7 +66,7 @@ public class ImageCatalog extends Activity {
 			}
 
 			// ImageCatalogSingleView sview = new ImageCatalogSingleView(this);
-			setContentView(R.layout.imagegallery_row);
+			setContentView(R.layout.imagegallery);
 			Button download = (Button) findViewById(id.down_btn);
 			download.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -76,15 +79,14 @@ public class ImageCatalog extends Activity {
 							toast.cancel();
 						}
 						toast = Toast.makeText(v.getContext(),
-								name + "に保存しました",
-								Toast.LENGTH_SHORT);
+								name + "に保存しました", Toast.LENGTH_SHORT);
 						toast.show();
 					} catch (Exception e) {
-					FLog.d("message", e);
+						FLog.d("message", e);
 					}
 				}
 			});
-			
+
 			Button prev = (Button) findViewById(id.prev_btn);
 			prev.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -95,7 +97,7 @@ public class ImageCatalog extends Activity {
 						imageview.setImage();
 						setReturnImage();
 					} catch (Exception e) {
-					FLog.d("message", e);
+						FLog.d("message", e);
 					}
 				}
 			});
@@ -109,7 +111,7 @@ public class ImageCatalog extends Activity {
 						imageview.setImage();
 						setReturnImage();
 					} catch (Exception e) {
-					FLog.d("message", e);
+						FLog.d("message", e);
 					}
 				}
 			});
@@ -117,11 +119,29 @@ public class ImageCatalog extends Activity {
 			rotate.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
 					try {
-						ImageCatalogSingleView imageview = 
-							(ImageCatalogSingleView) findViewById(id.image);
+						ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 						imageview.rotateImage();
 					} catch (Exception e) {
-					FLog.d("message", e);
+						FLog.d("message", e);
+					}
+				}
+			});
+
+			Button gridview = (Button) findViewById(id.gridview_btn);
+			gridview.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					try {
+						FLog.d("intent calling gridview activity");
+						Intent intent = new Intent();
+						// Log.d ( "ftbt", threadNum );
+						intent.putExtra("position", CircleList.pos());
+						intent.putExtra("imgURLs", imgURLs);
+						intent.putExtra("thumbURLs", thumbURLs);
+						intent.setClassName(getPackageName(), getClass()
+								.getPackage().getName() + ".ThumbGrid");
+						startActivity(intent);
+					} catch (Exception e) {
+						FLog.d("message", e);
 					}
 				}
 			});
@@ -130,7 +150,7 @@ public class ImageCatalog extends Activity {
 			setReturnImage();
 
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -154,11 +174,11 @@ public class ImageCatalog extends Activity {
 
 	@Override
 	public void onDestroy() {
-		//for GC Imageview.clearImageはSystem.gc呼んでる
+		// for GC Imageview.clearImageはSystem.gc呼んでる
 		ImageCatalogSingleView imageview = (ImageCatalogSingleView) findViewById(id.image);
 		imageview.clearImage();
-	FLog.d("ImageCatalog::onDestroy()");
-		
+		FLog.d("ImageCatalog::onDestroy()");
+
 		super.onDestroy();
 		// if(isFinishing()){
 		// スレ一覧に戻ったときに渡す情報
@@ -201,12 +221,12 @@ public class ImageCatalog extends Activity {
 		case R.id.about:
 			Uri uri = Uri.parse(getString(R.string.helpurl));
 			intent = new Intent(Intent.ACTION_VIEW, uri);
-			intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+			intent.setClassName("com.android.browser",
+					"com.android.browser.BrowserActivity");
 			try {
 				startActivity(intent);
 			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}

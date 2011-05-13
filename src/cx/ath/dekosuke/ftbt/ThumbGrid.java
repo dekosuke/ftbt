@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +33,7 @@ public class ThumbGrid extends Activity implements Runnable {
 
 	public ArrayList<String> thumbURLs = new ArrayList<String>();
 	public ArrayList<String> imgURLs = new ArrayList<String>();
+	public int startPos = 0;
 
 	// private CatalogAdapter adapter = null;
 	public String baseUrl = "";
@@ -42,15 +44,22 @@ public class ThumbGrid extends Activity implements Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setTitle("サムネイル一覧");
+		try {
+			setTitle("サムネイル一覧 - " + getString(R.string.app_name));
 
-		FLog.d("ThumbGrid.onCreate start");
-		Intent intent = getIntent();
-		thumbURLs = (ArrayList<String>) intent
-		.getSerializableExtra("thumbURLs");
-		imgURLs = (ArrayList<String>) intent
-		.getSerializableExtra("imgURLs");
+			System.gc(); // 重いのでGC呼んでおくよ(こんなところで呼んでいいのかわからないけど)
 
+			FLog.d("ThumbGrid.onCreate start");
+			Intent intent = getIntent();
+			thumbURLs = (ArrayList<String>) intent
+					.getSerializableExtra("thumbURLs");
+			imgURLs = (ArrayList<String>) intent
+					.getSerializableExtra("imgURLs");
+			startPos = (Integer) intent.getSerializableExtra("position");
+
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
 		setWait();
 
 	}
@@ -97,24 +106,32 @@ public class ThumbGrid extends Activity implements Runnable {
 	private void loading() {
 
 		/*
-		LinearLayout linearLayout = new LinearLayout(this);
-		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-		setContentView(linearLayout);
-		*/
+		 * LinearLayout linearLayout = new LinearLayout(this);
+		 * linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+		 * setContentView(linearLayout);
+		 */
 		setContentView(R.layout.thumbgrid);
+
+		TextView imagenum = (TextView) findViewById(id.imagenum);
+		imagenum.setText("画像:" + thumbURLs.size() + "枚  ");
 
 		GridView grid = (GridView) findViewById(id.gridview);
 		/*
-		GridView grid = new GridView(this);
-		linearLayout.addView(grid, createParam(WC, FP));
-		*/
+		 * GridView grid = new GridView(this); linearLayout.addView(grid,
+		 * createParam(WC, FP));
+		 */
 
 		grid.setNumColumns(3);
 		grid.setVerticalSpacing(10);
 		// grid.setStretchMode(GridView.STRETCH_SPACING);
 		ThumbGridAdapter adapter = new ThumbGridAdapter(this,
 				R.layout.thumbgridelement, thumbURLs);
-		grid.setAdapter(adapter);
+		grid.setAdapter(adapter);		
+		grid.setSmoothScrollbarEnabled(true);
+		grid.setVerticalScrollBarEnabled(true);
+		grid.setSelection(startPos);
+		grid.setDrawingCacheEnabled(true);
+		//grid.setDrawingCacheBackgroundColor(Color.BLACK);
 
 		waitDialog.dismiss();
 	}
@@ -122,10 +139,57 @@ public class ThumbGrid extends Activity implements Runnable {
 	private LinearLayout.LayoutParams createParam(int w, int h) {
 		return new LinearLayout.LayoutParams(w, h);
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_gridview, menu);
+		return true;
+	}
 
-	/*
-	 * ArrayList<String> urls = new ArrayList<String>(); ArrayAdapter<String>
-	 * arrayAdapter = new ArrayAdapter<String>(this, R.layout.thumbgridelement,
-	 * urls);
-	 */
+	// メニューをクリック
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
+		switch (item.getItemId()) {
+		case R.id.post:
+			// onClickPostBtn(null);
+			return true;
+		case R.id.settings:
+			intent = new Intent();
+			intent.setClassName(getPackageName(), getClass().getPackage()
+					.getName() + ".PrefSetting");
+			startActivity(intent);
+			return true;
+		case R.id.about:
+			Uri uri = Uri.parse(getString(R.string.helpurl));
+			intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.setClassName("com.android.browser",
+					"com.android.browser.BrowserActivity");
+			try {
+				startActivity(intent);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT).show();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void onPause() {
+		FLog.d("ThumbGrid::onPause()");
+
+		super.onPause();
+		System.gc(); // GC呼ぶよ
+	}
+
+	@Override
+	public void onStop() {
+		FLog.d("ThumbGrid::onStop()");
+
+		super.onStop();
+		System.gc(); // GC呼ぶよ
+	}
 }

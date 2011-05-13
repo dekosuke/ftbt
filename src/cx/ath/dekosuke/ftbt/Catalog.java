@@ -109,6 +109,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	@Override
 	protected void onPause() {
 		super.onPause();
+		System.gc();
 		CookieSyncManager.getInstance().sync();
 	}
 
@@ -434,5 +435,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public void onStop() {
+		FLog.d("ThumbGrid::onStop()");
+
+		super.onStop();
+		System.gc(); // GC呼ぶよ
 	}
 }

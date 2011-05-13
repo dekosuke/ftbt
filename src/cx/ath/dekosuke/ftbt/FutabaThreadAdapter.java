@@ -74,10 +74,12 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				// 背景画像をセットする
 				// view.setBackgroundResource(R.drawable.back);
 			}
+			
+			FutabaThread activity = (FutabaThread) getContext();
 
 			if (position == 0) { // 最初だけ色違う
 				view.setBackgroundColor(Color.rgb(255, 255, 238));
-			} else {
+			}else {
 				// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
 				view.setBackgroundColor(Color.rgb(240, 224, 214));
 			}
@@ -91,6 +93,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
 					title_base += " <font color=\"#117743\">" + item.name
 							+ "</font>";
+					if(activity.currentSize!=0 && position>=activity.prevSize){ //新着
+						title_base += " New!";
+					}
 					// name.setText(item.name);// item.getImgURL());
 				}
 				CharSequence cs_title = Html.fromHtml(title_base); // HTML表示

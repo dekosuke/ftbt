@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+	android:background="#000000"
+     > 
+<RelativeLayout android:layout_width="fill_parent"
+android:layout_height="wrap_content" android:id="@+id/top_control_bar">
+</RelativeLayout>
+
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:id="@+id/bottom_control_bar" android:orientation="horizontal">
+</LinearLayout>
+
+<FrameLayout
+            android:id="@+id/TestSample"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+		    android:layout_below="@id/top_blank" 
+		    android:layout_above="@id/buttons"
+            >
+
+<GridView android:id="@+id/gridview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/top_control_bar" 
+    android:layout_above="@id/bottom_control_bar"
+     />
+
+<TextView android:layout_width="fill_parent"  
+	android:layout_height="wrap_content"
+	android:id="@+id/imagenum"  
+	android:text="サムネイル"
+	android:gravity="right"
+	android:textSize="16sp"
+	android:textColor="#117743"
+	/>
+</FrameLayout>
+
+</RelativeLayout>
+
+

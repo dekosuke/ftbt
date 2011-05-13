@@ -12,7 +12,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 android:id="@+id/top_blank">
-
 </LinearLayout>
 
    <LinearLayout
@@ -35,7 +34,7 @@ android:id="@+id/top_blank">
          android:layout_gravity="center"
        android:layout_width="80dip">
     	</Button>
-      <Button android:text="ダウン\nロード"
+      <Button android:text="保存"
         android:id="@+id/down_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,6 +62,19 @@ android:id="@+id/top_blank">
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 /> 
+   <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_elems"
+        >  
+      <Button android:text="画像一覧"
+        android:id="@+id/gridview_btn"
+        android:layout_height="wrap_content"
+         android:layout_gravity="center"
+       android:layout_width="80dip">
+    	</Button>
+
 <TextView android:layout_width="fill_parent"  
 	android:layout_height="fill_parent"
 	android:id="@+id/imagenum"  
@@ -71,6 +83,7 @@ android:id="@+id/top_blank">
 	android:textSize="16sp"
 	android:textColor="#117743"
 	/>
+	</LinearLayout>
 </FrameLayout>
 
 </RelativeLayout>
