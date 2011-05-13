@@ -54,32 +54,28 @@ import org.apache.http.entity.mime.content.StringBody;
 
 public class Post extends Activity implements Runnable {
 	public String urlStr;
-	public String threadNum;
+	public int threadNum;
 	public String threadURL;
 
 	ProgressDialog waitDialog;
 	Thread thread;
 
-	//multipart 画像添付回り
+	// multipart 画像添付回り
 	final int REQUEST_IMAGEPICK_CONSTANT = 0x100200;
 	Uri imageContent = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		try {
-		FLog.d("start Post activity");
+			FLog.d("start Post activity");
 			Intent intent = getIntent();
 			// urlStr = (String) intent.getSerializableExtra("urlStr");
 			String baseURL = (String) intent.getSerializableExtra("baseURL");
-			threadNum = (String) intent.getSerializableExtra("threadNum");
+			threadNum = (Integer) intent.getSerializableExtra("threadNum");
 			threadURL = baseURL + threadNum;
 			urlStr = baseURL + "futaba.php";
-			String[] temp = threadNum.split("[/]");
-			threadNum = temp[temp.length - 1];
-			temp = threadNum.split("[.]");
-			threadNum = temp[0];
 
 			setContentView(R.layout.post);
 			Button postbutton = (Button) findViewById(id.postbutton);
@@ -95,13 +91,13 @@ public class Post extends Activity implements Runnable {
 				}
 			});
 			/*
-			TableLayout tablelayout = (TableLayout) findViewById(id.tableLayout1);
-			tablelayout.setColumnCollapsed(0, true);
-			tablelayout.setColumnCollapsed(1, true);
-			tablelayout.setColumnCollapsed(2, true);
-			tablelayout.setColumnCollapsed(3, true);
-			tablelayout.setColumnCollapsed(4, true);
-			*/
+			 * TableLayout tablelayout = (TableLayout)
+			 * findViewById(id.tableLayout1); tablelayout.setColumnCollapsed(0,
+			 * true); tablelayout.setColumnCollapsed(1, true);
+			 * tablelayout.setColumnCollapsed(2, true);
+			 * tablelayout.setColumnCollapsed(3, true);
+			 * tablelayout.setColumnCollapsed(4, true);
+			 */
 
 			// cookie関連
 			CookieSyncManager.createInstance(this);
@@ -110,7 +106,7 @@ public class Post extends Activity implements Runnable {
 			FutabaCookieManager.PrintCookie();
 
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -153,7 +149,7 @@ public class Post extends Activity implements Runnable {
 			try {
 				loading();
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 		}
 	};
@@ -162,34 +158,33 @@ public class Post extends Activity implements Runnable {
 		setWait();
 	}
 
-	
 	public void onClickImageChooseButton(View v) {
-		//画像選択ボタン
+		// 画像選択ボタン
 		Intent intent = new Intent(Intent.ACTION_PICK);
 		intent.setType("image/*");
 		startActivityForResult(intent, REQUEST_IMAGEPICK_CONSTANT);
 	}
-	
-	//画像を選択した直後に呼ばれる
+
+	// 画像を選択した直後に呼ばれる
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    if (resultCode == RESULT_OK && requestCode == REQUEST_IMAGEPICK_CONSTANT) {
-	    	Toast.makeText(this, "画像"+data.getData(), Toast.LENGTH_SHORT).show();
-	    	/*
-	        try{
-	            InputStream is = getContentResolver().openInputStream(data.getData());
-	            Bitmap bm = BitmapFactory.decodeStream(is);
-	            is.close();
-	        }catch(Exception e){
-	            
-	        }
-	        */
-	    	imageContent = data.getData();
+		if (resultCode == RESULT_OK
+				&& requestCode == REQUEST_IMAGEPICK_CONSTANT) {
+			Toast.makeText(this, "画像" + data.getData(), Toast.LENGTH_SHORT)
+					.show();
+			/*
+			 * try{ InputStream is =
+			 * getContentResolver().openInputStream(data.getData()); Bitmap bm =
+			 * BitmapFactory.decodeStream(is); is.close(); }catch(Exception e){
+			 * 
+			 * }
+			 */
+			imageContent = data.getData();
 			Button imgchoosebutton = (Button) findViewById(id.imgchoosebutton);
-			imgchoosebutton.setVisibility(View.GONE); //画像選択ボタンを消す
+			imgchoosebutton.setVisibility(View.GONE); // 画像選択ボタンを消す
 			TextView imgchoosenotify = (TextView) findViewById(id.imgchoosenotify);
-			imgchoosenotify.setText("選択:"+imageContent.toString()); //選択したファイル名を表示
+			imgchoosenotify.setText("選択:" + imageContent.toString()); // 選択したファイル名を表示
 			imgchoosenotify.setTextColor(Color.RED);
-	    }
+		}
 	}
 
 	private void loading() {
@@ -222,13 +217,13 @@ public class Post extends Activity implements Runnable {
 		 * activity.threadNum; String urlStr = activity.urlStr;
 		 */
 
-	FLog.d("threadNum=" + threadNum);
-	FLog.d("urlStr=" + urlStr);
-	FLog.d("comment=" + comment);
-	FLog.d("deletekey=" + deletekey);
-	FLog.d("email=" + email);
-	FLog.d("name=" + name);
-	FLog.d("threadURL=" + threadURL);
+		FLog.d("threadNum=" + threadNum);
+		FLog.d("urlStr=" + urlStr);
+		FLog.d("comment=" + comment);
+		FLog.d("deletekey=" + deletekey);
+		FLog.d("email=" + email);
+		FLog.d("name=" + name);
+		FLog.d("threadURL=" + threadURL);
 
 		if (false) {
 			return;
@@ -237,7 +232,7 @@ public class Post extends Activity implements Runnable {
 		// というわけでリクエストの作成
 		// スレッドに一度アクセスしてcookieセット－＞書き込みの２度アクセス
 		try {
-		FLog.d("start post!");
+			FLog.d("start post!");
 
 			DefaultHttpClient httpClient;
 			httpClient = new DefaultHttpClient();
@@ -256,10 +251,10 @@ public class Post extends Activity implements Runnable {
 			 * ByteArrayOutputStream();
 			 * httpResponse.getEntity().writeTo(byteArrayOutputStream); String
 			 * retData = byteArrayOutputStream.toString("Shift-JIS");
-			 *FLog.d(retData);FLog.d("1st access end");
+			 * FLog.d(retData);FLog.d("1st access end");
 			 * 
 			 * try { // 操作間隔を置く Thread.sleep(3000); } catch (Exception e) {
-			 *FLog.d("message", e); }
+			 * FLog.d("message", e); }
 			 */
 
 			try {
@@ -268,61 +263,67 @@ public class Post extends Activity implements Runnable {
 					List<Cookie> cookies = httpClient.getCookieStore()
 							.getCookies();
 					if (cookies.isEmpty()) {
-					FLog.d("Cookie None");
+						FLog.d("Cookie None");
 					} else {
 						for (int i = 0; i < cookies.size(); i++) {
-						FLog.d("" + cookies.get(i).toString());
+							FLog.d("" + cookies.get(i).toString());
 						}
 					}
 				}
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 
 			HttpPost httppost = new HttpPost(urlStr);
-			//添付画像
-			if(false)
-			{
-				//multipartにはライブラリ追加が必要そう
-				//http://www.softwarepassion.com/android-series-get-post-and-multipart-post-requests/
-				//http://yakinikunotare.boo.jp/orebase/index.php?Android%A1%CA%B3%AB%C8%AF%A1%CB%2F%A5%CD%A5%C3%A5%C8%A5%EF%A1%BC%A5%AF%A4%F2%BB%C8%A4%C3%A4%C6%A5%D5%A5%A1%A5%A4%A5%EB%A4%F2%A5%A2%A5%C3%A5%D7%A5%ED%A1%BC%A5%C9%A4%B9%A4%EB
-				//MultipartEntity reqEntity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);  
-				//reqEntity.addPart("myFile", bin);
-				//FileBody fileBody = new FileBody(file);
-				//entity.addPart("upfile", fileBody);
+			// 添付画像
+			if (false) {
+				// multipartにはライブラリ追加が必要そう
+				// http://www.softwarepassion.com/android-series-get-post-and-multipart-post-requests/
+				// http://yakinikunotare.boo.jp/orebase/index.php?Android%A1%CA%B3%AB%C8%AF%A1%CB%2F%A5%CD%A5%C3%A5%C8%A5%EF%A1%BC%A5%AF%A4%F2%BB%C8%A4%C3%A4%C6%A5%D5%A5%A1%A5%A4%A5%EB%A4%F2%A5%A2%A5%C3%A5%D7%A5%ED%A1%BC%A5%C9%A4%B9%A4%EB
+				// MultipartEntity reqEntity = new
+				// MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+				// reqEntity.addPart("myFile", bin);
+				// FileBody fileBody = new FileBody(file);
+				// entity.addPart("upfile", fileBody);
 			}
 			/*
-			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(7);
-			nameValuePair.add(new BasicNameValuePair("email", email));
-			nameValuePair.add(new BasicNameValuePair("name", name));
-			nameValuePair.add(new BasicNameValuePair("mode", "regist"));
-			nameValuePair.add(new BasicNameValuePair("resto", threadNum));
-			nameValuePair.add(new BasicNameValuePair("com", comment));
-			nameValuePair.add(new BasicNameValuePair("sub", "")); //題名
-			nameValuePair.add(new BasicNameValuePair("pwd", deletekey));
-			*/
-			MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+			 * List<NameValuePair> nameValuePair = new
+			 * ArrayList<NameValuePair>(7); nameValuePair.add(new
+			 * BasicNameValuePair("email", email)); nameValuePair.add(new
+			 * BasicNameValuePair("name", name)); nameValuePair.add(new
+			 * BasicNameValuePair("mode", "regist")); nameValuePair.add(new
+			 * BasicNameValuePair("resto", threadNum)); nameValuePair.add(new
+			 * BasicNameValuePair("com", comment)); nameValuePair.add(new
+			 * BasicNameValuePair("sub", "")); //題名 nameValuePair.add(new
+			 * BasicNameValuePair("pwd", deletekey));
+			 */
+			MultipartEntity entity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
 			Charset sjisCharset = Charset.forName("Shift_JIS");
 			entity.addPart("email", new StringBody(email, sjisCharset));
 			entity.addPart("name", new StringBody(name, sjisCharset));
 			entity.addPart("mode", new StringBody("regist"));
-			entity.addPart("resto", new StringBody(threadNum));
+			entity.addPart("resto", new StringBody("" + threadNum));
 			entity.addPart("com", new StringBody(comment, sjisCharset));
 			entity.addPart("sub", new StringBody(""));
 			entity.addPart("pwd", new StringBody(deletekey));
-			if(imageContent!=null){ // content:// -> file://
-			FLog.d("imageContent="+imageContent);
-			FLog.d("getPath="+imageContent.getPath());
-				//if(true) return;
-				Cursor c = getContentResolver().query(imageContent, null, null, null, null);
-				c.moveToFirst();	
-				String filename = c.getString(c.getColumnIndex(MediaStore.MediaColumns.DATA)); 
-			FLog.d("filename="+filename);
-				FileBody fileBody = new FileBody(new File(filename));//new File(imageContent.getPath()));
+			if (imageContent != null) { // content:// -> file://
+				FLog.d("imageContent=" + imageContent);
+				FLog.d("getPath=" + imageContent.getPath());
+				// if(true) return;
+				Cursor c = getContentResolver().query(imageContent, null, null,
+						null, null);
+				c.moveToFirst();
+				String filename = c.getString(c
+						.getColumnIndex(MediaStore.MediaColumns.DATA));
+				FLog.d("filename=" + filename);
+				FileBody fileBody = new FileBody(new File(filename));// new
+																		// File(imageContent.getPath()));
 				entity.addPart("upfile", fileBody);
 			}
 			httppost.setEntity(entity);
-			//httppost.setEntity(new UrlEncodedFormEntity(nameValuePair, "Shift-JIS"));
+			// httppost.setEntity(new UrlEncodedFormEntity(nameValuePair,
+			// "Shift-JIS"));
 			httppost.addHeader("referer", threadURL);
 			HttpResponse response = httpClient.execute(httppost);
 			FutabaCookieManager.saveCookie(httpClient);
@@ -332,7 +333,7 @@ public class Post extends Activity implements Runnable {
 			// SDCard.saveBin("retdata2", retData2.getBytes("Shift-JIS"),
 			// false);
 			Log.v("ftbt", retData2);
-		FLog.d("2nd access end");
+			FLog.d("2nd access end");
 
 			PostParser parser = new PostParser();
 			String contents = parser.parse(this, retData2);
@@ -342,7 +343,7 @@ public class Post extends Activity implements Runnable {
 				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 		waitDialog.dismiss();
 

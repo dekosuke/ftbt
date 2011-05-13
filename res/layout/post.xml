@@ -65,7 +65,7 @@
     </TableRow>
     </TableLayout>
     <Button android:id="@+id/postbutton" 
-     android:layout_width="100px"
+     android:layout_width="200px"
      android:layout_height="wrap_content"
      android:text="投稿する" android:layout_gravity="center_horizontal"></Button>
 

@@ -279,7 +279,7 @@ public class FutabaThread extends Activity implements Runnable {
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			// intent.putExtra(Intent.EXTRA_SUBJECT , );
-			intent.putExtra(Intent.EXTRA_TEXT, status_encoded + " #ftbt");
+			intent.putExtra(Intent.EXTRA_TEXT, status_encoded + getString(R.string.hashtagstr));
 			try {
 				startActivityForResult(intent, 0);
 			} catch (android.content.ActivityNotFoundException ex) {

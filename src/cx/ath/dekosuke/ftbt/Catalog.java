@@ -78,7 +78,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-	FLog.d("catalog start");
+		FLog.d("catalog start");
 
 		CookieSyncManager.createInstance(this);
 		CookieSyncManager.getInstance().startSync();
@@ -92,7 +92,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		super.onResume();
 		CookieSyncManager.getInstance().stopSync();
 		try {
-		FLog.d("Catalog::onResume");
+			FLog.d("Catalog::onResume");
 			if (adapter != null) {
 				adapter.notifyDataSetChanged();
 			}
@@ -102,7 +102,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				}
 			}
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -200,7 +200,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
 						FLog.d("hoge");
 
-						//FLog.d("message", e);
+						// FLog.d("message", e);
 						network_ok = false;
 						if (SDCard.cacheExist(FutabaCrypt
 								.createDigest(catalogURL))) {
@@ -416,6 +416,32 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
+		case R.id.share:
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, baseUrl);
+			try {
+				startActivityForResult(intent, 0);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
+						.show();
+			}
+			return true;
+		case R.id.tweet:
+			String bbs_title = "見てる:" + BBSName + " - ふたば";
+			String status_encoded = bbs_title + " " + baseUrl; // URIエンコードされた、ツイートしたい文章
+			intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			// intent.putExtra(Intent.EXTRA_SUBJECT , );
+			intent.putExtra(Intent.EXTRA_TEXT, status_encoded
+					+ getString(R.string.hashtagstr));
+			try {
+				startActivityForResult(intent, 0);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
+						.show();
+			}
+			return true;
 		case R.id.settings:
 			intent = new Intent();
 			intent.setClassName(getPackageName(), getClass().getPackage()
@@ -425,12 +451,12 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		case R.id.about:
 			Uri uri = Uri.parse(getString(R.string.helpurl));
 			intent = new Intent(Intent.ACTION_VIEW, uri);
-			intent.setClassName("com.android.browser", "com.android.browser.BrowserActivity");
+			intent.setClassName("com.android.browser",
+					"com.android.browser.BrowserActivity");
 			try {
 				startActivity(intent);
 			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT)
-						.show();
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		}
