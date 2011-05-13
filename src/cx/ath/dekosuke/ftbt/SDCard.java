@@ -8,6 +8,7 @@ import java.util.HashMap;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.os.Environment;
+import android.os.StatFs;
 
 import java.io.File;
 
@@ -61,16 +62,16 @@ public class SDCard {
 		} else {
 			filename = getCacheDir() + name;
 		}
-	FLog.d("length=" + bytes.length);
+		FLog.d("length=" + bytes.length);
 		File file = new File(filename);
-	FLog.d(filename);
+		FLog.d(filename);
 		file.getParentFile().mkdir();
 		try {
 			BufferedOutputStream fos = new BufferedOutputStream(
 					new FileOutputStream(file));
 			fos.write(bytes);
 		} catch (Exception e) {
-		FLog.d("failed to write file" + name);
+			FLog.d("failed to write file" + name);
 		}
 		// Environment.getDataDirectory().getPath(); // /dataなど
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
@@ -94,7 +95,7 @@ public class SDCard {
 						+ conn.getResponseCode());
 			}
 
-		FLog.d("HTTP Response code="+conn.getResponseCode());
+			FLog.d("HTTP Response code=" + conn.getResponseCode());
 			InputStream is = conn.getInputStream();
 
 			// OutputStream os = new FileOutputStream(filename);
@@ -113,7 +114,7 @@ public class SDCard {
 		} catch (IOException e) { // 2XX代以外のレスポンスコードとか
 			throw new IOException(e.toString());
 		} catch (Exception e) {
-		FLog.d("failed to write file" + name);
+			FLog.d("failed to write file" + name);
 		}
 	}
 
@@ -169,13 +170,14 @@ public class SDCard {
 			File f1 = (File) o1;
 			File f2 = (File) o2;
 			long f1_lastmodified = f1.lastModified();
-			//Log.d("ftbt", f1.toString()+" is "+FutabaCrypt.isHTMLName(f1.toString()));
+			// Log.d("ftbt",
+			// f1.toString()+" is "+FutabaCrypt.isHTMLName(f1.toString()));
 			if (FutabaCrypt.isHTMLName(f1.toString())) {
-				//Log.d("ftbt", f1.toString()+" is HTML");
+				// Log.d("ftbt", f1.toString()+" is HTML");
 				f1_lastmodified += additional_days;
 			}
 			long f2_lastmodified = f2.lastModified();
-			if (FutabaCrypt.isHTMLName(f2.toString())) {				
+			if (FutabaCrypt.isHTMLName(f2.toString())) {
 				f2_lastmodified += additional_days;
 			}
 
@@ -185,7 +187,7 @@ public class SDCard {
 
 	// numMBになるまでキャッシュフォルダのファイルを（古い順に）削除
 	// http://osima.jp/blog/howto_java_lastmodified/ 古い順にファイルソート
-	// 
+	//
 	public static void limitCache(int num) {
 		File cache_dir = new File(getCacheDir());
 		File[] files = cache_dir.listFiles();
@@ -201,17 +203,17 @@ public class SDCard {
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
-			//Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
-			//FLog.d(f.getName() + "," + toCalendarString(f));
+			// Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
+			// FLog.d(f.getName() + "," + toCalendarString(f));
 			if (f.isDirectory()) { // 強制ディレクトリ削除
 				// deleteDir(f);
-				//FLog.d("deleted directory "+f.getName());
+				// FLog.d("deleted directory "+f.getName());
 			} else {
-				//FLog.d("size="+f.length());
+				// FLog.d("size="+f.length());
 				sizeSum += f.length();
 				if (sizeSum > num * 1000000) { // 強制ファイル削除
 					f.delete();
-				FLog.d("deleted file " + f.getName());
+					FLog.d("deleted file " + f.getName());
 				}
 			}
 		}
@@ -273,4 +275,12 @@ public class SDCard {
 		ObjectOutputStream outObject = new ObjectOutputStream(outFile);
 		outObject.writeObject(object);
 	}
+
+	// Galaxy S以外だと使えるらしいSDカードマウントチェック
+	//http://sakaneya.blogspot.com/2011/02/galaxy-ssd.html
+	public static boolean isMountedExSD() {
+		return Environment.MEDIA_MOUNTED.equals(Environment.MEDIA_MOUNTED);
+	}
+
+
 }

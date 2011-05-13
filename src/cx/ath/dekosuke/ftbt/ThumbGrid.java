@@ -46,6 +46,7 @@ public class ThumbGrid extends Activity implements Runnable {
 
 		try {
 			setTitle("サムネイル一覧 - " + getString(R.string.app_name));
+			Toast.makeText(this, "サムネイル一覧を読み込み中です", Toast.LENGTH_SHORT).show();
 
 			System.gc(); // 重いのでGC呼んでおくよ(こんなところで呼んでいいのかわからないけど)
 

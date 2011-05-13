@@ -145,6 +145,17 @@ public class ImageCatalog extends Activity {
 					}
 				}
 			});
+			// 一覧─＞画像ー＞一覧ー＞画像とたどるのをふせぐために、特定の場所からしか見せない
+			gridview.setVisibility(View.GONE);
+			try {
+				String className = getCallingActivity().getClassName();
+				FLog.d("className=" + className);
+				if (className.equals("cx.ath.dekosuke.ftbt.FutabaThread")) {
+					gridview.setVisibility(View.VISIBLE);
+				}
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
 
 			moveImage(0);
 			setReturnImage();
@@ -202,7 +213,8 @@ public class ImageCatalog extends Activity {
 		case R.id.tweet:
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, myImageURL + getString(R.string.hashtagstr));
+			intent.putExtra(Intent.EXTRA_TEXT, myImageURL
+					+ getString(R.string.hashtagstr));
 			try {
 				startActivityForResult(intent, 0);
 			} catch (android.content.ActivityNotFoundException ex) {

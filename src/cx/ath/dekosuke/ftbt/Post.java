@@ -25,7 +25,9 @@ import org.apache.http.message.BasicNameValuePair;
 import cx.ath.dekosuke.ftbt.R.id;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -155,7 +157,30 @@ public class Post extends Activity implements Runnable {
 	};
 
 	public void onClickPostButton(View v) {
-		setWait();
+		
+		//確認
+		AlertDialog.Builder dlg;
+		dlg = new AlertDialog.Builder(Post.this);
+		dlg.setTitle("返信の確認");
+		dlg.setCancelable(true);
+		dlg.setMessage("投稿してよいですか？");
+		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// Catalog.this.finish();
+				//Catalog.this.deleteThreads();
+				Post.this.setWait();
+			}
+		});
+		dlg.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				// Catalog.cancel();
+				// Catalog.this.deleteThreads(false);
+			}
+		});
+		dlg.show();
+		
+		
+		//setWait();
 	}
 
 	public void onClickImageChooseButton(View v) {

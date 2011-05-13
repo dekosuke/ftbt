@@ -47,6 +47,14 @@ public class ftbt extends TabActivity {
 				tabs.getTabContentView(), true);
 				*/
 		Intent intent;
+		
+		//あんまり期待できないSDカード入ってるか判定
+		/*
+		if(!SDCard.isMountedExSD()){
+			Toast.makeText(this, getString(R.string.app_name)+"を利用するためには、SDカードが必要です。\nSDカードを装備してから再起動してください", Toast.LENGTH_LONG);
+			return;
+		}
+		*/
 
 		// キャッシュを削除する(重い)
 		try {

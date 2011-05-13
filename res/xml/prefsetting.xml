@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:title="(未実装)フォントサイズの変更"
-    android:key="@string/fontsize" 
-    android:inputType="number"
-    android:defaultValue="16"
-    android:summary="画面のフォントサイズを設定します"></EditTextPreference>
     <EditTextPreference android:title="キャッシュ(単位:MB)"
     android:key="@string/cachesize" 
     android:inputType="number"
@@ -16,7 +11,4 @@
     android:inputType="number"
     android:defaultValue="20"
     android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
-    <CheckBoxPreference android:summaryOn="On" android:summary="画像を逆周りで回転させます" 
-    android:summaryOff="Off" android:key="TestCheckBox" 
-    android:title="(未実装)画像の回転方向を逆に"></CheckBoxPreference>
 </PreferenceScreen>

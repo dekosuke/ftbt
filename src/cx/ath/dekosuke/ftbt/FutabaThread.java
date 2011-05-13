@@ -441,11 +441,6 @@ public class FutabaThread extends Activity implements Runnable {
 				} else if (cache_ok) {
 					statuses = cacheParser.getStatuses();
 				}
-				adapter.items.clear();
-				for (int i = 0; i < statuses.size(); ++i) {
-					FLog.d(statuses.get(i).toString());
-					adapter.items.add(statuses.get(i));
-				}
 				FLog.d("parse end" + statuses.size());
 				FutabaThreadParser parser = webParser;
 				if (!network_ok) {
@@ -455,9 +450,16 @@ public class FutabaThread extends Activity implements Runnable {
 						+ getString(R.string.app_name);
 				final String toast_text_f = toast_text;
 
+				final ArrayList<FutabaStatus> statuses_ref = statuses;
 				// 描画に関わる処理はここに集約(メインスレッド実行)
 				handler2.post(new Runnable() {
 					public void run() {
+						adapter.items.clear();
+						for (int i = 0; i < statuses_ref.size(); ++i) {
+							FLog.d(statuses_ref.get(i).toString());
+							adapter.items.add(statuses_ref.get(i));
+						}
+
 						Toast.makeText(adapter.getContext(), toast_text_f,
 								Toast.LENGTH_SHORT).show();
 						setTitle(title);
