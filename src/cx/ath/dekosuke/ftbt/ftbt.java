@@ -2,7 +2,6 @@ package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.LocalActivityManager;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -12,8 +11,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,98 +27,165 @@ import android.widget.TabHost.TabSpec;
 
 import cx.ath.dekosuke.ftbt.R.id;
 
-public class ftbt extends Activity implements Runnable {
+//タブ式トップページ
 
-	ProgressDialog waitDialog;
-	Thread thread;
-	boolean initialStart=true;
+public class ftbt extends TabActivity {
+
+	public ArrayList<FutabaBBSContent> favoriteBBSs = new ArrayList<FutabaBBSContent>();
+
+	private TabSpec tab02;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initialStart=false;
-		setWait();
-	}
-	
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		if(!initialStart){
-			setWait();
-		}
-	}
-
-	public void setWait() {
-		FLog.d("ftbt-cachecheck start");
-		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("キャッシュの整理中...");
-		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		// waitDialog.setCancelable(true);
-		waitDialog.show();
-
-		thread = new Thread(this);
-		thread.start();
-	}
-
-	public void run() {
-		try { // 細かい時間を置いて、ダイアログを確実に表示させる
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
-		}
-		handler.sendEmptyMessage(0);
-	}
-
-	private Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			// HandlerクラスではActivityを継承してないため
-			// 別の親クラスのメソッドにて処理を行うようにした。
-			try {
-				loading();
-			} catch (Exception e) {
-				FLog.d("message", e);
-			}
-		}
-	};
-
-	// メイン
-	public void loading() {
-		// あんまり期待できないSDカード入ってるか判定
-		/*
-		 * if(!SDCard.isMountedExSD()){ Toast.makeText(this,
-		 * getString(R.string.app_name
-		 * )+"を利用するためには、SDカードが必要です。\nSDカードを装備してから再起動してください", Toast.LENGTH_LONG);
-		 * return; }
-		 */
-
+		
 		// キャッシュを削除する(重い)
-		// この処理マルチスレッドにするために別activityに
 		try {
+			//ダイアログ出すの大変なのでToastに
+			Toast.makeText(this, "キャッシュを整理しています・・・", Toast.LENGTH_LONG).show();
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			int cacheSize = Integer.parseInt(preferences.getString(
 					getString(R.string.cachesize), "5"));
-			ProgressDialog waitDialog = new ProgressDialog(this);
-			waitDialog.setMessage("キャッシュの整理中・・・");
-			waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			// waitDialoProgressDialogg.setCancelable(true);
-			waitDialog.show();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
+
 			FLog.d("cachesize=" + cacheSize);
 			SDCard.limitCache(cacheSize);
-			waitDialog.dismiss();
-
-			Intent intent = new Intent();
-			intent.setClassName(getPackageName(), getClass().getPackage()
-					.getName() + ".ftbt_main");
-			startActivity(intent);
+		
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
 
+		// TabHostのインスタンスを取得
+		TabHost tabs = getTabHost();
+		/*
+		 * // レイアウトを設定 -> これあると2.1で落ちるよ(2.2だとok)
+		 * LayoutInflater.from(this).inflate(R.layout.tabmain,
+		 * tabs.getTabContentView(), true);
+		 */
+		Intent intent;
+
+		try {
+			// お気に入りスレッドリスト
+			favoriteBBSs = new ArrayList<FutabaBBSContent>();
+			FLog.d("favbbs=" + favoriteBBSs);
+			favoriteBBSs = FavoriteSettings.getFavorites(this);
+			// タブシートの設定
+			intent = new Intent().setClassName(getPackageName(), getClass()
+					.getPackage().getName() + ".FutabaBBSMenu");
+			intent.putExtra("mode", "all");
+			TabSpec tab01 = tabs.newTabSpec("TabSheet1");
+			View v1 = new MyView(this, "すべて");
+			tab01.setIndicator(v1);
+			tab01.setContent(intent);
+			tabs.addTab(tab01);
+
+			intent = new Intent().setClassName(getPackageName(), getClass()
+					.getPackage().getName() + ".FutabaBBSMenu");
+			intent.putExtra("mode", "fav");
+			tab02 = tabs.newTabSpec("TabSheet2");
+			// tab02.setIndicator("お気に入り");
+			View v2 = new MyView(this, "お気に入り");
+			tab02.setIndicator(v2);
+			tab02.setContent(intent);
+			tabs.addTab(tab02);
+			// 初期表示のタブ設定
+			tabs.setCurrentTab(0);
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
+		FLog.d("ftbt start");
+	}
+
+	public void addFavoriteBBSs(FutabaBBSContent bbs) {
+		FLog.d("favoriteBBSs=" + favoriteBBSs.toString());
+		try {
+			if (favoriteBBSs.indexOf(bbs) == -1) {
+				FLog.d("add " + bbs.toString());
+				favoriteBBSs.add(bbs);
+				FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
+				// adapter.addList(bbs);
+				// adapter.notifyDataSetChanged();
+			} else {
+				FLog.d("thread already exist in favlist");
+			}
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
+	}
+
+	public void removeFavoriteBBSs(FutabaBBSContent bbs) {
+		try {
+			favoriteBBSs.remove(bbs);
+			FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
+			FLog.d("remove " + bbs.toString());
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
+	}
+
+	// メニュー
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu_bbsmenu, menu);
+		return true;
+	}
+
+	// メニューをクリック
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
+		switch (item.getItemId()) {
+		case R.id.settings:
+			intent = new Intent();
+			intent.setClassName(getPackageName(), getClass().getPackage()
+					.getName() + ".PrefSetting");
+			startActivity(intent);
+			return true;
+		case R.id.about:
+			Uri uri = Uri.parse(getString(R.string.helpurl));
+			intent = new Intent(Intent.ACTION_VIEW, uri);
+			intent.setClassName("com.android.browser",
+					"com.android.browser.BrowserActivity");
+			try {
+				startActivity(intent);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT).show();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private class MyView extends FrameLayout {
+		private LayoutInflater inflater;
+
+		public MyView(Context context) {
+			super(context);
+			inflater = LayoutInflater.from(context);
+		}
+
+		public MyView(Context context, String title) {
+			this(context);
+
+			try {
+				View v = inflater.inflate(R.layout.tabwidget, null);
+
+				// テキスト
+				TextView tv = (TextView) v.findViewById(R.id.text);
+				tv.setText(title);
+
+				addView(v);
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		FLog.d("ftbt onresume");
 	}
 }

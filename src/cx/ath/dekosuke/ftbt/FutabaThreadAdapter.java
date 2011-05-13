@@ -192,8 +192,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		@Override
 		protected Bitmap doInBackground(String... urls) {
 			Bitmap bm = ImageCache.getImage(urls[0]);
-			HttpURLConnection con = null;
-			InputStream is = null;
 			FLog.d("futabaAdapter thread start");
 			if (bm == null) { // does not exist on cache
 				// synchronized (FutabaAdapter.lock){
@@ -209,17 +207,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						FLog.d("message", e2);
 					}
 				} finally {
-					try {
-						if (con != null) {
-							con.disconnect();
-						}
-						if (is != null) {
-							is.close();
-						}
-					} catch (Exception e) {
-						FLog.d("doInBackground", e);
-					}
-					// }
+
 				}
 			}
 			return bm;

@@ -76,7 +76,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		// 表示すべきデータの取得
 		final FutabaThreadContent item = (FutabaThreadContent) items
 				.get(position);
-		final String threadNum = ""+item.threadNum;
+		final String threadNum = "" + item.threadNum;
 
 		if (view == null) {
 			// 受け取ったビューがnullなら新しくビューを生成
@@ -90,7 +90,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		if (true) {
 			view.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
-				FLog.d("intent calling thread activity");
+					FLog.d("intent calling thread activity");
 					Intent intent = new Intent();
 					Catalog activity = (Catalog) getContext();
 					try {
@@ -111,23 +111,23 @@ public class CatalogAdapter extends ArrayAdapter {
 											.getString(R.string.historynum),
 											"5"));
 						} catch (Exception e) {
-						FLog.d("message", e);
+							FLog.d("message", e);
 						}
 
 						man.addThread(thread, maxHistoryNum);
 						man.Save();
 					} catch (Exception e) {
-					FLog.d("message", e);
+						FLog.d("message", e);
 					}
 
 					if (!activity.mode.equals("history")) { // 通常
 						String baseUrl = activity.baseUrl;
 						intent.putExtra("baseUrl", baseUrl);
-					FLog.d("normal intent");
+						FLog.d("normal intent");
 					} else {
 						String baseUrl = item.baseUrl; // 履歴モード
 						intent.putExtra("baseUrl", baseUrl);
-					FLog.d("history intent");
+						FLog.d("history intent");
 					}
 					intent.putExtra("threadNum", threadNum);
 					intent.setClassName(activity.getPackageName(), activity
@@ -160,16 +160,17 @@ public class CatalogAdapter extends ArrayAdapter {
 				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
 				checkbox.setChecked(item.isChecked);
-				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					public void onCheckedChanged(CompoundButton buttonView,
 							boolean isChecked) {
-					FLog.d(""+buttonView.isShown());
-					FLog.d("onCheckedChanged called at"+pos+" with"+isChecked);
-						if(buttonView.isShown()){ //画面から外れたときのfalse値回避
+						FLog.d("" + buttonView.isShown());
+						FLog.d("onCheckedChanged called at" + pos + " with"
+								+ isChecked);
+						if (buttonView.isShown()) { // 画面から外れたときのfalse値回避
 							items.get(pos).isChecked = isChecked;
 						}
 					}
-					
+
 				});
 			} else { // 通常モード
 				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
@@ -189,14 +190,14 @@ public class CatalogAdapter extends ArrayAdapter {
 					iv.setTag(item.imgURL);
 					ImageGetTask task = new ImageGetTask(iv);
 					task.execute(item.imgURL);
-					//FLog.d("image "+item.getImgURL()+"set" );
+					// FLog.d("image "+item.getImgURL()+"set" );
 				} else {
 					// Bitmap bm = null;
 					// ImageView iv = (ImageView)view.findViewById(R.id.image);
 					// iv.setImageBitmap(bm);
 				}
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 
 		}
@@ -232,7 +233,7 @@ public class CatalogAdapter extends ArrayAdapter {
 				}
 				bm = ImageResizer.ResizeWideToSquare(bm);
 			} catch (Exception e) {
-			FLog.d(e.toString());
+				FLog.d(e.toString());
 			}
 			return bm;
 		}
@@ -240,7 +241,7 @@ public class CatalogAdapter extends ArrayAdapter {
 		// メインスレッドで実行する処理
 		@Override
 		protected void onPostExecute(Bitmap result) {
-			//FLog.d(,
+			// FLog.d(,
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			// Tagが同じものが確認して、同じであれば画像を設定する
 			if (result != null && tag.equals(image.getTag().toString())) {

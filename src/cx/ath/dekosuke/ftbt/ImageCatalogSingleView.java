@@ -81,21 +81,21 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		width = w; // これで幅が取得できる
 		height = h; // これで高さが取得できる
 	}
-	
-	//画像への参照をなくしてメモリを解放させる
-	public void clearImage(){
-		try{
-		super.setImageBitmap(null);
-		if(bm!=null){
-			int size = bm.getWidth() * bm.getHeight();
-			bm = null;
-			if(size>640*480){ //そこそこの画像ならGC呼ぶよ
-			FLog.d("calling GC");
-				System.gc();
+
+	// 画像への参照をなくしてメモリを解放させる
+	public void clearImage() {
+		try {
+			super.setImageBitmap(null);
+			if (bm != null) {
+				int size = bm.getWidth() * bm.getHeight();
+				bm = null;
+				if (size > 640 * 480) { // そこそこの画像ならGC呼ぶよ
+					FLog.d("calling GC");
+					System.gc();
+				}
 			}
-		}
-		}catch(Exception e){
-		FLog.d("message", e);
+		} catch (Exception e) {
+			FLog.d("message", e);
 		}
 	}
 
@@ -118,7 +118,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 			this.gestureDetector = new GestureDetector(context,
 					simpleOnGestureListener);
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -140,13 +140,13 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 			 * if( activity.gallery.onTouchEvent(event) ){ return true; }
 			 */
 			// activity.gallery.onFling(null, null, 1000f, 0f);
-			//FLog.d("fling "+activity.gallery.onFling(null, null, 100f,
+			// FLog.d("fling "+activity.gallery.onFling(null, null, 100f,
 			// 100f) );
-			//FLog.d(event.toString());
+			// FLog.d(event.toString());
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_1_DOWN:
-				//FLog.d("mode=DRAG");
+				// FLog.d("mode=DRAG");
 				mode = DRAG;
 				p1.set(event.getX(), event.getY());
 				moveMatrix.set(matrix);
@@ -154,14 +154,14 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_2_UP:
 				point = null;
-				//FLog.d("mode=NONE");
+				// FLog.d("mode=NONE");
 				mode = NONE;
 				break;
 			case MotionEvent.ACTION_POINTER_2_DOWN:
 				p2.set(event.getX(), event.getY());
 				initLength = getLength(event);
 				if (true) {
-				FLog.d("mode=ZOOM");
+					FLog.d("mode=ZOOM");
 					moveMatrix.set(matrix);
 					mode = ZOOM;
 				}
@@ -198,7 +198,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 				if (d2 > 150 * 150 && mode == ZOOM) { // 誤作動対策
 					break;
 				}
-				//FLog.d("move ex=" + event.getX() + " ey=" +
+				// FLog.d("move ex=" + event.getX() + " ey=" +
 				// event.getY());
 				// activity.gallery.onScroll(e_temp, event, 100f, 100f);
 				// //これは動いた
@@ -230,7 +230,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 		return false;
 	}
@@ -247,7 +247,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 
 	// 画像の回転
 	public void rotateImage() {
-	FLog.d("rotate called");
+		FLog.d("rotate called");
 		/*
 		 * float[] values = new float[9]; matrix.getValues(values);
 		 * values[Matrix] += dx; values[Matrix.MTRANS_Y] += dy;
@@ -256,7 +256,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		matrix.postRotate(90f, width / 2, height / 2);
 		setImageMatrix(matrix);
 		rotated = !rotated;
-		zoomImage(1, width/2, height/2);
+		zoomImage(1, width / 2, height / 2);
 	}
 
 	// 画像の拡大縮小
@@ -274,7 +274,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		}
 		float postScale = currentScale * scale;
 
-	FLog.d("current=" + currentScale + " scale=" + scale);
+		FLog.d("current=" + currentScale + " scale=" + scale);
 
 		// 画面に収まるサイズ
 		float minScale = 1f;
@@ -286,7 +286,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 					(float) width / (float) bm.getHeight());
 		}
 		minScale = Math.min(minScale, 1f);
-	FLog.d("minscale=" + minScale);
+		FLog.d("minscale=" + minScale);
 		if (postScale < minScale) {
 			scale = minScale / currentScale;
 		}
@@ -304,7 +304,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 
 	// ダブルタップ時に呼ばれる
 	public boolean onDoubleTap(MotionEvent e) {
-	FLog.d("double tap");
+		FLog.d("double tap");
 		return false;
 	}
 
@@ -317,7 +317,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		} else {
 			float scale = Math.min((float) width / (float) bm.getWidth(),
 					(float) height / (float) bm.getHeight());
-		FLog.d("scale=" + scale);
+			FLog.d("scale=" + scale);
 			matrix.setScale(scale, scale);
 			bx = bm.getWidth() * scale;
 			by = bm.getHeight() * scale;
@@ -339,7 +339,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		rotated = false;
 		matrix.set(moveMatrix);
 		zoomImageToWindow();
-	FLog.d("bx=" + bx + " by=" + by);
+		FLog.d("bx=" + bx + " by=" + by);
 		setImageMatrix(matrix);
 	}
 
@@ -390,13 +390,13 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 			try {
 				loading();
 			} catch (Exception e) {
-			FLog.d("message", e);
+				FLog.d("message", e);
 			}
 		}
 	};
 
 	private void loading() {
-		try{
+		try {
 			String imgFile = CircleList.get();
 			setTag(imgFile);
 			Bitmap bmp = ImageCache.getImage(imgFile);
@@ -408,8 +408,8 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 				setImageBitmap(bmp);
 				dismissWaitDialog();
 			}
-		}catch(Exception e){
-		FLog.d("message", e);
+		} catch (Exception e) {
+			FLog.d("message", e);
 		}
 	}
 
@@ -437,33 +437,34 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 				ImageCatalogSingleView.LastTaskID += 1;
 				id = ImageCatalogSingleView.LastTaskID;
 			}
-		FLog.d("thread id" + id + " created.");
+			FLog.d("thread id" + id + " created.");
 		}
 
 		@Override
 		protected String doInBackground(String... urls) {
 
 			try {
-			FLog.d("getting" + urls[0]);
+				FLog.d("getting" + urls[0]);
 				ImageCache.getImage(urls[0]);
-				if (ImageCache.getImage(urls[0]) == null) { // does not exist on cache
+				if (ImageCache.getImage(urls[0]) == null) { // does not exist on
+															// cache
 					boolean network_result = ImageCache.setImage(urls[0]);
 					if (!network_result) { // 画像をhttpで取ってくるのに失敗
+						/*
 						Toast.makeText(
 								getContext(),
 								"画像の取得に失敗しました。\nネットワークがつながっていないか、"
 										+ "画像ファイルが存在しない可能性があります",
 								Toast.LENGTH_SHORT).show();
+						*/
 						return "";
 					}
 					return urls[0];
 				}
 			} catch (Exception e) {
-				Toast.makeText(
-						getContext(),
-						"画像の取得に失敗しました",
-						Toast.LENGTH_SHORT).show();
-			FLog.d("message", e);
+				//Toast.makeText(getContext(), "画像の取得に失敗しました", Toast.LENGTH_SHORT)
+				//		.show();
+				FLog.d("message", e);
 			}
 			return "";
 		}
@@ -472,26 +473,29 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		@Override
 		protected void onPostExecute(String url) {
 			// Tagが同じものが確認して、同じであれば画像を設定する
-			try{
-			if (!url.equals("") && tag != null & tag.equals(image.getTag())) {
-				// image.setImageBitmap(result);
-				try {
-					Bitmap bmp = ImageCache.getImage(url);
-					image.setImageBitmap(bmp);
-				} catch (Exception e) {
-				FLog.d("message", e);
+			try {
+				if (!url.equals("") && tag != null & tag.equals(image.getTag())) {
+					// image.setImageBitmap(result);
+					try {
+						Bitmap bmp = ImageCache.getImage(url);
+						image.setImageBitmap(bmp);
+					} catch (Exception e) {
+						FLog.d("message", e);
+					}
+				}else{
+					Toast.makeText(getContext(), "画像の取得に失敗しました", Toast.LENGTH_SHORT)
+							.show();					
 				}
-			}
-			}catch(Exception e){
-			FLog.d("message", e);
+			} catch (Exception e) {
+				FLog.d("message", e);
 			}
 			dismissWaitDialog();
-		FLog.d("thread " + id + "end.");
+			FLog.d("thread " + id + "end.");
 		}
 
 		@Override
 		protected void onCancelled() {
-		FLog.d("スレッドキャンセル id=" + id);
+			FLog.d("スレッドキャンセル id=" + id);
 		}
 	}
 
@@ -499,13 +503,13 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 
 		@Override
 		public boolean onDoubleTap(MotionEvent event) {
-		FLog.d("onDoubleTap");
+			FLog.d("onDoubleTap");
 			return super.onDoubleTap(event);
 		}
 
 		@Override
 		public boolean onDoubleTapEvent(MotionEvent event) {
-		FLog.d("onDoubleTapEvent");
+			FLog.d("onDoubleTapEvent");
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_POINTER_2_UP:
@@ -522,45 +526,45 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 
 		@Override
 		public boolean onDown(MotionEvent event) {
-		FLog.d("onDown");
+			FLog.d("onDown");
 			return super.onDown(event);
 		}
 
 		@Override
 		public boolean onFling(MotionEvent event1, MotionEvent event2,
 				float velocityX, float velocityY) {
-		FLog.d("onFling");
+			FLog.d("onFling");
 			return super.onFling(event1, event2, velocityX, velocityY);
 		}
 
 		@Override
 		public void onLongPress(MotionEvent event) {
-		FLog.d("onLongPress");
+			FLog.d("onLongPress");
 			super.onLongPress(event);
 		}
 
 		@Override
 		public boolean onScroll(MotionEvent event1, MotionEvent event2,
 				float distanceX, float distanceY) {
-		FLog.d("onScroll");
+			FLog.d("onScroll");
 			return super.onScroll(event1, event2, distanceX, distanceY);
 		}
 
 		@Override
 		public void onShowPress(MotionEvent event) {
-		FLog.d("onShowPress");
+			FLog.d("onShowPress");
 			super.onShowPress(event);
 		}
 
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent event) {
-		FLog.d("onSingleTapConfirmed");
+			FLog.d("onSingleTapConfirmed");
 			return super.onSingleTapConfirmed(event);
 		}
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent event) {
-		FLog.d("onSingleTapUp");
+			FLog.d("onSingleTapUp");
 			return super.onSingleTapUp(event);
 		}
 
