@@ -45,6 +45,9 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     android:layout_height="fill_parent"
     android:layout_below="@id/top_control_bar" 
     android:layout_above="@id/bottom_control_bar"
+    android:divider="#FFFFEE"
+android:dividerHeight="5dip"
+	android:padding="5dip"
      />
 </RelativeLayout>
 
