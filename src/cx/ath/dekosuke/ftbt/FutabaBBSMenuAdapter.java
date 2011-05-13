@@ -106,7 +106,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 					public void onClick(View v) {
 						if (activity.mode.equals("all")) {
 							if (!item.faved) {
-								ftbt ftbt_top = (ftbt) activity.getParent();
+								ftbt_main ftbt_top = (ftbt_main) activity.getParent();
 								// ftbt_top.favoriteBBSs.add(item);
 								item.faved = true;
 								ftbt_top.addFavoriteBBSs(item);
@@ -116,7 +116,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 										item.name + "をお気に入りに追加しました",
 										Toast.LENGTH_SHORT).show();
 							} else {
-								ftbt ftbt_top = (ftbt) activity.getParent();
+								ftbt_main ftbt_top = (ftbt_main) activity.getParent();
 								item.faved = false;
 								ftbt_top.removeFavoriteBBSs(item);
 								Toast.makeText(activity,

@@ -106,7 +106,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 				BBSs = parser.getBBSs();	
 				if(initial_loading){
 					initial_loading = false;
-					ftbt parent_activity = (ftbt) this.getParent();
+					ftbt_main parent_activity = (ftbt_main) this.getParent();
 					ArrayList<FutabaBBSContent> BBSs_faved = parent_activity.favoriteBBSs;
 					HashSet<String> BBS_urls=new HashSet<String>();
 					for(int i=0;i<BBSs_faved.size();i++){
@@ -119,7 +119,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 					}
 				}
 			} else { // fav
-				ftbt parent_activity = (ftbt) this.getParent();
+				ftbt_main parent_activity = (ftbt_main) this.getParent();
 				BBSs = parent_activity.favoriteBBSs;
 			}
 			adapter = new FutabaBBSMenuAdapter(this, R.layout.futaba_bbs_row,
@@ -157,7 +157,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 		super.onResume();
 		try {
 			if (mode.equals("fav")) {
-				ftbt parent_activity = (ftbt) this.getParent();
+				ftbt_main parent_activity = (ftbt_main) this.getParent();
 				if (adapter != null) {
 					adapter.items = parent_activity.favoriteBBSs;
 					adapter.notifyDataSetChanged();
