@@ -113,6 +113,8 @@ public class CatalogAdapter extends ArrayAdapter {
 							} catch (Exception e) {
 								FLog.d("message", e);
 							}
+							FLog.d("maxhistorynum="+maxHistoryNum);
+							FLog.d("add thread "+thread.toString());
 
 							man.addThread(thread, maxHistoryNum);
 							man.Save();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.TreeMap;
 
 import android.app.Activity;
@@ -21,11 +22,11 @@ public class HistoryManager {
 	private final String OPT_HISTORY = "history";
 
 	// キーがスレッドidのlist
-	private TreeMap<Integer, FutabaThreadContent> threads = new TreeMap<Integer, FutabaThreadContent>();
+	private LinkedHashMap<Integer, FutabaThreadContent> threads = new LinkedHashMap<Integer, FutabaThreadContent>();
 
 	// 初期化
 	public void clear() {
-		threads = new TreeMap<Integer, FutabaThreadContent>();
+		threads = new LinkedHashMap<Integer, FutabaThreadContent>();
 	}
 
 	// スレッドの追加
@@ -36,12 +37,16 @@ public class HistoryManager {
 			// すでにある－＞更新
 			threads.put(thread.threadNum, thread);
 		}
-	FLog.d("maxHistoryNum=" + maxHistoryNum);
+		FLog.d("maxHistoryNum=" + maxHistoryNum);
 		if (threads.size() > maxHistoryNum) {
-			threads.remove(threads.lastKey());
+			for (Object key : threads.keySet()) {
+				threads.remove(key);
+				break;
+			}
+
 		}
 	}
-	
+
 	// スレッドの更新
 	public void updateThread(FutabaThreadContent thread_a) throws Exception {
 		if (!threads.containsKey(thread_a.threadNum)) {
@@ -49,7 +54,7 @@ public class HistoryManager {
 		} else {
 			// すでにある->一部データ更新
 			FutabaThreadContent thread = threads.get(thread_a.threadNum);
-			if(Integer.parseInt(thread_a.resNum)!=0){
+			if (Integer.parseInt(thread_a.resNum) != 0) {
 				thread.resNum = thread_a.resNum;
 			}
 			threads.put(thread.threadNum, thread);
@@ -79,11 +84,11 @@ public class HistoryManager {
 	public void Load() {
 		try {
 			if (SDCard.existSeriarized(OPT_HISTORY)) {
-				threads = (TreeMap<Integer, FutabaThreadContent>) SDCard
+				threads = (LinkedHashMap<Integer, FutabaThreadContent>) SDCard
 						.getSerialized(OPT_HISTORY).readObject();
 			}
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 

@@ -381,18 +381,25 @@ public class FutabaThread extends Activity implements Runnable {
 							.createDigest(threadURL));
 					webParser.parse(webThreadHtml, anonymous);
 					// FLog.d(threadHtml);
+					if(cache_ok){
+						if(webParser.getStatuses().size() < cacheParser.getStatuses().size()){
+							//スレが短くなってる - データが途中で転送切れたとかの類?
+							throw new Exception("network disconnected before finish");
+						}
 
-					try {
-						// 取得に成功した場合、履歴データの件数とかを更新する
-						HistoryManager man = new HistoryManager();
-						FutabaThreadContent thread = new FutabaThreadContent();
-						thread.threadNum = threadNum;
-						thread.resNum = "" + webParser.getStatuses().size();
-						man.Load();
-						man.updateThread(thread);
-						man.Save();
-					} catch (Exception e) {
-						FLog.d("message", e);
+						try {
+							// 取得に成功した場合、履歴データの件数とかを更新する
+							HistoryManager man = new HistoryManager();
+							FutabaThreadContent thread = new FutabaThreadContent();
+							thread.threadNum = threadNum;
+							thread.resNum = "" + webParser.getStatuses().size();
+							man.Load();
+							man.updateThread(thread);
+							man.Save();
+						} catch (Exception e) {
+							FLog.d("message", e);
+						}
+
 					}
 
 					network_ok = true;
@@ -426,6 +433,7 @@ public class FutabaThread extends Activity implements Runnable {
 					HistoryManager man = new HistoryManager();
 					FutabaThreadContent thread = new FutabaThreadContent();
 					thread.threadNum = threadNum;
+					FLog.d("del thread"+thread.toString());
 					man.Load();
 					man.removeThread(thread);
 					man.Save();
@@ -447,7 +455,7 @@ public class FutabaThread extends Activity implements Runnable {
 							toast_text = "新着レス:" + num + "件";
 						}
 					} else {
-						toast_text = "レス" + (num - 1) + "件";
+						toast_text = "レス" + Math.max(num - 1, 0 ) + "件";
 						currentSize = prevSize = num;
 					}
 				} else if (cache_ok) {
@@ -468,7 +476,7 @@ public class FutabaThread extends Activity implements Runnable {
 					public void run() {
 						adapter.items.clear();
 						for (int i = 0; i < statuses_ref.size(); ++i) {
-							FLog.d(statuses_ref.get(i).toString());
+							//FLog.d(statuses_ref.get(i).toString());
 							adapter.items.add(statuses_ref.get(i));
 						}
 
