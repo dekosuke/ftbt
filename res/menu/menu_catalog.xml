@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="スレッドを建てる" android:id="@+id/post"
+    android:icon="@android:drawable/ic_menu_edit"></item>
     <item android:title="Tweet" android:id="@+id/tweet"
     android:icon="@drawable/ic_menu_dialog"></item>
     <item android:title="URLを共有" android:id="@+id/share"

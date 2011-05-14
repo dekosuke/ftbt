@@ -65,6 +65,9 @@ public class Post extends Activity implements Runnable {
 	// multipart 画像添付回り
 	final int REQUEST_IMAGEPICK_CONSTANT = 0x100200;
 	Uri imageContent = null;
+	
+	//スレ建てか返信かどうか
+	boolean newthread=false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -76,10 +79,21 @@ public class Post extends Activity implements Runnable {
 			// urlStr = (String) intent.getSerializableExtra("urlStr");
 			String baseURL = (String) intent.getSerializableExtra("baseURL");
 			threadNum = (Integer) intent.getSerializableExtra("threadNum");
-			threadURL = baseURL + threadNum;
+			if(threadNum==0){
+				newthread=true;
+			}
+			if(newthread){
+				threadURL = baseURL;				
+			}else{
+				threadURL = baseURL + threadNum;				
+			}
 			urlStr = baseURL + "futaba.php";
 
 			setContentView(R.layout.post);
+			TextView titleText = (TextView) findViewById(id.titletext);
+			if(newthread){
+				titleText.setText("スレッドを建てる");
+			}
 			Button postbutton = (Button) findViewById(id.postbutton);
 			postbutton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -328,7 +342,9 @@ public class Post extends Activity implements Runnable {
 			entity.addPart("email", new StringBody(email, sjisCharset));
 			entity.addPart("name", new StringBody(name, sjisCharset));
 			entity.addPart("mode", new StringBody("regist"));
-			entity.addPart("resto", new StringBody("" + threadNum));
+			if(!newthread){
+				entity.addPart("resto", new StringBody("" + threadNum));
+			}
 			entity.addPart("com", new StringBody(comment, sjisCharset));
 			entity.addPart("sub", new StringBody(""));
 			entity.addPart("pwd", new StringBody(deletekey));
