@@ -329,6 +329,10 @@ public class FutabaThread extends Activity implements Runnable {
 			FLog.d("message", e);
 		}
 	}
+	
+	private boolean isAnonymousThread(String url){
+		return url.contains("img.2chan.net/b") || url.contains("up.2chan.net/e"); 
+	}
 
 	private class FutabaThreadContentGetter extends Thread {
 
@@ -339,7 +343,7 @@ public class FutabaThread extends Activity implements Runnable {
 				// 匿名のBBS
 				boolean anonymous = false;
 				// ここでマジックナンバーが・・
-				if (baseURL.contains("http://img.2chan.net/b")) {
+				if (isAnonymousThread(baseURL)) {
 					anonymous = true;
 				}
 				

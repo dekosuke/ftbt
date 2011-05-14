@@ -167,15 +167,10 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		return (int) (bm.getHeight() / scale);
 	}
 
-	static Object lock = new Object();
-	static Object lock_id = new Object();
-	static int LastTaskID = -1;
-
 	// 画像取得用スレッド
 	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
 		private ImageView image;
 		private String tag;
-		private int id;
 
 		public ImageGetTask(ImageView _image) {
 			image = _image;
@@ -183,10 +178,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				FLog.d("imageview is null!!!");
 			}
 			tag = image.getTag().toString();
-			synchronized (FutabaThreadAdapter.lock_id) {
-				FutabaThreadAdapter.LastTaskID += 1;
-				id = FutabaThreadAdapter.LastTaskID;
-			}
 		}
 
 		@Override

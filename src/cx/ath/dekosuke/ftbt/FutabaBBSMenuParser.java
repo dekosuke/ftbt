@@ -78,6 +78,21 @@ public class FutabaBBSMenuParser {
 						bbs.name="二次元裏(jun)";						
 					}
 				}
+				//やおい板の直後に特殊掲示板３つ
+				if(bbs.name.equals("やおい")){
+					FutabaBBSContent other_bbs = new FutabaBBSContent();
+					other_bbs.name = "二次元グロ";
+					other_bbs.url = "http://cgi.2chan.net/o/";
+					BBSs.add(other_bbs);
+					other_bbs = new FutabaBBSContent();
+					other_bbs.name = "二次元グロ裏";
+					other_bbs.url = "http://jun.2chan.net/51/";
+					BBSs.add(other_bbs);
+					other_bbs = new FutabaBBSContent();
+					other_bbs.name = "えろげ";
+					other_bbs.url = "http://zip.2chan.net/5/";
+					BBSs.add(other_bbs);
+				}
 				BBSs.add(bbs);
 			}
 		} catch (Exception e) {
