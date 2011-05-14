@@ -140,6 +140,8 @@ public class ftbt extends TabActivity implements Runnable {
 			tabs.addTab(tab02);
 			// 初期表示のタブ設定
 			tabs.setCurrentTab(0);
+			
+			setTitle("BBS一覧 - " + getString(R.string.app_name));
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}

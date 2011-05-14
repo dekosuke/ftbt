@@ -11,4 +11,11 @@
     android:inputType="number"
     android:defaultValue="20"
     android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
+    <CheckBoxPreference 
+      android:key="@string/dispcensored"
+      android:title="警告付きBBSも一覧に表示する" 
+      android:summaryOn="表示する"
+      android:summaryOff="表示しない" />
+    android:defaultValue="Off"
+    android:summary="PCで見る際に警告画面の出る掲示板も表示します">
 </PreferenceScreen>

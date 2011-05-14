@@ -5,6 +5,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.net.URL;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,12 +20,17 @@ public class FutabaBBSMenuParser {
 	private String urlStr;
 	public boolean network_ok;
 	public boolean cache_ok;
+	public boolean display_censored=false;
 
 	public FutabaBBSMenuParser(String urlStr) {
 		this.urlStr = urlStr;
 		BBSs = new ArrayList<FutabaBBSContent>();
 		network_ok = true;
-		cache_ok = true;
+		cache_ok = true;	
+	}
+	
+	public void setDisplayCensored(boolean bool){
+		display_censored = bool;
 	}
 
 	// スレッドの形式:
@@ -78,8 +85,8 @@ public class FutabaBBSMenuParser {
 						bbs.name="二次元裏(jun)";						
 					}
 				}
-				//やおい板の直後に特殊掲示板３つ
-				if(bbs.name.equals("やおい")){
+				//自作PCの直前に特殊掲示板３つ
+				if(bbs.name.equals("自作PC") && display_censored){
 					FutabaBBSContent other_bbs = new FutabaBBSContent();
 					other_bbs.name = "二次元グロ";
 					other_bbs.url = "http://cgi.2chan.net/o/";

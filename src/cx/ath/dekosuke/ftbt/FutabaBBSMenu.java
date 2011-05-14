@@ -14,11 +14,13 @@ import android.util.Log;
 
 //using Intent
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import android.app.ProgressDialog;
 import java.lang.Thread;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -85,6 +87,12 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 	private void loading() {
 
 		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this);
+			boolean dispCensored = preferences.getBoolean(
+					getString(R.string.dispcensored), false);
+			
+
 			setContentView(R.layout.bbsmenu);
 			Intent intent = getIntent();
 
@@ -92,6 +100,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			if (mode == null || mode.equals("all")) {
 				FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
 						"http://www.2chan.net/bbsmenu.html");
+				parser.setDisplayCensored(dispCensored);
 				parser.parse();
 				if (!parser.network_ok) {
 					if (parser.cache_ok) {
