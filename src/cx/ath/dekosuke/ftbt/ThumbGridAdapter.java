@@ -51,6 +51,8 @@ public class ThumbGridAdapter extends ArrayAdapter {
 		View view = convertView;
 
 		try {
+			//System.gc(); //ためしに呼んでみる->かくつくのでだめぽ
+			//スクロールストップ時にgcとかどうか
 			if (view == null) {
 				// 受け取ったビューがnullなら新しくビューを生成
 				view = inflater.inflate(R.layout.thumbgridelement, null);

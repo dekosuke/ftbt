@@ -193,4 +193,12 @@ public class ThumbGrid extends Activity implements Runnable {
 		super.onStop();
 		System.gc(); // GC呼ぶよ
 	}
+
+	@Override
+	public void onDestroy() {
+		FLog.d("ThumbGrid::onDestroy()");
+
+		super.onDestroy();
+		System.gc(); // GC呼ぶよ
+	}
 }

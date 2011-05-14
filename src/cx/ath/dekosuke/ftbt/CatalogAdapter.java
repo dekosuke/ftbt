@@ -73,11 +73,6 @@ public class CatalogAdapter extends ArrayAdapter {
 		// ビューを受け取る
 		View view = convertView;
 
-		// 表示すべきデータの取得
-		final FutabaThreadContent item = (FutabaThreadContent) items
-				.get(position);
-		final String threadNum = "" + item.threadNum;
-
 		if (view == null) {
 			// 受け取ったビューがnullなら新しくビューを生成
 			view = inflater.inflate(R.layout.futaba_catalog_row, null);
@@ -86,120 +81,132 @@ public class CatalogAdapter extends ArrayAdapter {
 
 		}
 
-		// カタログからスレッドをクリックしたときのリスナー
-		if (true) {
-			view.setOnClickListener(new View.OnClickListener() {
-				public void onClick(View v) {
-					FLog.d("intent calling thread activity");
-					Intent intent = new Intent();
-					Catalog activity = (Catalog) getContext();
-					try {
-						FutabaThreadContent thread = item;
-						if (!activity.mode.equals("history")) { // 通常
-							thread.baseUrl = activity.baseUrl;
-						}
-						Calendar calendar = Calendar.getInstance();
-						thread.lastAccessed = calendar.getTimeInMillis();
-						HistoryManager man = new HistoryManager();
-						man.Load();
-						int maxHistoryNum = 5;
+		try {
+			// 表示すべきデータの取得
+			final FutabaThreadContent item = (FutabaThreadContent) items
+					.get(position);
+			final String threadNum = "" + item.threadNum;
+
+			// カタログからスレッドをクリックしたときのリスナー
+			if (true) {
+				view.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+						FLog.d("intent calling thread activity");
+						Intent intent = new Intent();
+						Catalog activity = (Catalog) getContext();
 						try {
-							SharedPreferences preferences = PreferenceManager
-									.getDefaultSharedPreferences(activity);
-							maxHistoryNum = Integer.parseInt(preferences
-									.getString(activity
-											.getString(R.string.historynum),
-											"5"));
+							FutabaThreadContent thread = item;
+							if (!activity.mode.equals("history")) { // 通常
+								thread.baseUrl = activity.baseUrl;
+							}
+							Calendar calendar = Calendar.getInstance();
+							thread.lastAccessed = calendar.getTimeInMillis();
+							HistoryManager man = new HistoryManager();
+							man.Load();
+							int maxHistoryNum = 5;
+							try {
+								SharedPreferences preferences = PreferenceManager
+										.getDefaultSharedPreferences(activity);
+								maxHistoryNum = Integer.parseInt(preferences.getString(
+										activity.getString(R.string.historynum),
+										"5"));
+							} catch (Exception e) {
+								FLog.d("message", e);
+							}
+
+							man.addThread(thread, maxHistoryNum);
+							man.Save();
 						} catch (Exception e) {
 							FLog.d("message", e);
 						}
 
-						man.addThread(thread, maxHistoryNum);
-						man.Save();
-					} catch (Exception e) {
-						FLog.d("message", e);
-					}
-
-					if (!activity.mode.equals("history")) { // 通常
-						String baseUrl = activity.baseUrl;
-						intent.putExtra("baseUrl", baseUrl);
-						FLog.d("normal intent");
-					} else {
-						String baseUrl = item.baseUrl; // 履歴モード
-						intent.putExtra("baseUrl", baseUrl);
-						FLog.d("history intent");
-					}
-					intent.putExtra("threadNum", threadNum);
-					intent.setClassName(activity.getPackageName(), activity
-							.getClass().getPackage().getName()
-							+ ".FutabaThread");
-					activity.startActivity(intent); // Never called!
-				}
-			});
-		}
-
-		Bitmap bm = null;
-		ImageView iv = (ImageView) view.findViewById(R.id.image);
-		iv.setImageBitmap(bm);
-		Catalog activity = (Catalog) getContext();
-
-		final int pos = position;
-
-		if (item != null) {
-			// テキストをビューにセット
-			TextView text = (TextView) view.findViewById(R.id.bottomtext);
-			if (item.text != null) {
-				CharSequence cs = Html.fromHtml(item.text);
-				text.setText(cs);
-			}
-			TextView resNum = (TextView) view.findViewById(R.id.resnum);
-			resNum.setText(item.resNum + "レス");
-			if (activity.mode.equals("history")) { // 履歴モード
-				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
-				BBSName.setText("(" + item.BBSName + ")");
-				view.setBackgroundColor(Color.parseColor("#F0E0D6"));
-				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-				checkbox.setChecked(item.isChecked);
-				checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						FLog.d("" + buttonView.isShown());
-						FLog.d("onCheckedChanged called at" + pos + " with"
-								+ isChecked);
-						if (buttonView.isShown()) { // 画面から外れたときのfalse値回避
-							items.get(pos).isChecked = isChecked;
+						if (!activity.mode.equals("history")) { // 通常
+							String baseUrl = activity.baseUrl;
+							intent.putExtra("baseUrl", baseUrl);
+							FLog.d("normal intent");
+						} else {
+							String baseUrl = item.baseUrl; // 履歴モード
+							intent.putExtra("baseUrl", baseUrl);
+							FLog.d("history intent");
 						}
+						intent.putExtra("threadNum", threadNum);
+						intent.setClassName(activity.getPackageName(), activity
+								.getClass().getPackage().getName()
+								+ ".FutabaThread");
+						activity.startActivity(intent); // Never called!
 					}
-
 				});
-			} else { // 通常モード
-				CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
-				checkbox.setVisibility(View.GONE);
-				TextView nonclickableblank = (TextView) view
-						.findViewById(id.nonclickableblank);
-				nonclickableblank.setVisibility(View.GONE);
 			}
 
-			// とりあえず空画像を作成
-			bm = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
+			Bitmap bm = null;
+			ImageView iv = (ImageView) view.findViewById(R.id.image);
 			iv.setImageBitmap(bm);
+			Catalog activity = (Catalog) getContext();
 
-			// 画像をセット
-			try {
-				if (item.imgURL != null) {
-					iv.setTag(item.imgURL);
-					ImageGetTask task = new ImageGetTask(iv);
-					task.execute(item.imgURL);
-					// FLog.d("image "+item.getImgURL()+"set" );
-				} else {
-					// Bitmap bm = null;
-					// ImageView iv = (ImageView)view.findViewById(R.id.image);
-					// iv.setImageBitmap(bm);
+			final int pos = position;
+
+			if (item != null) {
+				// テキストをビューにセット
+				TextView text = (TextView) view.findViewById(R.id.bottomtext);
+				if (item.text != null) {
+					CharSequence cs = Html.fromHtml(item.text);
+					text.setText(cs);
 				}
-			} catch (Exception e) {
-				FLog.d("message", e);
-			}
+				TextView resNum = (TextView) view.findViewById(R.id.resnum);
+				resNum.setText(item.resNum + "レス");
+				if (activity.mode.equals("history")) { // 履歴モード
+					TextView BBSName = (TextView) view
+							.findViewById(R.id.bbsname);
+					BBSName.setText("(" + item.BBSName + ")");
+					view.setBackgroundColor(Color.parseColor("#F0E0D6"));
+					CheckBox checkbox = (CheckBox) view
+							.findViewById(R.id.checkbox);
+					checkbox.setChecked(item.isChecked);
+					checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+						public void onCheckedChanged(CompoundButton buttonView,
+								boolean isChecked) {
+							FLog.d("" + buttonView.isShown());
+							FLog.d("onCheckedChanged called at" + pos + " with"
+									+ isChecked);
+							if (buttonView.isShown()) { // 画面から外れたときのfalse値回避
+								items.get(pos).isChecked = isChecked;
+							}
+						}
 
+					});
+				} else { // 通常モード
+					CheckBox checkbox = (CheckBox) view
+							.findViewById(R.id.checkbox);
+					checkbox.setVisibility(View.GONE);
+					TextView nonclickableblank = (TextView) view
+							.findViewById(id.nonclickableblank);
+					nonclickableblank.setVisibility(View.GONE);
+				}
+
+				// とりあえず空画像を作成
+				bm = Bitmap.createBitmap(50, 50, Bitmap.Config.ALPHA_8);
+				iv.setImageBitmap(bm);
+
+				// 画像をセット
+				try {
+					if (item.imgURL != null) {
+						iv.setTag(item.imgURL);
+						ImageGetTask task = new ImageGetTask(iv);
+						task.execute(item.imgURL);
+						// FLog.d("image "+item.getImgURL()+"set" );
+					} else {
+						// Bitmap bm = null;
+						// ImageView iv =
+						// (ImageView)view.findViewById(R.id.image);
+						// iv.setImageBitmap(bm);
+					}
+				} catch (Exception e) {
+					FLog.d("message", e);
+				}
+
+			}
+		} catch (Exception e) {
+			FLog.d("message", e);
 		}
 		return view;
 	}

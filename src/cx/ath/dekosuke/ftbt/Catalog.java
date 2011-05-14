@@ -240,8 +240,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 
 					if (network_ok || cache_ok) {
-						parser.parse(catalogHtml);
-						fthreads = parser.getThreads();
+						FLog.d("network="+network_ok+" cache="+cache_ok+" length="+catalogHtml.length());
+						if(catalogHtml.length()>50){ //あまりに小さいと失敗っぽいので弾く・・
+							parser.parse(catalogHtml);
+							fthreads = parser.getThreads();
+						}else{
+							toast_text = "データの取得に失敗しました";							
+						}
 					}
 
 					// BBS名足す
