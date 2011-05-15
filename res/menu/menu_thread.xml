@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  >
     <item android:title="返信する" android:id="@+id/post"
-    android:icon="@android:drawable/ic_menu_edit"></item>
+    android:icon="@android:drawable/ic_menu_edit"
+    ></item>
     <item android:title="Tweet" android:id="@+id/tweet"
     android:icon="@drawable/ic_menu_dialog"></item>
     <item android:title="共有" android:id="@+id/share"
@@ -10,5 +12,8 @@
     <item android:title="設定" android:id="@+id/settings"
     android:icon="@android:drawable/ic_menu_preferences"></item>
     <item android:title="このアプリについて" android:id="@+id/about" 
-    android:icon="@android:drawable/ic_menu_help"></item>
+    android:icon="@android:drawable/ic_menu_help"
+        android:titleCondensed="ヘルプ"
+    
+    ></item>
 </menu>

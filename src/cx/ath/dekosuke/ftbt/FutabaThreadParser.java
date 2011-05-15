@@ -37,6 +37,9 @@ public class FutabaThreadParser {
 		statuses = new ArrayList<FutabaStatus>();
 	}
 
+	private Pattern mailToPattern = Pattern.compile(
+			"mailto:([^>\"]+)", Pattern.DOTALL);
+	
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
 	// TODO:mailtoのパーズ
 	// スレッドの形式:
@@ -56,6 +59,7 @@ public class FutabaThreadParser {
 					"<input[^>]+>([^<]*?)<a", Pattern.DOTALL);
 			Pattern textPattern = Pattern.compile(
 					"<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
+
 			Pattern imgPattern = Pattern.compile(
 					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')",
 					Pattern.DOTALL);
@@ -114,6 +118,7 @@ public class FutabaThreadParser {
 					if (mcTextAttr.find()) {
 						status.title = mcTextAttr.group(1);
 						status.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
+						status.mailTo = extractMailTo(mcTextAttr.group(2));						
 						status.datestr = mcTextAttr.group(3);
 						status.idstr = mcTextAttr.group(4);
 					}
@@ -152,6 +157,15 @@ public class FutabaThreadParser {
 		text = tagPattern.matcher(text).replaceAll(""); // タグ除去
 		text = text.replaceAll("&gt;", ">");
 		return text;
+	}
+	
+	//メルアド抽出
+	private String extractMailTo(String name){
+		Matcher mailTo = mailToPattern.matcher(name);
+		if (mailTo.find()) {
+			return mailTo.group(1);
+		}
+		return "";
 	}
 
 	// 返信ひとつげっと

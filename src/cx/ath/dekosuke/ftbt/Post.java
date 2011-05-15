@@ -175,7 +175,7 @@ public class Post extends Activity implements Runnable {
 		//確認
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(Post.this);
-		dlg.setTitle("返信の確認");
+		dlg.setTitle("投稿の確認");
 		dlg.setCancelable(true);
 		dlg.setMessage("投稿してよいですか？");
 		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {

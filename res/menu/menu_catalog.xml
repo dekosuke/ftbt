@@ -2,6 +2,7 @@
 <menu
   xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:title="スレッドを建てる" android:id="@+id/post"
+            android:titleCondensed="スレ建て"
     android:icon="@android:drawable/ic_menu_edit"></item>
     <item android:title="Tweet" android:id="@+id/tweet"
     android:icon="@drawable/ic_menu_dialog"></item>
@@ -10,5 +11,8 @@
     <item android:title="設定" android:id="@+id/settings"
     android:icon="@android:drawable/ic_menu_preferences"></item>
     <item android:title="このアプリについて" android:id="@+id/about" 
-    android:icon="@android:drawable/ic_menu_help"></item>
+    android:icon="@android:drawable/ic_menu_help"
+            android:titleCondensed="ヘルプ"
+    
+    ></item>
 </menu>

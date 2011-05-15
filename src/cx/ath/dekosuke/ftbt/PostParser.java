@@ -7,17 +7,24 @@ import android.content.Context;
 import android.util.Log;
 
 public class PostParser {
-	Pattern honbunPattern = Pattern.compile("<body>(.+?)</body>",
+	private static Pattern tagPattern = Pattern
+	.compile("<.+?>", Pattern.DOTALL);
+	Pattern honbunPattern = Pattern.compile("<body[^>]*>(.+?)</body>",
 			Pattern.DOTALL);
 
 	public String parse(Context context, String str) {
+		FLog.d("str="+str);
 		try {
 			Matcher mc = honbunPattern.matcher(str);
 			mc.find();
-			return mc.group(1);
+			return removeTag(mc.group(1));
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 		return "";
+	}
+
+	public static String removeTag(String str) {
+		return tagPattern.matcher(str).replaceAll("");
 	}
 }

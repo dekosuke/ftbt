@@ -93,6 +93,10 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
 					title_base += " <font color=\"#117743\">" + item.name
 							+ "</font>";
+					if(item.mailTo != null && !item.mailTo.equals("")){
+						title_base += " <font color=\"#0000CC\">" + item.mailTo
+						+ "</font>";
+					}
 					if(activity.currentSize!=0 && position>=activity.prevSize){ //新着
 						title_base += " New!";
 					}
