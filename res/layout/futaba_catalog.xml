@@ -48,7 +48,6 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     android:layout_height="0dip"
     android:layout_below="@id/top_control_bar" 
     android:layout_above="@id/bottom_control_bar"
-    android:fastScrollEnabled="true"
      />
 </RelativeLayout>
 
