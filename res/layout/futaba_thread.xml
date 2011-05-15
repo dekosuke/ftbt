@@ -48,6 +48,7 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     android:divider="#FFFFEE"
 android:dividerHeight="5dip"
 	android:padding="5dip"
+    android:fastScrollEnabled="true"
      />
 </RelativeLayout>
 
