@@ -37,15 +37,27 @@ public class ftbt extends TabActivity implements Runnable {
 
 	ProgressDialog waitDialog;
 	Thread thread;
-
-	private TabSpec tab02;
+	
+	TabHost tabs;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// TabHostのインスタンスを取得
+		tabs = getTabHost();
+		
+		//2.1で落ちる問題対策のためのダミータブ
+		TabSpec tab00 = tabs.newTabSpec("TabSheet0");
+		View v1 = new MyView(this, "読み込み中・・・");
+		tab00.setIndicator(v1);
+		Intent intent = new Intent().setClassName(getPackageName(), getClass()
+				.getPackage().getName() + ".DummyTab");
+		tab00.setContent(intent);
+		tabs.addTab(tab00);
+		
 		setWait();
-
+		
 	}
 
 	public void setWait() {
@@ -56,7 +68,8 @@ public class ftbt extends TabActivity implements Runnable {
 		waitDialog.show();
 
 		thread = new Thread(this);
-		thread.start();
+		thread.start();		
+
 	}
 
 	public void run() {
@@ -64,7 +77,8 @@ public class ftbt extends TabActivity implements Runnable {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
-		}
+		}		
+
 		handler.sendEmptyMessage(0);
 	}
 
@@ -72,6 +86,7 @@ public class ftbt extends TabActivity implements Runnable {
 		public void handleMessage(Message msg) {
 			// HandlerクラスではActivityを継承してないため
 			// 別の親クラスのメソッドにて処理を行うようにした。
+			FLog.d("handle msg"+msg);
 			try {
 				loading();
 			} catch (Exception e) {
@@ -97,6 +112,8 @@ public class ftbt extends TabActivity implements Runnable {
 			FLog.d("message", e);
 		}
 		
+		FLog.d("after cachecheck");
+
 		try {
 			waitDialog.dismiss();
 			Thread.sleep(100);
@@ -105,8 +122,6 @@ public class ftbt extends TabActivity implements Runnable {
 			e1.printStackTrace();
 		}
 		
-		// TabHostのインスタンスを取得
-		TabHost tabs = getTabHost();
 		/*
 		 * // レイアウトを設定 -> これあると2.1で落ちるよ(2.2だとok)
 		 * LayoutInflater.from(this).inflate(R.layout.tabmain,
@@ -115,6 +130,9 @@ public class ftbt extends TabActivity implements Runnable {
 		Intent intent;
 
 		try {
+			//ダミータブ消す
+			tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
+			
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBSContent>();
 			FLog.d("favbbs=" + favoriteBBSs);
@@ -132,14 +150,14 @@ public class ftbt extends TabActivity implements Runnable {
 			intent = new Intent().setClassName(getPackageName(), getClass()
 					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "fav");
-			tab02 = tabs.newTabSpec("TabSheet2");
+			TabSpec tab02 = tabs.newTabSpec("TabSheet2");
 			// tab02.setIndicator("お気に入り");
 			View v2 = new MyView(this, "お気に入り");
 			tab02.setIndicator(v2);
 			tab02.setContent(intent);
 			tabs.addTab(tab02);
 			// 初期表示のタブ設定
-			tabs.setCurrentTab(0);
+			tabs.setCurrentTab(1);
 			
 			setTitle("BBS一覧 - " + getString(R.string.app_name));
 		} catch (Exception e) {
