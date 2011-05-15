@@ -270,7 +270,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 */
 				adapter.items.clear();
 				for (int i = 0; i < fthreads.size(); ++i) {
-					FLog.d(fthreads.get(i).toString());
+					//FLog.d(fthreads.get(i).toString());
 					adapter.items.add(fthreads.get(i));
 				}
 				final String title_text_f = title_text;

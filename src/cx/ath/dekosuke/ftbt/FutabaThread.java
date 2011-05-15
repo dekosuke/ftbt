@@ -1,6 +1,7 @@
 package cx.ath.dekosuke.ftbt;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -45,6 +47,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -80,6 +83,8 @@ public class FutabaThread extends Activity implements Runnable {
 	// 画像カタログから戻ってきたときにどの画像から戻ってきたか判定用
 	final int TO_IMAGECATALOG = 0;
 
+	private int itemLongClick_chosen = 0; // ここに変数置くの可能ならやめたい・・
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -100,6 +105,80 @@ public class FutabaThread extends Activity implements Runnable {
 		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 				statuses);
 		listView.setAdapter(adapter);
+
+		// 長クリック－＞テキスト共有
+		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			public boolean onItemLongClick(AdapterView<?> arg0, View view,
+					int arg2, long arg3) {
+				FLog.d("longclick");
+				itemLongClick_chosen = 0;
+				if (view != null) {
+					TextView text = (TextView) view.findViewById(R.id.maintext);
+					if (text != null) {
+						// これいまいちだな・・・
+						String[] addition = { "(レス全体)" };
+						final String strs_all = text.getText().toString();
+						final String[] strs = StringUtil.nonBlankSplit(strs_all, addition);
+						// FLog.d(str);
+
+						// CharSequence[] items = new CharSequence[strs.length];
+						AlertDialog.Builder dlg;
+						dlg = new AlertDialog.Builder(FutabaThread.this);
+						dlg.setTitle("テキストを共有\n(外部アプリに送る)");
+						// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
+						dlg.setCancelable(true);
+						dlg.setSingleChoiceItems(strs, 0,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int item) {
+										// button.setText(String.format("%sが選択されました。",items[item]));
+										// Catalog.this.delete_option = item;
+										FutabaThread.this.itemLongClick_chosen = item;
+									}
+								});
+						dlg.setPositiveButton("OK",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int id) {
+										// Catalog.this.finish();
+										// Catalog.this.deleteThreads();
+										int chosen = FutabaThread.this.itemLongClick_chosen;
+										FLog.d("chosen=" + chosen);
+										if (chosen >= 0 && chosen < strs.length) {
+											String text = strs[chosen];
+											if(chosen==strs.length-1 && strs.length>2){ //すべて選択
+												text = strs_all;
+											}
+											// アクティビティ飛ばす
+											Intent intent = new Intent(
+													Intent.ACTION_SEND);
+											intent.setType("text/plain");
+											intent.putExtra(Intent.EXTRA_TEXT,
+													text);
+											try {
+												startActivity(intent);
+											} catch (android.content.ActivityNotFoundException ex) {
+												FLog.d("failed to find target activity to share text");
+											}
+										}
+									}
+								});
+						dlg.setNegativeButton("キャンセル",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int id) {
+										// Catalog.cancel();
+										// Catalog.this.deleteThreads(false);
+									}
+								});
+						dlg.show();
+
+					}
+				}
+
+				return false;
+			}
+		});
 
 		setWait();
 	}
@@ -381,11 +460,16 @@ public class FutabaThread extends Activity implements Runnable {
 							.createDigest(threadURL));
 					webParser.parse(webThreadHtml, anonymous);
 					// FLog.d(threadHtml);
-					if(cache_ok){
-						if(webParser.getStatuses().size() < cacheParser.getStatuses().size()){
-							//スレが短くなってる - データが途中で転送切れたとかの類?
-							throw new Exception("network disconnected before finish");
+					if (cache_ok) {
+						//↓コメント削除があるからこれは仮定できない
+						/*
+						if (webParser.getStatuses().size() < cacheParser
+								.getStatuses().size()) {
+							// スレが短くなってる - データが途中で転送切れたとかの類?
+							throw new Exception(
+									"network disconnected before finish");
 						}
+						*/
 
 						try {
 							// 取得に成功した場合、履歴データの件数とかを更新する
@@ -433,7 +517,7 @@ public class FutabaThread extends Activity implements Runnable {
 					HistoryManager man = new HistoryManager();
 					FutabaThreadContent thread = new FutabaThreadContent();
 					thread.threadNum = threadNum;
-					FLog.d("del thread"+thread.toString());
+					FLog.d("del thread" + thread.toString());
 					man.Load();
 					man.removeThread(thread);
 					man.Save();
@@ -455,7 +539,7 @@ public class FutabaThread extends Activity implements Runnable {
 							toast_text = "新着レス:" + num + "件";
 						}
 					} else {
-						toast_text = "レス" + Math.max(num - 1, 0 ) + "件";
+						toast_text = "レス" + Math.max(num - 1, 0) + "件";
 						currentSize = prevSize = num;
 					}
 				} else if (cache_ok) {
@@ -476,7 +560,7 @@ public class FutabaThread extends Activity implements Runnable {
 					public void run() {
 						adapter.items.clear();
 						for (int i = 0; i < statuses_ref.size(); ++i) {
-							//FLog.d(statuses_ref.get(i).toString());
+							// FLog.d(statuses_ref.get(i).toString());
 							adapter.items.add(statuses_ref.get(i));
 						}
 
