@@ -279,9 +279,17 @@ public class FutabaThread extends Activity implements Runnable {
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
 		ArrayList<String> thumbURLs = getThumbURLs();
-		//↓positionを一番近い場所にしたいのなら、今のpositionから一番近い画像を探す処理が必要(↓ではだめ)
+		//↓positionを一番近い場所にしたいのなら、今のpositionの画像が何番目か知る必要あり
+		int pos = listView.getFirstVisiblePosition();
+		int imagepos = 0;
+		for(int i=0;i<=pos;++i){ //現在位置までの画像を数えて行ってる
+			FutabaStatus status = (FutabaStatus) adapter.items.get(i);
+			if(status.imgURL != null && !status.imgURL.equals("")){
+				imagepos++;
+			}
+		}
 		//Math.min(listView.getFirstVisiblePosition(), thumbURLs.size()-1));
-		intent.putExtra("position", 0 );
+		intent.putExtra("position", imagepos );
 		intent.putExtra("imgURLs", getImageURLs());
 		intent.putExtra("thumbURLs", thumbURLs);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
