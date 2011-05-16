@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ふたばと</string>
+    <string name="app_name">"ふたばと"</string>
     <string name="cachesize">myCacheSize</string>
     <string name="historynum">myHistoryNum</string>
     <string name="dispcensored">dispCensored</string>

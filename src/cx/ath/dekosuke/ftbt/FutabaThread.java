@@ -278,9 +278,12 @@ public class FutabaThread extends Activity implements Runnable {
 		FLog.d("intent calling gridview activity");
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
-		intent.putExtra("position", 0);
+		ArrayList<String> thumbURLs = getThumbURLs();
+		//↓positionを一番近い場所にしたいのなら、今のpositionから一番近い画像を探す処理が必要(↓ではだめ)
+		//Math.min(listView.getFirstVisiblePosition(), thumbURLs.size()-1));
+		intent.putExtra("position", 0 );
 		intent.putExtra("imgURLs", getImageURLs());
-		intent.putExtra("thumbURLs", getThumbURLs());
+		intent.putExtra("thumbURLs", thumbURLs);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
 				+ ".ThumbGrid");
 		startActivity(intent);
