@@ -279,6 +279,9 @@ public class FutabaThread extends Activity implements Runnable {
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
 		ArrayList<String> thumbURLs = getThumbURLs();
+		if(thumbURLs.size()==0){ //画像がないよ
+			return;
+		}
 		//↓positionを一番近い場所にしたいのなら、今のpositionの画像が何番目か知る必要あり
 		int pos = listView.getFirstVisiblePosition();
 		int imagepos = 0;
@@ -288,6 +291,7 @@ public class FutabaThread extends Activity implements Runnable {
 				imagepos++;
 			}
 		}
+		imagepos = Math.max(0, imagepos-1);//これやらないと半分隠れてるときとかに不自然
 		//Math.min(listView.getFirstVisiblePosition(), thumbURLs.size()-1));
 		intent.putExtra("position", imagepos );
 		intent.putExtra("imgURLs", getImageURLs());
