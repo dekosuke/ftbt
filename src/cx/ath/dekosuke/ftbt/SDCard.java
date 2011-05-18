@@ -5,8 +5,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.os.StatFs;
 
@@ -75,6 +78,7 @@ public class SDCard {
 		} catch (Exception e) {
 			FLog.d("failed to write file" + name);
 		}
+		
 		// Environment.getDataDirectory().getPath(); // /dataなど
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
 	}
@@ -143,15 +147,16 @@ public class SDCard {
 		return file.exists();
 	}
 
-	public static String copyCacheToFile(String urlhash, String url)
+	public static File copyCacheToFile(String urlhash, String url)
 			throws IOException {
 		String srcfilename = getCacheDir() + urlhash;
 		String dstfilename = getSaveDir() + url;
 		// ファイルコピーのフェーズ
 		InputStream input = null;
 		OutputStream output = null;
+		File dstFile = new File(dstfilename);
 		input = new FileInputStream(new File(srcfilename));
-		output = new FileOutputStream(new File(dstfilename));
+		output = new FileOutputStream(dstFile);
 
 		int DEFAULT_BUFFER_SIZE = 1024 * 4;
 		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
@@ -161,7 +166,7 @@ public class SDCard {
 		}
 		input.close();
 		output.close();
-		return dstfilename;
+		return dstFile;
 	}
 
 	// ファイル古いものが先にくるようにソート

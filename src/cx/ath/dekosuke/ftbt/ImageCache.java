@@ -1,6 +1,8 @@
 package cx.ath.dekosuke.ftbt;
 
 import java.util.HashMap;
+
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
 import java.util.Iterator;
@@ -57,7 +59,7 @@ public class ImageCache {
 	}
 
 
-	public static String saveImage(String url) {
+	public static File saveImage(String url) {
 		String urlHash = FutabaCrypt.createDigest(url);
 		File file = new File(url);
 		if (SDCard.cacheExist(urlHash)) {
@@ -68,12 +70,12 @@ public class ImageCache {
 			}
 		} else {
 			// キャッシュがない(通常あまりないはずだが・・)
-			//再読み込みしてください、みたいな例外を投げましょう
+			// 再読み込みしてください、みたいな例外を投げましょう
 			/*
 			 * setImage(url); //再帰 saveImage(url);
 			 */
 		}
-		return "";
+		return null;
 	}
 
 	public static void GC() {

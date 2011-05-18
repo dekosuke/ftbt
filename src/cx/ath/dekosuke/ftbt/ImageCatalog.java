@@ -7,10 +7,14 @@ import java.util.ArrayList;
 import cx.ath.dekosuke.ftbt.R.id;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,13 +78,34 @@ public class ImageCatalog extends Activity {
 						// 画像を保存する
 						String imgFile = CircleList.get();
 						File file = new File(imgFile);
-						String name = ImageCache.saveImage(imgFile);
-						if (toast != null) {
-							toast.cancel();
+						File saved_file= ImageCache.saveImage(imgFile);
+						if (saved_file != null) {
+							if (toast != null) {
+								toast.cancel();
+							}
+							toast = Toast.makeText(v.getContext(),
+									saved_file.getAbsolutePath() + "に保存しました", Toast.LENGTH_SHORT);
+							toast.show();
+							
+							// ギャラリーに反映されるように登録
+							// http://www.adakoda.com/adakoda/2010/08/android-34.html
+							String mimeType = StringUtil.getMIMEType(saved_file.getName());
+							
+							FLog.d("name="+saved_file.getName());
+							FLog.d("mime="+mimeType);
+
+							// ContentResolver を使用する場合
+							ContentResolver contentResolver = getContentResolver();
+							ContentValues values = new ContentValues(7);
+							values.put(Images.Media.TITLE, saved_file.getName());
+							values.put(Images.Media.DISPLAY_NAME, saved_file.getName());
+							values.put(Images.Media.DATE_TAKEN, System.currentTimeMillis());
+							values.put(Images.Media.MIME_TYPE, mimeType);
+							values.put(Images.Media.ORIENTATION, 0);
+							values.put(Images.Media.DATA, saved_file.getPath());
+							values.put(Images.Media.SIZE, saved_file.length());
+							contentResolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
 						}
-						toast = Toast.makeText(v.getContext(),
-								name + "に保存しました", Toast.LENGTH_SHORT);
-						toast.show();
 					} catch (Exception e) {
 						FLog.d("message", e);
 					}

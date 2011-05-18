@@ -1,6 +1,9 @@
 package cx.ath.dekosuke.ftbt;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import android.webkit.MimeTypeMap;
 
 public class StringUtil {
 	static String safeCut(String str, int length) {
@@ -55,18 +58,19 @@ public class StringUtil {
 
 	// http://ameblo.jp/archive-redo-blog/entry-10376390355.html
 	private static String zenkakuToHankaku(String value) {
-	    StringBuilder sb = new StringBuilder(value);
-	    for (int i = 0; i < sb.length(); i++) {
-	        int c = (int) sb.charAt(i);
-	        if ((c >= 0xFF10 && c <= 0xFF19) || (c >= 0xFF21 && c <= 0xFF3A) || (c >= 0xFF41 && c <= 0xFF5A)) {
-	            sb.setCharAt(i, (char) (c - 0xFEE0));
-	        }
-	    }
-	    value = sb.toString();
-	    return value;
+		StringBuilder sb = new StringBuilder(value);
+		for (int i = 0; i < sb.length(); i++) {
+			int c = (int) sb.charAt(i);
+			if ((c >= 0xFF10 && c <= 0xFF19) || (c >= 0xFF21 && c <= 0xFF3A)
+					|| (c >= 0xFF41 && c <= 0xFF5A)) {
+				sb.setCharAt(i, (char) (c - 0xFEE0));
+			}
+		}
+		value = sb.toString();
+		return value;
 	}
 
-	//http://www7a.biglobe.ne.jp/~java-master/samples/string/ZenkakuKatakanaToZenkakuHiragana.html
+	// http://www7a.biglobe.ne.jp/~java-master/samples/string/ZenkakuKatakanaToZenkakuHiragana.html
 	public static String zenkakuHiraganaToZenkakuKatakana(String s) {
 		StringBuffer sb = new StringBuffer(s);
 		for (int i = 0; i < sb.length(); i++) {
@@ -96,4 +100,42 @@ public class StringUtil {
 		temp = zenkakuHiraganaToZenkakuKatakana(temp);
 		return temp;
 	}
+
+	/**
+	 * 渡されたファイル名から、MIMEタイプを返します。
+	 * 
+	 */
+	public static String getMIMEType(String targetFile) {
+		String url = URLEncoder.encode(targetFile);
+		String extention = MimeTypeMap.getFileExtensionFromUrl(url);
+		String mtype = "";
+
+		// 拡張子を小文字に変換
+		extention = extention.toLowerCase();
+
+		mtype = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extention);
+		if (mtype == null) {
+			// ソースコードなどは判定してくれないので自分で判定する
+
+			String PLANETEXT = "text/plain";
+			if (
+			// テキストエディタで開けそうなソースファイルはテキストとして登録
+			(targetFile.endsWith(".c")) || (targetFile.endsWith(".cp"))
+					|| (targetFile.endsWith(".cpp"))
+					|| (targetFile.endsWith(".java"))
+					|| (targetFile.endsWith(".txt"))
+					|| (targetFile.endsWith(".c++"))
+					|| (targetFile.endsWith(".sh"))
+					|| (targetFile.endsWith(".cmake"))
+					|| (targetFile.endsWith(".ini"))
+					|| (targetFile.endsWith(".php"))
+					|| (targetFile.endsWith(".py")))
+				mtype = PLANETEXT;
+		}
+
+		if (mtype == null)
+			mtype = "";
+		return mtype;
+	}
+
 }
