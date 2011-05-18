@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#FFFFEE"
+>
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/search_bar"
+    >
+    <EditText android:text="" android:id="@+id/searchinput" 
+    android:layout_weight="1"  
+    	android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+    <Button 
+    android:text="検索" android:id="@+id/searchbutton" 
+    android:onClick="onClickSearchButton"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:singleLine="true"
+    />
+
+</LinearLayout>
+<RelativeLayout 
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#FFFFEE"
     > 
 <RelativeLayout android:layout_width="fill_parent"
 android:layout_height="wrap_content" android:id="@+id/top_control_bar">
@@ -50,5 +73,5 @@ android:layout_height="wrap_content" android:id="@+id/top_control_bar">
     android:layout_above="@id/bottom_control_bar"
      />
 </RelativeLayout>
-
+</LinearLayout>
 

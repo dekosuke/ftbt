@@ -3,29 +3,98 @@ package cx.ath.dekosuke.ftbt;
 import java.util.ArrayList;
 
 public class StringUtil {
-	static String safeCut(String str, int length){
-		if(str.length()>length){
-			return str.substring(0, length)+"...";
+	static String safeCut(String str, int length) {
+		if (str.length() > length) {
+			return str.substring(0, length) + "...";
 		}
 		return str;
 	}
 
-	//これ汎用じゃない・・
-	static String[] nonBlankSplit(String str, String[] addition){
+	// これ汎用じゃない・・
+	static String[] nonBlankSplit(String str, String[] addition) {
 		String[] elems = str.split("\n");
 		ArrayList<String> filtered_elems = new ArrayList<String>();
-		for(int i=0;i<elems.length;++i){
-			//if(elems[i])
-			if(elems[i].length()>0){
+		for (int i = 0; i < elems.length; ++i) {
+			// if(elems[i])
+			if (elems[i].length() > 0) {
 				filtered_elems.add(elems[i]);
 			}
 		}
-		if(elems.length>1){
-			for(int i=0;i<addition.length;++i){
+		if (elems.length > 1) {
+			for (int i = 0; i < addition.length; ++i) {
 				filtered_elems.add(addition[i]);
 			}
 		}
-		//FLog.d("length="+filtered_elems.size());
-		return (String[])filtered_elems.toArray(new String[0]);
+		// FLog.d("length="+filtered_elems.size());
+		return (String[]) filtered_elems.toArray(new String[0]);
+	}
+
+	// 検索クエリを正規化
+	// TODO:大文字小文字、全角半角、ひらがなかたかなの標準化
+	static String[] queryNormalize(String str) {
+		String temp = normalize(str);
+		String[] splits = str.split("[ 　]");
+		ArrayList<String> splits_tmp = new ArrayList<String>();
+		for (int i = 0; i < splits.length; ++i) {
+			if (splits[i].length() > 0) {
+				splits_tmp.add(splits[i]);
+			}
+		}
+		return (String[]) splits_tmp.toArray(new String[0]);
+	}
+
+	static boolean isQueryMatch(String str, String[] query) {
+		String temp = normalize(str);
+		for (int i = 0; i < query.length; ++i) {
+			if (!temp.contains(query[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// http://www7a.biglobe.ne.jp/~java-master/samples/string/ZenkakuAlphabetToHankakuAlphabet.html
+	public static String zenkakuAlphabetToHankaku(String s) {
+		StringBuffer sb = new StringBuffer(s);
+		for (int i = 0; i < sb.length(); i++) {
+			char c = sb.charAt(i);
+			if (c >= 'ａ' && c <= 'ｚ') {
+				sb.setCharAt(i, (char) (c - 'ａ' + 'a'));
+			} else if (c >= 'Ａ' && c <= 'Ｚ') {
+				sb.setCharAt(i, (char) (c - 'Ａ' + 'A'));
+			}
+		}
+		return sb.toString();
+	}
+
+	//http://www7a.biglobe.ne.jp/~java-master/samples/string/ZenkakuKatakanaToZenkakuHiragana.html
+	public static String zenkakuHiraganaToZenkakuKatakana(String s) {
+		StringBuffer sb = new StringBuffer(s);
+		for (int i = 0; i < sb.length(); i++) {
+			char c = sb.charAt(i);
+			if (c >= 'ァ' && c <= 'ン') {
+				sb.setCharAt(i, (char) (c - 'ァ' + 'ぁ'));
+			} else if (c == 'ヵ') {
+				sb.setCharAt(i, 'か');
+			} else if (c == 'ヶ') {
+				sb.setCharAt(i, 'け');
+			} else if (c == 'ヴ') {
+				sb.setCharAt(i, 'う');
+				sb.insert(i + 1, '゛');
+				i++;
+			}
+		}
+		return sb.toString();
+	}
+
+	// 正規化
+	static String normalize(String str) {
+		// 大文字ー＞小文字
+		String temp = str.toLowerCase();
+		// 全角ー＞半角
+		temp = zenkakuAlphabetToHankaku(temp);
+		// かたかなー＞ひらがな
+		temp = zenkakuHiraganaToZenkakuKatakana(temp);
+		return temp;
 	}
 }

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,7 +15,9 @@ import android.content.Intent;
 import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -171,7 +174,34 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			historyButton.setVisibility(View.GONE);
 		}
 
+		// searchbuttonでenter押したときのイベント取る
+		// http://android-vl0c0lv.blogspot.com/2009/08/edittext.html
+		// このくらい簡単な処理書くのに行数多すぎるだろjk...
+		EditText searchWord = (EditText) findViewById(R.id.searchbutton);
+		searchWord.setOnKeyListener(new View.OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				// ここではEditTextに改行が入らないようにしている。
+				if (event.getAction() == KeyEvent.ACTION_DOWN) {
+					return true;
+				}
+				// Enterを離したときに検索処理を実行
+				if (event.getAction() == KeyEvent.ACTION_UP
+						&& keyCode == KeyEvent.KEYCODE_ENTER) {
+					EditText word = (EditText) findViewById(R.id.searchbutton);
+					if (word != null && word.length() != 0) {
+						Catalog activity = (Catalog)v.getContext();
+						activity.onClickSearchButton(v);
+					}
+					return true;
+				}
+				return false;
+			}
+		});
+
 		listView.setAdapter(adapter);
+
+		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+		searchBar.setVisibility(View.GONE);
 
 		new Thread(new FutabaCatalogContentGetter()).start();
 		// FutabaThreadContentGetter getterThread = new
@@ -240,12 +270,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					}
 
 					if (network_ok || cache_ok) {
-						FLog.d("network="+network_ok+" cache="+cache_ok+" length="+catalogHtml.length());
-						if(catalogHtml.length()>50){ //あまりに小さいと失敗っぽいので弾く・・
+						FLog.d("network=" + network_ok + " cache=" + cache_ok
+								+ " length=" + catalogHtml.length());
+						if (catalogHtml.length() > 50) { // あまりに小さいと失敗っぽいので弾く・・
 							parser.parse(catalogHtml);
 							fthreads = parser.getThreads();
-						}else{
-							toast_text = "データの取得に失敗しました";							
+						} else {
+							toast_text = "データの取得に失敗しました";
 						}
 					}
 
@@ -270,7 +301,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 */
 				adapter.items.clear();
 				for (int i = 0; i < fthreads.size(); ++i) {
-					//FLog.d(fthreads.get(i).toString());
+					// FLog.d(fthreads.get(i).toString());
 					adapter.items.add(fthreads.get(i));
 				}
 				final String title_text_f = title_text;
@@ -426,7 +457,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				+ ".Post");
 		startActivity(intent);
 	}
-	
+
 	// メニューをクリック
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -445,6 +476,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
 						.show();
 			}
+			return true;
+		case R.id.search:
+			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+			searchBar.setVisibility(View.VISIBLE);
 			return true;
 		case R.id.tweet:
 			String bbs_title = "見てる:" + BBSName + " - ふたば";
@@ -480,6 +515,30 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			return true;
 		}
 		return false;
+	}
+
+	public void onClickSearchButton(View v) {
+		// Toast.makeText(this, "検索ボタンが押されました", Toast.LENGTH_SHORT).show();
+		if (true) {
+			EditText searchEdit = (EditText) findViewById(id.searchinput);
+			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
+			String[] query = StringUtil.queryNormalize(searchText);
+			ArrayList<FutabaThreadContent> fthreads_temp = (ArrayList<FutabaThreadContent>) adapter.items
+					.clone();
+			adapter.items.clear();
+			// 検索テキストから絞込み
+			for (int i = 0; i < fthreads_temp.size(); ++i) {
+				String text = fthreads_temp.get(i).text;
+				// Toast.makeText(this, "text=" + text,
+				// Toast.LENGTH_SHORT).show();
+				if (StringUtil.isQueryMatch(text, query)) {
+					adapter.items.add(fthreads_temp.get(i));
+				}
+			}
+			adapter.notifyDataSetChanged(); // 再描画命令
+			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+			searchBar.setVisibility(View.GONE);
+		}
 	}
 
 	@Override

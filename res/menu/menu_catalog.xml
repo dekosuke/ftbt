@@ -6,6 +6,8 @@
     android:icon="@android:drawable/ic_menu_edit"></item>
     <item android:title="Tweet" android:id="@+id/tweet"
     android:icon="@drawable/ic_menu_dialog"></item>
+    <item android:title="検索" android:id="@+id/search"
+    android:icon="@android:drawable/ic_menu_search"></item>
     <item android:title="URLを共有" android:id="@+id/share"
     android:icon="@android:drawable/ic_menu_share"></item>
     <item android:title="設定" android:id="@+id/settings"
