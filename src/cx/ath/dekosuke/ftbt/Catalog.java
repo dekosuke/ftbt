@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.webkit.CookieSyncManager;
@@ -26,6 +27,7 @@ import android.view.View.OnClickListener;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -161,7 +163,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		setContentView(R.layout.futaba_catalog);
 		listView = (ListView) findViewById(id.cataloglistview);
 		adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
-				fthreads);
+				(ArrayList<FutabaThreadContent>) fthreads.clone());
 		// 通常モード・履歴モードの片方でしか使わないボタンを消す
 		if (!mode.equals("history")) { // 通常モード
 			Button historyDeleteButton = (Button) findViewById(id.delete_btn);
@@ -177,22 +179,22 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		// searchbuttonでenter押したときのイベント取る
 		// http://android-vl0c0lv.blogspot.com/2009/08/edittext.html
 		// このくらい簡単な処理書くのに行数多すぎるだろjk...
-		EditText searchWord = (EditText) findViewById(R.id.searchbutton);
+		EditText searchWord = (EditText) findViewById(R.id.searchinput);
 		searchWord.setOnKeyListener(new View.OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				FLog.d("onKey" + event);
 				// ここではEditTextに改行が入らないようにしている。
-				if (event.getAction() == KeyEvent.ACTION_DOWN) {
+				if (event.getAction() == KeyEvent.ACTION_DOWN
+						&& keyCode == KeyEvent.KEYCODE_ENTER) {
 					return true;
 				}
 				// Enterを離したときに検索処理を実行
 				if (event.getAction() == KeyEvent.ACTION_UP
 						&& keyCode == KeyEvent.KEYCODE_ENTER) {
-					EditText word = (EditText) findViewById(R.id.searchbutton);
-					if (word != null && word.length() != 0) {
-						Catalog activity = (Catalog)v.getContext();
-						activity.onClickSearchButton(v);
-					}
-					return true;
+					EditText word = (EditText) findViewById(R.id.searchinput);
+					Catalog activity = (Catalog) v.getContext();
+					activity.onClickSearchButton(v);
+					return false;
 				}
 				return false;
 			}
@@ -213,7 +215,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		@Override
 		public void run() {
 			try {
-				ArrayList<FutabaThreadContent> fthreads = new ArrayList<FutabaThreadContent>();
+				fthreads = new ArrayList<FutabaThreadContent>();
 
 				parser = new CatalogParser();
 
@@ -285,7 +287,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						fthreads.get(i).BBSName = BBSName;
 					}
 
-					title_text = BBSName + " - " + getString(R.string.app_name);
+					title_text = BBSName + "(カタログ) - " + getString(R.string.app_name);
 
 				} else { // 履歴モード。複数板混在なので注意
 					HistoryManager man = new HistoryManager();
@@ -356,6 +358,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	// 履歴削除ボタン
 	public void onClickDeleteBtn(View v) {
+		if(adapter.items.size() != fthreads.size()){
+			Toast.makeText(this, "検索絞り込み中は、スレッドを削除できません", Toast.LENGTH_LONG).show();
+			return;
+		}
 		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ", "すべてのスレ" };
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(Catalog.this);
@@ -416,6 +422,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			HistoryManager man = new HistoryManager();
 			man.set(adapter.items);
 			man.Save();
+			fthreads = (ArrayList<FutabaThreadContent>) adapter.items.clone();
 			// adapter.items = man.getThreadsArray();
 			// DesireHDで動かしてて分かったけど
 			// adapter.itemの参照アドレスが変わる->notifyDataSetChanged で落ちる
@@ -479,7 +486,11 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			return true;
 		case R.id.search:
 			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
-			searchBar.setVisibility(View.VISIBLE);
+			if (searchBar.getVisibility() == View.GONE) {
+				searchBar.setVisibility(View.VISIBLE);
+			} else {
+				searchBar.setVisibility(View.GONE);
+			}
 			return true;
 		case R.id.tweet:
 			String bbs_title = "見てる:" + BBSName + " - ふたば";
@@ -519,26 +530,57 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	public void onClickSearchButton(View v) {
 		// Toast.makeText(this, "検索ボタンが押されました", Toast.LENGTH_SHORT).show();
+		FLog.d("fthreads size=" + fthreads.size());
 		if (true) {
 			EditText searchEdit = (EditText) findViewById(id.searchinput);
 			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
 			String[] query = StringUtil.queryNormalize(searchText);
-			ArrayList<FutabaThreadContent> fthreads_temp = (ArrayList<FutabaThreadContent>) adapter.items
-					.clone();
 			adapter.items.clear();
 			// 検索テキストから絞込み
-			for (int i = 0; i < fthreads_temp.size(); ++i) {
-				String text = fthreads_temp.get(i).text;
+			for (int i = 0; i < fthreads.size(); ++i) {
+				String text = fthreads.get(i).text;
 				// Toast.makeText(this, "text=" + text,
 				// Toast.LENGTH_SHORT).show();
 				if (StringUtil.isQueryMatch(text, query)) {
-					adapter.items.add(fthreads_temp.get(i));
+					adapter.items.add(fthreads.get(i));
 				}
 			}
 			adapter.notifyDataSetChanged(); // 再描画命令
 			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
-			searchBar.setVisibility(View.GONE);
+			// searchBar.setVisibility(View.GONE);
+			String toastText = "全" + fthreads.size() + "スレッド中、"
+					+ adapter.items.size() + "スレッドを表示します";
+			if (fthreads.size() == adapter.items.size()) {
+				toastText = "すべてのスレッドを表示します";
+			} else if (adapter.items.size() == 0) {
+				toastText = "該当するスレッドは見つかりませんでした";
+			}
+			Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
+
+			// ソフトウェアキーボードかくす
+			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
 		}
+	}
+
+	public void onClickSearchHideButton(View v) {
+		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+		searchBar.setVisibility(View.GONE);
+		// ソフトウェアキーボードかくす
+		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+	}
+	
+	public boolean onSearchRequested(){
+		//Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
+		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+		if (searchBar.getVisibility() == View.GONE) {
+			searchBar.setVisibility(View.VISIBLE);
+		} else {
+			searchBar.setVisibility(View.GONE);
+		}		return false;
+		
 	}
 
 	@Override

@@ -33,7 +33,7 @@ public class StringUtil {
 	// TODO:大文字小文字、全角半角、ひらがなかたかなの標準化
 	static String[] queryNormalize(String str) {
 		String temp = normalize(str);
-		String[] splits = str.split("[ 　]");
+		String[] splits = temp.split("[ 　]");
 		ArrayList<String> splits_tmp = new ArrayList<String>();
 		for (int i = 0; i < splits.length; ++i) {
 			if (splits[i].length() > 0) {
@@ -53,18 +53,17 @@ public class StringUtil {
 		return true;
 	}
 
-	// http://www7a.biglobe.ne.jp/~java-master/samples/string/ZenkakuAlphabetToHankakuAlphabet.html
-	public static String zenkakuAlphabetToHankaku(String s) {
-		StringBuffer sb = new StringBuffer(s);
-		for (int i = 0; i < sb.length(); i++) {
-			char c = sb.charAt(i);
-			if (c >= 'ａ' && c <= 'ｚ') {
-				sb.setCharAt(i, (char) (c - 'ａ' + 'a'));
-			} else if (c >= 'Ａ' && c <= 'Ｚ') {
-				sb.setCharAt(i, (char) (c - 'Ａ' + 'A'));
-			}
-		}
-		return sb.toString();
+	// http://ameblo.jp/archive-redo-blog/entry-10376390355.html
+	private static String zenkakuToHankaku(String value) {
+	    StringBuilder sb = new StringBuilder(value);
+	    for (int i = 0; i < sb.length(); i++) {
+	        int c = (int) sb.charAt(i);
+	        if ((c >= 0xFF10 && c <= 0xFF19) || (c >= 0xFF21 && c <= 0xFF3A) || (c >= 0xFF41 && c <= 0xFF5A)) {
+	            sb.setCharAt(i, (char) (c - 0xFEE0));
+	        }
+	    }
+	    value = sb.toString();
+	    return value;
 	}
 
 	//http://www7a.biglobe.ne.jp/~java-master/samples/string/ZenkakuKatakanaToZenkakuHiragana.html
@@ -92,7 +91,7 @@ public class StringUtil {
 		// 大文字ー＞小文字
 		String temp = str.toLowerCase();
 		// 全角ー＞半角
-		temp = zenkakuAlphabetToHankaku(temp);
+		temp = zenkakuToHankaku(temp);
 		// かたかなー＞ひらがな
 		temp = zenkakuHiraganaToZenkakuKatakana(temp);
 		return temp;

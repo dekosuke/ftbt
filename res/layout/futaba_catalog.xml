@@ -10,16 +10,32 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:id="@+id/search_bar"
+    android:background="#FFCC99"
+    android:gravity="center_vertical"  
+    android:layout_gravity="center_vertical"  
     >
-    <EditText android:text="" android:id="@+id/searchinput" 
-    android:layout_weight="1"  
-    	android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-    <Button 
-    android:text="検索" android:id="@+id/searchbutton" 
-    android:onClick="onClickSearchButton"
+    <Button
+	android:id="@+id/searchhidebutton" 
+    android:onClick="onClickSearchHideButton"
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"  
+    android:textSize="12sp"
     android:singleLine="true"
+    android:background = "@android:drawable/ic_delete"
+    />
+    <EditText android:text="" android:id="@+id/searchinput" 
+    android:layout_weight="1"
+    android:layout_gravity="center_vertical"  
+    android:singleLine="true"
+    	android:layout_width="fill_parent" android:layout_height="wrap_content"/>
+    <ImageButton
+    android:id="@+id/searchbutton" 
+    android:src="@drawable/ic_btn_search"
+    android:onClick="onClickSearchButton"
+    android:layout_gravity="center_vertical"  
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
     />
 
 </LinearLayout>

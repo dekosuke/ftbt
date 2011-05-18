@@ -90,6 +90,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
 				String title_base = item.title;// StringUtil.safeCut(, 30);
+				if(position!=0){ //レス番号
+					title_base = "<font color=\"#800000\">"+position+"</font> "+title_base;
+				}
 				if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
 					title_base += " <font color=\"#117743\">" + item.name
 							+ "</font>";
