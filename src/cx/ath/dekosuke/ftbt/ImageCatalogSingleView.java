@@ -363,6 +363,9 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 
 	// 画像をオンライン取得
 	public void setImage() {
+		if(waitDialog!=null){ //前のロード残りっぱなしなら消す
+			dismissWaitDialog();
+		}
 		waitDialog = new ProgressDialog(getContext());
 		waitDialog.setMessage("ロード中...");
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
