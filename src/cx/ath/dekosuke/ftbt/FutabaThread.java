@@ -573,12 +573,16 @@ public class FutabaThread extends Activity implements Runnable {
 				final String toast_text_f = toast_text;
 
 				final ArrayList<FutabaStatus> statuses_ref = statuses;
+				final int prevSize_ref = prevSize;
 				// 描画に関わる処理はここに集約(メインスレッド実行)
 				handler2.post(new Runnable() {
 					public void run() {
 						adapter.items.clear();
 						for (int i = 0; i < statuses_ref.size(); ++i) {
 							// FLog.d(statuses_ref.get(i).toString());
+							if(i!=0 && i==prevSize_ref){
+								adapter.items.add(FutabaStatus.createBlank());								
+							}
 							adapter.items.add(statuses_ref.get(i));
 						}
 

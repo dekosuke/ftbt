@@ -30,6 +30,17 @@ public class FutabaStatus {
 		width = 0;
 		height = 0;
 	}
+	
+	//区切り用仮想レス作成
+	public static FutabaStatus createBlank(){
+		FutabaStatus st = new FutabaStatus();
+		st.idstr = "-1";
+		return st;
+	}
+	
+	public static boolean isBlank(FutabaStatus st){
+		return st.idstr.equals("-1");
+	}
 
 	public String toString(){
 		return "FTC userName="+userName+

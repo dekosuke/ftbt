@@ -1,6 +1,8 @@
 package cx.ath.dekosuke.ftbt;
 
 import java.util.ArrayList;
+
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 import android.graphics.Typeface;
@@ -74,12 +76,12 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				// 背景画像をセットする
 				// view.setBackgroundResource(R.drawable.back);
 			}
-			
+
 			FutabaThread activity = (FutabaThread) getContext();
 
 			if (position == 0) { // 最初だけ色違う
 				view.setBackgroundColor(Color.rgb(255, 255, 238));
-			}else {
+			} else {
 				// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
 				view.setBackgroundColor(Color.rgb(240, 224, 214));
 			}
@@ -88,64 +90,92 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			FutabaStatus item = (FutabaStatus) items.get(position);
 			FLog.d("potision=" + position + " datestr=" + item.datestr);
 			if (item != null) {
-				TextView title = (TextView) view.findViewById(R.id.title);
-				String title_base = item.title;// StringUtil.safeCut(, 30);
-				if(position!=0){ //レス番号
-					title_base = "<font color=\"#800000\">"+position+"</font> "+title_base;
-				}
-				if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
-					title_base += " <font color=\"#117743\">" + item.name
-							+ "</font>";
-					if(item.mailTo != null && !item.mailTo.equals("")){
-						title_base += " <font color=\"#0000CC\">" + item.mailTo
-						+ "</font>";
+				if (FutabaStatus.isBlank(item)) {
+					// 区切り線
+					ImageView iv = (ImageView) view.findViewById(R.id.image);
+					iv.setImageBitmap(null);
+					TextView title = (TextView) view.findViewById(R.id.title);
+					TextView text = (TextView) view.findViewById(R.id.maintext);
+					TextView bottomtext = (TextView) view
+							.findViewById(R.id.bottomtext);
+					text.setText("----ここから新着----");
+					text.setGravity(Gravity.CENTER);
+					title.setVisibility(View.GONE);
+					bottomtext.setVisibility(View.GONE);
+					bottomtext.setText("");
+					view.setBackgroundColor(Color.parseColor("#CCCCFF"));
+				} else {
+					TextView title = (TextView) view.findViewById(R.id.title);
+					String title_base = item.title;// StringUtil.safeCut(, 30);
+					if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
+						title_base += " <font color=\"#117743\">" + item.name
+								+ "</font>";
+						if (item.mailTo != null && !item.mailTo.equals("")) {
+							title_base += " <font color=\"#0000CC\">"
+									+ item.mailTo + "</font>";
+						}
+						if (activity.currentSize != 0
+								&& position >= activity.prevSize) { // 新着
+							title_base += " New!";
+							if (position != 0) { // レス番号
+								title_base = "<font color=\"#800000\">" + (position-1)
+										+ "</font> " + title_base;
+							}
+						}else{
+							if (position != 0) { // レス番号
+								title_base = "<font color=\"#800000\">" + position
+										+ "</font> " + title_base;
+							}
+						}
+						// name.setText(item.name);// item.getImgURL());
 					}
-					if(activity.currentSize!=0 && position>=activity.prevSize){ //新着
-						title_base += " New!";
+					CharSequence cs_title = Html.fromHtml(title_base); // HTML表示
+					title.setText(cs_title);// item.getImgURL());
+					// TextView name = (TextView) view.findViewById(R.id.name);
+
+					// スクリーンネームをビューにセット
+					TextView text = (TextView) view.findViewById(R.id.maintext);
+					TextView bottomtext = (TextView) view
+							.findViewById(R.id.bottomtext);
+					if (item.datestr != null) {
+						bottomtext.setText(item.datestr + " " + item.idstr);
 					}
-					// name.setText(item.name);// item.getImgURL());
-				}
-				CharSequence cs_title = Html.fromHtml(title_base); // HTML表示
-				title.setText(cs_title);// item.getImgURL());
-				// TextView name = (TextView) view.findViewById(R.id.name);
+					
+					//ここらへんは区切り線で変えた可能性のあるデータを元に戻す
+					text.setGravity(Gravity.LEFT);
+					title.setVisibility(View.VISIBLE);
+					bottomtext.setVisibility(View.VISIBLE);
 
-				// スクリーンネームをビューにセット
-				TextView text = (TextView) view.findViewById(R.id.maintext);
-				TextView bottomtext = (TextView) view
-						.findViewById(R.id.bottomtext);
-				if (item.datestr != null) {
-					bottomtext.setText(item.datestr + " " + item.idstr);
-				}
+					Bitmap bm = null;
+					ImageView iv = (ImageView) view.findViewById(R.id.image);
+					iv.setImageBitmap(bm);
 
-				Bitmap bm = null;
-				ImageView iv = (ImageView) view.findViewById(R.id.image);
-				iv.setImageBitmap(bm);
-
-				// 画像をセット
-				try {
-					if (item.imgURL != null) {
-						iv.setTag(item.bigImgURL);
-						bm = Bitmap.createBitmap(item.width, item.height,
-								Bitmap.Config.ALPHA_8);
-						iv.setImageBitmap(bm);
-						ImageGetTask task = new ImageGetTask(iv);
-						task.execute(item.imgURL);
-						// title.setText("(画像あり)");
-					} else { // 画像なし
-						/*
-						 * FLog.d("w="+item.width+" h="+item.height ); bm =
-						 * Bitmap.createBitmap(item.width, item.height,
-						 * Bitmap.Config.ALPHA_8); iv.setImageBitmap(bm);
-						 */
+					// 画像をセット
+					try {
+						if (item.imgURL != null) {
+							iv.setTag(item.bigImgURL);
+							bm = Bitmap.createBitmap(item.width, item.height,
+									Bitmap.Config.ALPHA_8);
+							iv.setImageBitmap(bm);
+							ImageGetTask task = new ImageGetTask(iv);
+							task.execute(item.imgURL);
+							// title.setText("(画像あり)");
+						} else { // 画像なし
+							/*
+							 * FLog.d("w="+item.width+" h="+item.height ); bm =
+							 * Bitmap.createBitmap(item.width, item.height,
+							 * Bitmap.Config.ALPHA_8); iv.setImageBitmap(bm);
+							 */
+						}
+					} catch (Exception e) {
+						FLog.d("message", e);
 					}
-				} catch (Exception e) {
-					FLog.d("message", e);
-				}
 
-				// テキストをビューにセット
-				if (text != null) {
-					CharSequence cs = Html.fromHtml(item.text); // HTML表示
-					text.setText(cs);
+					// テキストをビューにセット
+					if (text != null) {
+						CharSequence cs = Html.fromHtml(item.text); // HTML表示
+						text.setText(cs);
+					}
 				}
 			}
 
@@ -239,7 +269,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 									// これスレッドごとに作られているのが結構ひどい気がする
 									intent.putExtra("imgURLs",
 											activity.getImageURLs());
-									intent.putExtra("thumbURLs", activity.getThumbURLs());
+									intent.putExtra("thumbURLs",
+											activity.getThumbURLs());
 									intent.putExtra("myImgURL", tag);
 									intent.setClassName(
 											activity.getPackageName(), activity
