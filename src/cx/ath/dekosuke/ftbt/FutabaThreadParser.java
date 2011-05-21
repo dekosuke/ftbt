@@ -37,9 +37,9 @@ public class FutabaThreadParser {
 		statuses = new ArrayList<FutabaStatus>();
 	}
 
-	private Pattern mailToPattern = Pattern.compile(
-			"mailto:([^>\"]+)", Pattern.DOTALL);
-	
+	private Pattern mailToPattern = Pattern.compile("mailto:([^>\"]+)",
+			Pattern.DOTALL);
+
 	// メモ:ふたばのスレッドはhtml-body-2つめのformのなかにある
 	// TODO:mailtoのパーズ
 	// スレッドの形式:
@@ -67,6 +67,12 @@ public class FutabaThreadParser {
 					.compile(
 							"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
 							Pattern.DOTALL);
+			Pattern endTimePattern = Pattern
+					.compile(
+							"<span id=\"contdisp\">([0-9:]+頃消えます)<",
+							Pattern.DOTALL);
+
+			// <span id="contdisp">05:12頃消えます<\/span>
 
 			// parser.setInput(new StringReader(new String(data, "UTF-8")));
 			Matcher mc = honbunPattern.matcher(allData);
@@ -81,7 +87,7 @@ public class FutabaThreadParser {
 				statusTop.width = Integer.parseInt(mcImg.group(2));
 				statusTop.height = Integer.parseInt(mcImg.group(3));
 			}
-			//FLog.d("parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
+			// FLog.d("parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 			Matcher mcBigImg = imgPattern.matcher(honbun);
 			if (mcBigImg.find()) {
 				statusTop.bigImgURL = mcBigImg.group(1);
@@ -104,26 +110,34 @@ public class FutabaThreadParser {
 			}
 			String text = mcText.group(1);
 			statusTop.text = text;
+			Matcher mcEndTime = endTimePattern.matcher(honbun);
+			if(mcEndTime.find()){
+				statusTop.endTime=mcEndTime.group(1);				
+			}else{
+				FLog.d("endtime not match");
+			}
 			statuses.add(statusTop);
 
-			//FLog.d(honbun );
+			// FLog.d(honbun );
 			Matcher mcRes = resPattern.matcher(honbun);
 			while (mcRes.find()) {
 				FutabaStatus status = new FutabaStatus();
 				mcText = textPattern.matcher(mcRes.group(1));
-				//FLog.d(mcRes.group(1) );
+				// FLog.d(mcRes.group(1) );
 				mcText.find();
 				if (!anonymous) {
-					Matcher mcTextAttr = textAttrPattern.matcher(mcRes.group(1));
+					Matcher mcTextAttr = textAttrPattern
+							.matcher(mcRes.group(1));
 					if (mcTextAttr.find()) {
 						status.title = mcTextAttr.group(1);
 						status.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
-						status.mailTo = extractMailTo(mcTextAttr.group(2));						
+						status.mailTo = extractMailTo(mcTextAttr.group(2));
 						status.datestr = mcTextAttr.group(3);
 						status.id = Integer.parseInt(mcTextAttr.group(4));
 					}
 				} else {
-					Matcher mcTextAttr = imgTextAttrPattern.matcher(mcRes.group(1));
+					Matcher mcTextAttr = imgTextAttrPattern.matcher(mcRes
+							.group(1));
 					if (mcTextAttr.find()) {
 						status.datestr = mcTextAttr.group(1);
 					}
@@ -136,18 +150,18 @@ public class FutabaThreadParser {
 					status.imgURL = mcImg.group(1);
 					status.width = Integer.parseInt(mcImg.group(2));
 					status.height = Integer.parseInt(mcImg.group(3));
-					//FLog.d(,
+					// FLog.d(,
 					// "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 				}
 				mcBigImg = imgPattern.matcher(mcRes.group(1));
 				if (mcBigImg.find()) {
 					status.bigImgURL = mcBigImg.group(1);
 				}
-				//FLog.d(text );
+				// FLog.d(text );
 				statuses.add(status);
 			}
 		} catch (Exception e) {
-		FLog.d("failure in FutabaThreadParser", e);
+			FLog.d("failure in FutabaThreadParser", e);
 		}
 		// return list;
 	}
@@ -158,9 +172,9 @@ public class FutabaThreadParser {
 		text = text.replaceAll("&gt;", ">");
 		return text;
 	}
-	
-	//メルアド抽出
-	private String extractMailTo(String name){
+
+	// メルアド抽出
+	private String extractMailTo(String name) {
 		Matcher mailTo = mailToPattern.matcher(name);
 		if (mailTo.find()) {
 			return mailTo.group(1);
@@ -214,22 +228,21 @@ public class FutabaThreadParser {
 		return "";
 	}
 
-
 	public ArrayList<FutabaStatus> getStatuses() {
 		return statuses;
 	}
-	
-	//タイトルを取得する(最大num文字)
-	public String getTitle(int num){
-		if(statuses.size()>0){
+
+	// タイトルを取得する(最大num文字)
+	public String getTitle(int num) {
+		if (statuses.size() > 0) {
 			String text = statuses.get(0).title;
 			text = tagPattern.matcher(text).replaceAll(""); // タグ除去
 			return text.substring(0, Math.min(text.length(), num));
 		}
 		return "(no title)";
 	}
-	
-	public static String removeTag(String str){
+
+	public static String removeTag(String str) {
 		return tagPattern.matcher(str).replaceAll("");
 	}
 }

@@ -108,83 +108,12 @@ public class FutabaThread extends Activity implements Runnable {
 
 		// 長クリック－＞テキスト共有
 		listView.setOnItemLongClickListener(new FutabaThreadOnLongClickListener());
-				/*new AdapterView.OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> arg0, View view,
-					int arg2, long arg3) {
-				FLog.d("longclick");
-				itemLongClick_chosen = 0;
-				if (view != null) {
-					TextView text = (TextView) view.findViewById(R.id.maintext);
-					if (text != null) {
-						// これいまいちだな・・・
-						String[] addition = { "(レス全体)" };
-						final String strs_all = text.getText().toString();
-						final String[] strs = StringUtil.nonBlankSplit(strs_all, addition);
-						// FLog.d(str);
-
-						// CharSequence[] items = new CharSequence[strs.length];
-						AlertDialog.Builder dlg;
-						dlg = new AlertDialog.Builder(FutabaThread.this);
-						dlg.setTitle("テキストを共有\n(外部アプリに送る)");
-						// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
-						dlg.setCancelable(true);
-						dlg.setSingleChoiceItems(strs, 0,
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int item) {
-										// button.setText(String.format("%sが選択されました。",items[item]));
-										// Catalog.this.delete_option = item;
-										FutabaThread.this.itemLongClick_chosen = item;
-									}
-								});
-						dlg.setPositiveButton("OK",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										// Catalog.this.finish();
-										// Catalog.this.deleteThreads();
-										int chosen = FutabaThread.this.itemLongClick_chosen;
-										FLog.d("chosen=" + chosen);
-										if (chosen >= 0 && chosen < strs.length) {
-											String text = strs[chosen];
-											if(chosen==strs.length-1 && strs.length>2){ //すべて選択
-												text = strs_all;
-											}
-											// アクティビティ飛ばす
-											Intent intent = new Intent(
-													Intent.ACTION_SEND);
-											intent.setType("text/plain");
-											intent.putExtra(Intent.EXTRA_TEXT,
-													text);
-											try {
-												startActivity(intent);
-											} catch (android.content.ActivityNotFoundException ex) {
-												FLog.d("failed to find target activity to share text");
-											}
-										}
-									}
-								});
-						dlg.setNegativeButton("キャンセル",
-								new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog,
-											int id) {
-										// Catalog.cancel();
-										// Catalog.this.deleteThreads(false);
-									}
-								});
-						dlg.show();
-
-					}
-				}
-
-				return false;
-				*/
 
 		setWait();
 	}
 
 	public void setWait() {
-		if(waitDialog!=null){
+		if (waitDialog != null) {
 			waitDialog.dismiss();
 		}
 		waitDialog = new ProgressDialog(this);
@@ -282,21 +211,21 @@ public class FutabaThread extends Activity implements Runnable {
 		Intent intent = new Intent();
 		// Log.d ( "ftbt", threadNum );
 		ArrayList<String> thumbURLs = getThumbURLs();
-		if(thumbURLs.size()==0){ //画像がないよ
+		if (thumbURLs.size() == 0) { // 画像がないよ
 			return;
 		}
-		//↓positionを一番近い場所にしたいのなら、今のpositionの画像が何番目か知る必要あり
+		// ↓positionを一番近い場所にしたいのなら、今のpositionの画像が何番目か知る必要あり
 		int pos = listView.getFirstVisiblePosition();
 		int imagepos = 0;
-		for(int i=0;i<=pos;++i){ //現在位置までの画像を数えて行ってる
+		for (int i = 0; i <= pos; ++i) { // 現在位置までの画像を数えて行ってる
 			FutabaStatus status = (FutabaStatus) adapter.items.get(i);
-			if(status.imgURL != null && !status.imgURL.equals("")){
+			if (status.imgURL != null && !status.imgURL.equals("")) {
 				imagepos++;
 			}
 		}
-		imagepos = Math.max(0, imagepos-1);//これやらないと半分隠れてるときとかに不自然
-		//Math.min(listView.getFirstVisiblePosition(), thumbURLs.size()-1));
-		intent.putExtra("position", imagepos );
+		imagepos = Math.max(0, imagepos - 1);// これやらないと半分隠れてるときとかに不自然
+		// Math.min(listView.getFirstVisiblePosition(), thumbURLs.size()-1));
+		intent.putExtra("position", imagepos);
 		intent.putExtra("imgURLs", getImageURLs());
 		intent.putExtra("thumbURLs", thumbURLs);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
@@ -479,15 +408,13 @@ public class FutabaThread extends Activity implements Runnable {
 					webParser.parse(webThreadHtml, anonymous);
 					// FLog.d(threadHtml);
 					if (cache_ok) {
-						//↓コメント削除があるからこれは仮定できない
+						// ↓コメント削除があるからこれは仮定できない
 						/*
-						if (webParser.getStatuses().size() < cacheParser
-								.getStatuses().size()) {
-							// スレが短くなってる - データが途中で転送切れたとかの類?
-							throw new Exception(
-									"network disconnected before finish");
-						}
-						*/
+						 * if (webParser.getStatuses().size() < cacheParser
+						 * .getStatuses().size()) { // スレが短くなってる -
+						 * データが途中で転送切れたとかの類? throw new Exception(
+						 * "network disconnected before finish"); }
+						 */
 
 						try {
 							// 取得に成功した場合、履歴データの件数とかを更新する
@@ -580,10 +507,16 @@ public class FutabaThread extends Activity implements Runnable {
 						adapter.items.clear();
 						for (int i = 0; i < statuses_ref.size(); ++i) {
 							FLog.d(statuses_ref.get(i).toString());
-							if(i!=0 && i==prevSize_ref){
-								adapter.items.add(FutabaStatus.createBlank());								
+							if (i != 0 && i == prevSize_ref) {
+								adapter.items.add(FutabaStatus.createBlank());
 							}
 							adapter.items.add(statuses_ref.get(i));
+							// 最後にスレ落ち時間予告をはさむ
+							if (i == statuses_ref.size() - 1
+									&& !statuses_ref.get(0).endTime.equals("")) {
+								adapter.items.add(FutabaStatus
+										.createEndTime(statuses_ref.get(0).endTime));
+							}
 						}
 
 						Toast.makeText(adapter.getContext(), toast_text_f,

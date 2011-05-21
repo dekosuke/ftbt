@@ -104,6 +104,23 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					bottomtext.setVisibility(View.GONE);
 					bottomtext.setText("");
 					view.setBackgroundColor(Color.parseColor("#CCCCFF"));
+				} else if(FutabaStatus.isEndTime(item)){
+					// 区切り線
+					ImageView iv = (ImageView) view.findViewById(R.id.image);
+					iv.setImageBitmap(null);
+					TextView title = (TextView) view.findViewById(R.id.title);
+					TextView text = (TextView) view.findViewById(R.id.maintext);
+					TextView bottomtext = (TextView) view
+							.findViewById(R.id.bottomtext);
+					String text_html = item.text;
+					CharSequence cs = Html.fromHtml(text_html); // HTML表示
+					text.setText(cs);
+					text.setGravity(Gravity.CENTER);
+					title.setVisibility(View.GONE);
+					bottomtext.setVisibility(View.GONE);
+					bottomtext.setText("");
+					view.setBackgroundColor(Color.parseColor("#FFFFEE"));
+					
 				} else {
 					TextView title = (TextView) view.findViewById(R.id.title);
 					String title_base = item.title;// StringUtil.safeCut(, 30);
@@ -173,7 +190,13 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 					// テキストをビューにセット
 					if (text != null) {
-						CharSequence cs = Html.fromHtml(item.text); // HTML表示
+						String text_html = item.text;
+						/*
+						if(!item.endTime.equals("")){
+							text_html+="<br><font color=\"red\">("+item.endTime+")</font>";
+						}
+						*/
+						CharSequence cs = Html.fromHtml(text_html); // HTML表示
 						text.setText(cs);
 					}
 				}
