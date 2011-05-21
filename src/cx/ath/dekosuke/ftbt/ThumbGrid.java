@@ -5,16 +5,19 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -34,6 +37,8 @@ public class ThumbGrid extends Activity implements Runnable {
 	public ArrayList<String> thumbURLs = new ArrayList<String>();
 	public ArrayList<String> imgURLs = new ArrayList<String>();
 	public int startPos = 0;
+	private int width;
+	private int height;
 
 	// private CatalogAdapter adapter = null;
 	public String baseUrl = "";
@@ -58,6 +63,12 @@ public class ThumbGrid extends Activity implements Runnable {
 					.getSerializableExtra("imgURLs");
 			startPos = (Integer) intent.getSerializableExtra("position");
 
+			// 画面サイズの取得
+			WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+			Display display = wm.getDefaultDisplay();
+			width = display.getWidth();
+			height = display.getHeight();
+			
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
@@ -122,8 +133,12 @@ public class ThumbGrid extends Activity implements Runnable {
 		 * createParam(WC, FP));
 		 */
 
-		grid.setNumColumns(3);
-		grid.setVerticalSpacing(10);
+		if(width<height){
+			grid.setNumColumns(3);
+		}else{
+			grid.setNumColumns(6);			
+		}
+		//grid.setVerticalSpacing(10);
 		// grid.setStretchMode(GridView.STRETCH_SPACING);
 		ThumbGridAdapter adapter = new ThumbGridAdapter(this,
 				R.layout.thumbgridelement, thumbURLs);

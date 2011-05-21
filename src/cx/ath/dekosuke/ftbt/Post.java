@@ -58,6 +58,7 @@ public class Post extends Activity implements Runnable {
 	public String urlStr;
 	public int threadNum;
 	public String threadURL;
+	public String postText;
 
 	ProgressDialog waitDialog;
 	Thread thread;
@@ -79,6 +80,7 @@ public class Post extends Activity implements Runnable {
 			// urlStr = (String) intent.getSerializableExtra("urlStr");
 			String baseURL = (String) intent.getSerializableExtra("baseURL");
 			threadNum = (Integer) intent.getSerializableExtra("threadNum");
+			postText = (String) intent.getSerializableExtra("postText");
 			if(threadNum==0){
 				newthread=true;
 			}
@@ -94,6 +96,8 @@ public class Post extends Activity implements Runnable {
 			if(newthread){
 				titleText.setText("スレッドを建てる");
 			}
+			TextView comment_v = (TextView) findViewById(id.comment);
+			comment_v.setText(postText);
 			Button postbutton = (Button) findViewById(id.postbutton);
 			postbutton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {

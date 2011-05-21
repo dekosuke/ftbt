@@ -107,7 +107,8 @@ public class FutabaThread extends Activity implements Runnable {
 		listView.setAdapter(adapter);
 
 		// 長クリック－＞テキスト共有
-		listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+		listView.setOnItemLongClickListener(new FutabaThreadOnLongClickListener());
+				/*new AdapterView.OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> arg0, View view,
 					int arg2, long arg3) {
 				FLog.d("longclick");
@@ -177,8 +178,7 @@ public class FutabaThread extends Activity implements Runnable {
 				}
 
 				return false;
-			}
-		});
+				*/
 
 		setWait();
 	}
@@ -579,7 +579,7 @@ public class FutabaThread extends Activity implements Runnable {
 					public void run() {
 						adapter.items.clear();
 						for (int i = 0; i < statuses_ref.size(); ++i) {
-							// FLog.d(statuses_ref.get(i).toString());
+							FLog.d(statuses_ref.get(i).toString());
 							if(i!=0 && i==prevSize_ref){
 								adapter.items.add(FutabaStatus.createBlank());								
 							}

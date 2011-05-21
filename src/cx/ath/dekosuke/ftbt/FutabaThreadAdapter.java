@@ -138,7 +138,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					TextView bottomtext = (TextView) view
 							.findViewById(R.id.bottomtext);
 					if (item.datestr != null) {
-						bottomtext.setText(item.datestr + " " + item.idstr);
+						bottomtext.setText(item.datestr + " No." + item.id);
 					}
 					
 					//ここらへんは区切り線で変えた可能性のあるデータを元に戻す

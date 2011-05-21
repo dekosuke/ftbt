@@ -54,7 +54,7 @@ public class FutabaThreadParser {
 			Pattern textAttrPattern = Pattern
 					.compile("<input[^>]+><font[^>]+><b>(.*?)</b></font>"
 							+ ".*?<font[^>]+><b>(.*?) ?</b></font>"
-							+ "(.*?) (No.[0-9]+).+?<blockquote", Pattern.DOTALL);
+							+ "(.*?) No.([0-9]+).+?<blockquote", Pattern.DOTALL);
 			Pattern imgTextAttrPattern = Pattern.compile(
 					"<input[^>]+>([^<]*?)<a", Pattern.DOTALL);
 			Pattern textPattern = Pattern.compile(
@@ -94,7 +94,7 @@ public class FutabaThreadParser {
 					statusTop.title = mcTextAttr.group(1);
 					statusTop.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
 					statusTop.datestr = mcTextAttr.group(3);
-					statusTop.idstr = mcTextAttr.group(4);
+					statusTop.id = Integer.parseInt(mcTextAttr.group(4));
 				}
 			} else {
 				Matcher mcTextAttr = imgTextAttrPattern.matcher(honbun);
@@ -120,7 +120,7 @@ public class FutabaThreadParser {
 						status.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
 						status.mailTo = extractMailTo(mcTextAttr.group(2));						
 						status.datestr = mcTextAttr.group(3);
-						status.idstr = mcTextAttr.group(4);
+						status.id = Integer.parseInt(mcTextAttr.group(4));
 					}
 				} else {
 					Matcher mcTextAttr = imgTextAttrPattern.matcher(mcRes.group(1));

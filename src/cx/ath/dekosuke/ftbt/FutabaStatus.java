@@ -11,7 +11,7 @@ public class FutabaStatus {
 	public String name;
 	public String datestr;
 	public String mailTo;
-	public String idstr;
+	public int id;
 	public String imgURL;
 	public String bigImgURL;
 	public int width;
@@ -26,7 +26,7 @@ public class FutabaStatus {
 		title = "";
 		text = "";
 		mailTo = "";
-		idstr = "";
+		id = 0;
 		width = 0;
 		height = 0;
 	}
@@ -34,12 +34,12 @@ public class FutabaStatus {
 	//区切り用仮想レス作成
 	public static FutabaStatus createBlank(){
 		FutabaStatus st = new FutabaStatus();
-		st.idstr = "-1";
+		st.id = -1;
 		return st;
 	}
 	
 	public static boolean isBlank(FutabaStatus st){
-		return st.idstr.equals("-1");
+		return st.id==-1;
 	}
 
 	public String toString(){
@@ -49,7 +49,7 @@ public class FutabaStatus {
 		" name="+name+
 		" datestr="+datestr+
 		" mailTo="+mailTo+
-		" idstr="+idstr+
+		" id="+id+
 		" imgURL="+imgURL+
 		" bigImgURL="+bigImgURL+
 		" width="+width+

@@ -4,7 +4,7 @@ import android.util.Log;
 
 //出力可否切り替え可能ログクラス
 public class FLog {
-	static final boolean use_log=false;
+	static final boolean use_log=true;
 	static public int d(String msg){
 		if(use_log){
 			return Log.d("ftbt", msg);

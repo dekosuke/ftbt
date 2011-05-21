@@ -31,6 +31,19 @@ public class StringUtil {
 		// FLog.d("length="+filtered_elems.size());
 		return (String[]) filtered_elems.toArray(new String[0]);
 	}
+	
+	static String quote(String str){
+		String ret="";
+		String[] elems = str.split("\n");
+		ArrayList<String> filtered_elems = new ArrayList<String>();
+		for (int i = 0; i < elems.length; ++i) {
+			// if(elems[i])
+			if (elems[i].length() > 0) {
+				ret+=">"+elems[i].trim()+"\n";
+			}
+		}
+		return ret;
+	}
 
 	// 検索クエリを正規化
 	// TODO:大文字小文字、全角半角、ひらがなかたかなの標準化
