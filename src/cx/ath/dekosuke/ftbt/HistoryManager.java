@@ -42,6 +42,9 @@ public class HistoryManager {
 			threads.put(thread.threadNum, thread);
 		} else {
 			// すでにある－＞更新
+			// このときの差分更新アルゴリズムがなんとも・・・
+			FutabaThreadContent currentThread = threads.get(thread.threadNum);
+			thread.pointAt = currentThread.pointAt;
 			threads.put(thread.threadNum, thread);
 		}
 		FLog.d("maxHistoryNum=" + maxHistoryNum);
@@ -65,6 +68,7 @@ public class HistoryManager {
 				thread.resNum = thread_a.resNum;
 			}
 			if (thread_a.pointAt != 0) {
+				//FLog.d("pointat written"+thread_a.pointAt);
 				thread.pointAt = thread_a.pointAt;
 			}
 			threads.put(thread.threadNum, thread);

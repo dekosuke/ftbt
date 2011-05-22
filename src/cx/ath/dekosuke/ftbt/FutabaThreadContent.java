@@ -55,7 +55,8 @@ public class FutabaThreadContent implements Serializable{
 		" resNum="+resNum+
 		" BBSName="+BBSName+
 		" lastAccessed="+lastAccessed+
-		" isChecked="+isChecked;
+		" isChecked="+isChecked+
+		" pointAt="+pointAt;
 	}
 	
 	//区切り用仮想スレ作成
