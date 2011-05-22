@@ -38,6 +38,7 @@ import android.widget.Toast;
 public class FutabaThreadOnLongClickListener implements
 		AdapterView.OnItemLongClickListener, OnClickListener {
 	public int chosen = 0;
+	public int currentPosition = 0;
 	FutabaThread fthread = null;
 
 	public boolean onItemLongClick(AdapterView<?> arg0, View view, int arg2,
@@ -47,11 +48,24 @@ public class FutabaThreadOnLongClickListener implements
 			return false;
 		}
 		fthread = (FutabaThread) view.getContext();
-		FLog.d("longclick");
+		FLog.d("longclick arg2="+arg2+" arg3="+arg3);
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(fthread);
 		dlg.setTitle("レスに対する操作");
-		final String[] strs = { "削除", "引用して返信", "他アプリと共有" };
+		String[] strs_temp = null;
+		//これもっと良い書き方ないのか・・・
+		if(arg2==0){
+			String[] temp = { "削除", "引用して返信", "他アプリと共有"};
+			strs_temp = temp;
+		}else if(arg2 != fthread.adapter.shioriPosition){
+			String[] temp = { "削除", "引用して返信", "他アプリと共有", "栞をはさむ" };
+			strs_temp = temp;	
+		}else{
+			String[] temp = { "削除", "引用して返信", "他アプリと共有", "栞を削除" };
+			strs_temp = temp;	
+		}
+		currentPosition = arg2;
+		final String[] strs= strs_temp;
 		final View view_f = view;
 		dlg.setSingleChoiceItems(strs, 0, this);
 		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -66,6 +80,9 @@ public class FutabaThreadOnLongClickListener implements
 				} else if (chosen == 2) {
 					// 他アプリと共有のためのダイアログを開く
 					processShareDialog(view_f);
+				} else if (chosen == 3) {
+					// 栞操作
+					modifyShiori(view_f);
 				}
 			}
 		});
@@ -273,6 +290,15 @@ public class FutabaThreadOnLongClickListener implements
 			FLog.d("message", e);
 		}
 	}
+	
+	public void modifyShiori(View view) {
+		
+		if(currentPosition == fthread.adapter.shioriPosition){ //栞があるー＞削除
+			fthread.removeShiori(currentPosition);			
+		}else{ //栞がない場所－＞栞追加
+			fthread.registerShiori(currentPosition);
+		}
+	}	
 }
 
 /*

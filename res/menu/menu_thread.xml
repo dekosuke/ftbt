@@ -4,16 +4,13 @@
   >
     <item android:title="返信する" android:id="@+id/post"
     android:icon="@android:drawable/ic_menu_edit"
-    ></item>
+    />
     <item android:title="Tweet" android:id="@+id/tweet"
-    android:icon="@drawable/ic_menu_dialog"></item>
+    android:icon="@drawable/ic_menu_dialog" />
     <item android:title="共有" android:id="@+id/share"
-    android:icon="@android:drawable/ic_menu_share"></item>
-    <item android:title="設定" android:id="@+id/settings"
-    android:icon="@android:drawable/ic_menu_preferences"></item>
-    <item android:title="このアプリについて" android:id="@+id/about" 
-    android:icon="@android:drawable/ic_menu_help"
-        android:titleCondensed="ヘルプ"
-    
-    ></item>
+    android:icon="@android:drawable/ic_menu_share"/>
+    <item android:title="栞をはさむ" android:id="@+id/possave"
+    android:icon="@drawable/ic_menu_mark" />
+    <item android:title="栞に飛ぶ" android:id="@+id/posload"
+    android:icon="@drawable/ic_menu_goto" />
 </menu>

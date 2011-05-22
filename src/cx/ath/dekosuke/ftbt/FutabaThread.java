@@ -62,7 +62,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 public class FutabaThread extends Activity implements Runnable {
 
 	public ArrayList<FutabaStatus> statuses = null; // レス一覧
-	private FutabaThreadAdapter adapter = null;
+	public FutabaThreadAdapter adapter = null;
 	public String threadURL = null;
 	public String baseURL = null;
 	public int threadNum;
@@ -273,6 +273,62 @@ public class FutabaThread extends Activity implements Runnable {
 		return true;
 	}
 
+	public void registerShiori(int position) {
+		try {
+			if (position == 0) {
+				Toast.makeText(this, "スレッドの最初では栞を登録できません", Toast.LENGTH_SHORT)
+						.show();
+			} else {
+				// FutabaStatus item = (FutabaStatus) items.get(position);
+				// スレッドファイルに書き込み
+				HistoryManager man = new HistoryManager();
+				man.Load();
+				FutabaThreadContent thread = new FutabaThreadContent();
+				thread.pointAt = position;
+				thread.threadNum = threadNum;
+				FLog.d(thread.toString());
+				man.updateThread(thread);
+				man.Save();
+				View view = listView.getChildAt(0);
+				adapter.shioriPosition = position;
+				adapter.setShioriStatus(view);
+				adapter.notifyDataSetChanged();// 再描画
+				listView.invalidate();
+
+				Toast.makeText(this, "しおりを登録しました。", Toast.LENGTH_SHORT).show();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			FLog.d("message", e);
+		}
+	}
+
+	public void removeShiori(int position) {
+		try {
+			// FutabaStatus item = (FutabaStatus) items.get(position);
+			// スレッドファイルに書き込み
+			HistoryManager man = new HistoryManager();
+			man.Load();
+			FutabaThreadContent thread = new FutabaThreadContent();
+			thread.pointAt = -1;
+			thread.threadNum = threadNum;
+			FLog.d(thread.toString());
+			man.updateThreadRemoveShiori(thread);
+			man.Save();
+			View view = listView.getChildAt(0);
+			adapter.shioriPosition = 0;
+			// adapter.setShioriStatus(view);
+			adapter.notifyDataSetChanged();// 再描画
+			listView.invalidate();
+
+			Toast.makeText(this, "しおりを削除しました。", Toast.LENGTH_SHORT).show();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			FLog.d("message", e);
+		}
+
+	}
+
 	// メニューをクリック
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -280,6 +336,37 @@ public class FutabaThread extends Activity implements Runnable {
 		switch (item.getItemId()) {
 		case R.id.post:
 			onClickPostBtn(null);
+			return true;
+		case R.id.possave:
+			// 栞をはさむ
+		{
+			int position = listView.getFirstVisiblePosition();
+			registerShiori(position);
+		}
+			// 現在位置の取得
+			return true;
+		case R.id.posload:
+			// 栞を読み込む(位置移動)
+			try {
+				HistoryManager man = new HistoryManager();
+				man.Load();
+				FutabaThreadContent thread = man.get(threadNum);
+				int position = thread.pointAt;
+				if (position != 0) {
+					listView.setSelection(Math.min(position,
+							adapter.items.size() - 1));
+					Toast.makeText(this, "しおりを読み込みました", Toast.LENGTH_SHORT)
+							.show();
+				} else {
+					Toast.makeText(this, "しおりが登録されていません", Toast.LENGTH_SHORT)
+							.show();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				FLog.d("message", e);
+				Toast.makeText(this, "しおりが見つかりませんでした", Toast.LENGTH_SHORT)
+						.show();
+			}
 			return true;
 		case R.id.share:
 			intent = new Intent(Intent.ACTION_SEND);
@@ -458,14 +545,22 @@ public class FutabaThread extends Activity implements Runnable {
 
 				}
 
+				HistoryManager man = new HistoryManager();
+				man.Load();
 				if ((!network_ok) && (!cache_ok)) { // データ取得もキャッシュもないスレッドは消す
-					HistoryManager man = new HistoryManager();
 					FutabaThreadContent thread = new FutabaThreadContent();
 					thread.threadNum = threadNum;
 					FLog.d("del thread" + thread.toString());
-					man.Load();
 					man.removeThread(thread);
 					man.Save();
+				}
+
+				// しおりの場所を調べる
+				try {
+					FutabaThreadContent thisThread = man.get(threadNum);
+					adapter.shioriPosition = thisThread.pointAt;
+				} catch (Exception e) {
+					FLog.d("message", e);
 				}
 
 				ArrayList<FutabaStatus> statuses = new ArrayList<FutabaStatus>();
@@ -506,7 +601,7 @@ public class FutabaThread extends Activity implements Runnable {
 					public void run() {
 						adapter.items.clear();
 						for (int i = 0; i < statuses_ref.size(); ++i) {
-							FLog.d(statuses_ref.get(i).toString());
+							// FLog.d(statuses_ref.get(i).toString());
 							if (i != 0 && i == prevSize_ref) {
 								adapter.items.add(FutabaStatus.createBlank());
 							}

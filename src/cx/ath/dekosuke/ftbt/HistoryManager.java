@@ -28,6 +28,13 @@ public class HistoryManager {
 	public void clear() {
 		threads = new LinkedHashMap<Integer, FutabaThreadContent>();
 	}
+	
+	public FutabaThreadContent get(int threadNum) throws Exception{
+		if (!threads.containsKey(threadNum)) {
+			throw new Exception("Thread "+threadNum+"not found");
+		}
+		return threads.get(threadNum);
+	}
 
 	// スレッドの追加
 	public void addThread(FutabaThreadContent thread, int maxHistoryNum) {
@@ -57,6 +64,20 @@ public class HistoryManager {
 			if (Integer.parseInt(thread_a.resNum) != 0) {
 				thread.resNum = thread_a.resNum;
 			}
+			if (thread_a.pointAt != 0) {
+				thread.pointAt = thread_a.pointAt;
+			}
+			threads.put(thread.threadNum, thread);
+		}
+	}
+
+	public void updateThreadRemoveShiori(FutabaThreadContent thread_a) throws Exception {
+		if (!threads.containsKey(thread_a.threadNum)) {
+			throw new Exception("thread not found in history");
+		} else {
+			// すでにある->一部データ更新
+			FutabaThreadContent thread = threads.get(thread_a.threadNum);
+			thread.pointAt = 0;
 			threads.put(thread.threadNum, thread);
 		}
 	}

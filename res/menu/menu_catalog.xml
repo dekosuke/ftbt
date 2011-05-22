@@ -10,11 +10,5 @@
     android:icon="@android:drawable/ic_menu_search"></item>
     <item android:title="URLを共有" android:id="@+id/share"
     android:icon="@android:drawable/ic_menu_share"></item>
-    <item android:title="設定" android:id="@+id/settings"
-    android:icon="@android:drawable/ic_menu_preferences"></item>
-    <item android:title="このアプリについて" android:id="@+id/about" 
-    android:icon="@android:drawable/ic_menu_help"
-            android:titleCondensed="ヘルプ"
-    
-    ></item>
+    >
 </menu>

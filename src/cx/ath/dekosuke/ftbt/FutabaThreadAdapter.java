@@ -47,6 +47,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	// 画面サイズ
 	private int width;
 	private int height;
+	
+	//しおり位置
+	public int shioriPosition=0;
 
 	public FutabaThreadAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
@@ -78,13 +81,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			}
 
 			FutabaThread activity = (FutabaThread) getContext();
-
-			if (position == 0) { // 最初だけ色違う
-				view.setBackgroundColor(Color.rgb(255, 255, 238));
-			} else {
-				// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
-				view.setBackgroundColor(Color.rgb(240, 224, 214));
-			}
 
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
@@ -146,16 +142,29 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						}
 						// name.setText(item.name);// item.getImgURL());
 					}
+
 					CharSequence cs_title = Html.fromHtml(title_base); // HTML表示
 					title.setText(cs_title);// item.getImgURL());
 					// TextView name = (TextView) view.findViewById(R.id.name);
-
+					
 					// スクリーンネームをビューにセット
 					TextView text = (TextView) view.findViewById(R.id.maintext);
 					TextView bottomtext = (TextView) view
 							.findViewById(R.id.bottomtext);
 					if (item.datestr != null) {
 						bottomtext.setText(item.datestr + " No." + item.id);
+					}
+					
+
+					if (position == 0) { // 最初だけ色違う
+						view.setBackgroundColor(Color.rgb(255, 255, 238));
+					} else {
+						// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
+						if(position == shioriPosition){ //しおり位置
+							setShioriStatus(view);
+						}else{
+							view.setBackgroundColor(Color.rgb(240, 224, 214));
+						}
 					}
 					
 					//ここらへんは区切り線で変えた可能性のあるデータを元に戻す
@@ -207,6 +216,14 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		}
 
 		return view;
+	}
+	
+	void setShioriStatus(View view){
+		view.setBackgroundColor(Color.parseColor("#BBFFBB"));					
+		TextView bottomText = (TextView) view.findViewById(R.id.bottomtext);
+		String bottomTextStr = "[しおり]"+bottomText.getText().toString();
+		
+		bottomText.setText(bottomTextStr);
 	}
 
 	static int getSmlImageWidth(Bitmap bm, int width, int height) {

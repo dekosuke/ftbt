@@ -24,28 +24,30 @@ android:id="@+id/top_blank">
           
       <Button android:text="←"
         android:id="@+id/prev_btn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:layout_gravity="left|center"
-        android:layout_width="80dip">
+        android:layout_weight="3"
+       >
     	</Button>
       <Button android:text="→"
         android:id="@+id/next_btn"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:layout_gravity="center"
-       android:layout_width="80dip">
+        android:layout_weight="3"
+       >
     	</Button>
       <Button android:text="保存"
         android:id="@+id/down_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:layout_gravity="center|right"
-       android:layout_weight="1">
+        android:layout_weight="3"
+      >
     	</Button>
       <Button android:text="回転"
         android:id="@+id/rotate_btn"
-        android:layout_width="60dip"
+        android:layout_weight="3"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-         android:layout_gravity="center|right"
        />
     
     </LinearLayout>  
