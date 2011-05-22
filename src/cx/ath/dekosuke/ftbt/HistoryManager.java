@@ -45,11 +45,12 @@ public class HistoryManager {
 			// このときの差分更新アルゴリズムがなんとも・・・
 			FutabaThreadContent currentThread = threads.get(thread.threadNum);
 			thread.pointAt = currentThread.pointAt;
+			threads.remove(thread.threadNum); //一度削除することで挿入順を最後に
 			threads.put(thread.threadNum, thread);
 		}
 		FLog.d("maxHistoryNum=" + maxHistoryNum);
 		if (threads.size() > maxHistoryNum) {
-			for (Object key : threads.keySet()) {
+			for (Object key : threads.keySet()) { //これが挿入順であることを期待してる
 				threads.remove(key);
 				break;
 			}
@@ -132,8 +133,13 @@ public class HistoryManager {
 			threads_array.add(threads.get(it.next()));
 		}
 		// 更新日時順ソート
-		Collections.sort(threads_array, comparator);
-		return threads_array;
+		//Collections.sort(threads_array, comparator);
+		//反転
+		ArrayList<FutabaThreadContent> threads_array_rev = new ArrayList<FutabaThreadContent>();
+		for(int i=threads_array.size()-1;i>=0;--i){
+			threads_array_rev.add(threads_array.get(i));
+		}
+		return threads_array_rev;
 	}
 
 	// スレッド最終閲覧時間順ソート
