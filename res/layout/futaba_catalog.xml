@@ -1,93 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#FFFFEE"
->
-<LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/search_bar"
-    android:background="#FFCC99"
-    android:gravity="center_vertical"  
-    android:layout_gravity="center_vertical"  
-    >
-    <Button
-	android:id="@+id/searchhidebutton" 
-    android:onClick="onClickSearchHideButton"
-    android:layout_width="wrap_content" 
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"  
-    android:textSize="12sp"
-    android:singleLine="true"
-    android:background = "@android:drawable/ic_delete"
-    />
-    <EditText android:text="" android:id="@+id/searchinput" 
-    android:layout_weight="1"
-    android:layout_gravity="center_vertical"  
-    android:singleLine="true"
-    	android:layout_width="fill_parent" android:layout_height="wrap_content"/>
-    <ImageButton
-    android:id="@+id/searchbutton" 
-    android:src="@drawable/ic_btn_search"
-    android:onClick="onClickSearchButton"
-    android:layout_gravity="center_vertical"  
-    android:layout_width="wrap_content" 
-    android:layout_height="wrap_content"
-    />
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical" android:background="#FFFFEE">
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:id="@+id/search_bar" android:background="#FFCC99"
+		android:gravity="center_vertical" android:layout_gravity="center_vertical">
+		<Button android:id="@+id/searchhidebutton" android:onClick="onClickSearchHideButton"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:textSize="12sp"
+			android:singleLine="true" android:background="@android:drawable/ic_delete" />
+		<EditText android:text="" android:id="@+id/searchinput"
+			android:layout_weight="1" android:layout_gravity="center_vertical"
+			android:singleLine="true" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" />
+		<ImageButton android:id="@+id/searchbutton" android:src="@drawable/ic_btn_search"
+			android:onClick="onClickSearchButton" android:layout_gravity="center_vertical"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" />
 
-</LinearLayout>
-<RelativeLayout 
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    > 
-<RelativeLayout android:layout_width="fill_parent"
-android:layout_height="wrap_content" android:id="@+id/top_control_bar">
-</RelativeLayout>
+	</LinearLayout>
+	<RelativeLayout android:orientation="vertical"
+		android:layout_width="wrap_content" android:layout_height="wrap_content">
 
-<LinearLayout
-    android:orientation="horizontal"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:id="@+id/bottom_control_bar"
-    >
-    <Button
-        android:id="@+id/reload_btn"
-        android:text="リロード"
-        android:drawableLeft="@drawable/sync_button"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:onClick="onClickReloadBtn"
-        android:layout_weight="2"
-        />
-    <Button android:text="履歴モードへ"
-        android:id="@+id/history_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:onClick="onClickHistoryBtn"
-        android:layout_weight="2"        
-        >
-    </Button>
-    <Button android:text="履歴を削除"
-        android:id="@+id/delete_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:onClick="onClickDeleteBtn"
-        android:layout_weight="2"
-        >
-    </Button>
-</LinearLayout>
+		<ListView android:id="@+id/cataloglistview"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			/>
 
-<ListView android:id="@+id/cataloglistview"
-    android:layout_width="fill_parent"
-    android:layout_height="0dip"
-    android:layout_below="@id/top_control_bar" 
-    android:layout_above="@id/bottom_control_bar"
-     />
-</RelativeLayout>
+		<LinearLayout android:orientation="horizontal"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true" android:id="@+id/bottom_control_bar">
+			<ImageButton android:id="@+id/reload_btn"
+				android:src="@drawable/ic_menu_refresh" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:onClick="onClickReloadBtn"
+				android:background="#33000000"
+				android:layout_margin="2dip"
+				android:layout_weight="1" />
+			<ImageButton android:id="@+id/history_btn"
+				android:src="@drawable/ic_menu_recent_history"
+				android:background="#33000000"
+				android:layout_margin="2dip"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:onClick="onClickHistoryBtn" android:layout_weight="1"/>
+			<ImageButton android:id="@+id/delete_btn"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:onClick="onClickDeleteBtn" android:layout_weight="1"
+				android:src="@drawable/ic_menu_delete"
+				android:background="#33000000"
+				android:layout_margin="2dip"
+			/>
+		</LinearLayout>
+
+	</RelativeLayout>
 </LinearLayout>
 

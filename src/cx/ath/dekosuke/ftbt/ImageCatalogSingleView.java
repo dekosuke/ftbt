@@ -80,6 +80,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		width = w; // これで幅が取得できる
 		height = h; // これで高さが取得できる
+		setImage(); //回転したときに位置が崩れるので再取得
 	}
 
 	// 画像への参照をなくしてメモリを解放させる

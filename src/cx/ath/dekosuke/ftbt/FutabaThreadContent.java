@@ -54,4 +54,15 @@ public class FutabaThreadContent implements Serializable{
 		" lastAccessed="+lastAccessed+
 		" isChecked="+isChecked;
 	}
+	
+	//区切り用仮想スレ作成
+	public static FutabaThreadContent createBlank(){
+		FutabaThreadContent st = new FutabaThreadContent();
+		st.id = -1;
+		return st;
+	}
+	
+	public static boolean isBlank(FutabaThreadContent thread){
+		return thread.id==-1;
+	}
 }

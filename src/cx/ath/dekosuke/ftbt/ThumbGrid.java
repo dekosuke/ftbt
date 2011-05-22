@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class ThumbGrid extends Activity implements Runnable {
 	public String baseUrl = "";
 	private String catalogURL;
 	private String BBSName = ""; // 板名
+	
+	private GridView grid;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,7 +130,7 @@ public class ThumbGrid extends Activity implements Runnable {
 		TextView imagenum = (TextView) findViewById(id.imagenum);
 		imagenum.setText("画像:" + thumbURLs.size() + "枚  ");
 
-		GridView grid = (GridView) findViewById(id.gridview);
+		grid = (GridView) findViewById(id.gridview);
 		/*
 		 * GridView grid = new GridView(this); linearLayout.addView(grid,
 		 * createParam(WC, FP));
@@ -136,7 +139,7 @@ public class ThumbGrid extends Activity implements Runnable {
 		if(width<height){
 			grid.setNumColumns(3);
 		}else{
-			grid.setNumColumns(6);			
+			grid.setNumColumns(5);			
 		}
 		//grid.setVerticalSpacing(10);
 		// grid.setStretchMode(GridView.STRETCH_SPACING);
@@ -151,7 +154,24 @@ public class ThumbGrid extends Activity implements Runnable {
 
 		waitDialog.dismiss();
 	}
-
+	
+	//回転のときに呼ばれる
+	public void onConfigurationChanged(Configuration newConfig){
+		super.onConfigurationChanged(newConfig);
+		// 画面サイズの取得
+		WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		width = display.getWidth();
+		height = display.getHeight();
+		
+		if(width<height){
+			grid.setNumColumns(3);
+		}else{
+			grid.setNumColumns(5);			
+		}
+		System.gc();
+	}
+	
 	private LinearLayout.LayoutParams createParam(int w, int h) {
 		return new LinearLayout.LayoutParams(w, h);
 	}

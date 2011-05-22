@@ -119,7 +119,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	}
 
 	public void setWait() {
-		if(waitDialog!=null){
+		if (waitDialog != null) {
 			waitDialog.dismiss();
 		}
 		waitDialog = new ProgressDialog(this);
@@ -169,13 +169,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				(ArrayList<FutabaThreadContent>) fthreads.clone());
 		// 通常モード・履歴モードの片方でしか使わないボタンを消す
 		if (!mode.equals("history")) { // 通常モード
-			Button historyDeleteButton = (Button) findViewById(id.delete_btn);
+			ImageButton historyDeleteButton = (ImageButton) findViewById(id.delete_btn);
 			historyDeleteButton.setVisibility(View.GONE);
 		} else { // 履歴モード
 			// 通常モードのときのボタンを非表示に
-			Button reloadButton = (Button) findViewById(id.reload_btn);
+			ImageButton reloadButton = (ImageButton) findViewById(id.reload_btn);
 			reloadButton.setVisibility(View.GONE);
-			Button historyButton = (Button) findViewById(id.history_btn);
+			ImageButton historyButton = (ImageButton) findViewById(id.history_btn);
 			historyButton.setVisibility(View.GONE);
 		}
 
@@ -203,6 +203,15 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			}
 		});
 
+		/*(
+		LinearLayout footer = new LinearLayout(this);
+		footer.setLayoutParams(createParam(0, 40));
+		listView.addFooterView(footer);
+	*/
+		Button btn = new Button(this);
+		btn.setText("hoge\fuga");
+		btn.setVisibility(View.INVISIBLE);
+		listView.addFooterView(btn);
 		listView.setAdapter(adapter);
 
 		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
@@ -213,6 +222,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		// FutabaThreadContentGetter();
 		// getterThread.start();
 	}
+	
+    private LinearLayout.LayoutParams createParam(int w, int h){
+        return new LinearLayout.LayoutParams(w, h);
+    }
 
 	private class FutabaCatalogContentGetter extends Thread {
 		@Override
@@ -290,7 +303,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						fthreads.get(i).BBSName = BBSName;
 					}
 
-					title_text = BBSName + "(カタログ) - " + getString(R.string.app_name);
+					title_text = BBSName + "(カタログ) - "
+							+ getString(R.string.app_name);
 
 				} else { // 履歴モード。複数板混在なので注意
 					HistoryManager man = new HistoryManager();
@@ -361,8 +375,9 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	// 履歴削除ボタン
 	public void onClickDeleteBtn(View v) {
-		if(adapter.items.size() != fthreads.size()){
-			Toast.makeText(this, "検索絞り込み中は、スレッドを削除できません", Toast.LENGTH_LONG).show();
+		if (adapter.items.size() != fthreads.size()) {
+			Toast.makeText(this, "検索絞り込み中は、スレッドを削除できません", Toast.LENGTH_LONG)
+					.show();
 			return;
 		}
 		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ", "すべてのスレ" };
@@ -574,16 +589,17 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 	}
-	
-	public boolean onSearchRequested(){
-		//Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
+
+	public boolean onSearchRequested() {
+		// Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
 		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
 		if (searchBar.getVisibility() == View.GONE) {
 			searchBar.setVisibility(View.VISIBLE);
 		} else {
 			searchBar.setVisibility(View.GONE);
-		}		return false;
-		
+		}
+		return false;
+
 	}
 
 	@Override
