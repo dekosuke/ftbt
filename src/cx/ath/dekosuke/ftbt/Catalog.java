@@ -169,13 +169,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				(ArrayList<FutabaThreadContent>) fthreads.clone());
 		// 通常モード・履歴モードの片方でしか使わないボタンを消す
 		if (!mode.equals("history")) { // 通常モード
-			ImageButton historyDeleteButton = (ImageButton) findViewById(id.delete_btn);
+			Button historyDeleteButton = (Button) findViewById(id.delete_btn);
 			historyDeleteButton.setVisibility(View.GONE);
 		} else { // 履歴モード
 			// 通常モードのときのボタンを非表示に
-			ImageButton reloadButton = (ImageButton) findViewById(id.reload_btn);
+			Button reloadButton = (Button) findViewById(id.reload_btn);
 			reloadButton.setVisibility(View.GONE);
-			ImageButton historyButton = (ImageButton) findViewById(id.history_btn);
+			Button historyButton = (Button) findViewById(id.history_btn);
 			historyButton.setVisibility(View.GONE);
 		}
 
@@ -211,7 +211,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		Button btn = new Button(this);
 		btn.setText("hoge\fuga");
 		btn.setVisibility(View.INVISIBLE);
-		listView.addFooterView(btn);
+		//listView.addFooterView(btn);
 		listView.setAdapter(adapter);
 
 		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);

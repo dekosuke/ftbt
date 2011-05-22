@@ -21,35 +21,30 @@
 	</LinearLayout>
 	<RelativeLayout android:orientation="vertical"
 		android:layout_width="wrap_content" android:layout_height="wrap_content">
-
-		<ListView android:id="@+id/cataloglistview"
-			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			/>
+		<RelativeLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/top_control_bar">
+		</RelativeLayout>
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:layout_alignParentBottom="true" android:id="@+id/bottom_control_bar">
-			<ImageButton android:id="@+id/reload_btn"
-				android:src="@drawable/ic_menu_refresh" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:onClick="onClickReloadBtn"
-				android:background="#33000000"
-				android:layout_margin="2dip"
-				android:layout_weight="1" />
-			<ImageButton android:id="@+id/history_btn"
-				android:src="@drawable/ic_menu_recent_history"
-				android:background="#33000000"
-				android:layout_margin="2dip"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:onClick="onClickHistoryBtn" android:layout_weight="1"/>
-			<ImageButton android:id="@+id/delete_btn"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:onClick="onClickDeleteBtn" android:layout_weight="1"
-				android:src="@drawable/ic_menu_delete"
-				android:background="#33000000"
-				android:layout_margin="2dip"
-			/>
+			<Button android:id="@+id/reload_btn" android:text="リロード"
+				android:drawableLeft="@drawable/sync_button" android:layout_width="fill_parent"
+				android:layout_height="fill_parent" android:onClick="onClickReloadBtn"
+				android:layout_weight="2" />
+			<Button android:text="履歴モードへ" android:id="@+id/history_btn"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:onClick="onClickHistoryBtn" android:layout_weight="2">
+			</Button>
+			<Button android:text="履歴を削除" android:id="@+id/delete_btn"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:onClick="onClickDeleteBtn" android:layout_weight="2">
+			</Button>
 		</LinearLayout>
 
+		<ListView android:id="@+id/cataloglistview"
+			android:layout_width="fill_parent" android:layout_height="0dip"
+			android:layout_below="@id/top_control_bar" android:layout_above="@id/bottom_control_bar" />
 	</RelativeLayout>
 </LinearLayout>
 
