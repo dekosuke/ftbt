@@ -56,10 +56,10 @@ public class FutabaThreadParser {
 							+ ".*?<font[^>]+><b>(.*?) ?</b></font>"
 							+ "(.*?) No.([0-9]+).+?<blockquote", Pattern.DOTALL);
 			Pattern imgTextAttrPattern = Pattern.compile(
-					"<input[^>]+>([^<]*?)<a", Pattern.DOTALL);
+					"<input[^>]+>([^<]*?) No.([0-9]+).+?<a", Pattern.DOTALL);
+			//11/05/23(月)00:05:40 No.117233203 
 			Pattern textPattern = Pattern.compile(
 					"<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
-
 			Pattern imgPattern = Pattern.compile(
 					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')",
 					Pattern.DOTALL);
@@ -106,6 +106,7 @@ public class FutabaThreadParser {
 				Matcher mcTextAttr = imgTextAttrPattern.matcher(honbun);
 				if (mcTextAttr.find()) {
 					statusTop.datestr = mcTextAttr.group(1);
+					statusTop.id = Integer.parseInt(mcTextAttr.group(2));
 				}
 			}
 			String text = mcText.group(1);
@@ -140,6 +141,7 @@ public class FutabaThreadParser {
 							.group(1));
 					if (mcTextAttr.find()) {
 						status.datestr = mcTextAttr.group(1);
+						status.id = Integer.parseInt(mcTextAttr.group(2));
 					}
 				}
 

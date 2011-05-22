@@ -160,7 +160,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						view.setBackgroundColor(Color.rgb(255, 255, 238));
 					} else {
 						// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
-						if(position == shioriPosition){ //しおり位置
+						if(item.id!=0 && item.id == shioriPosition){ //しおり位置
 							setShioriStatus(view);
 						}else{
 							view.setBackgroundColor(Color.rgb(240, 224, 214));

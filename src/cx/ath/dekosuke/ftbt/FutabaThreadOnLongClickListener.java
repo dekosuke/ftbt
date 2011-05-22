@@ -43,6 +43,10 @@ public class FutabaThreadOnLongClickListener implements
 
 	public boolean onItemLongClick(AdapterView<?> arg0, View view, int arg2,
 			long arg3) {
+		if(view == null){
+			FLog.d("null view at onItemLongClick");
+			return false;
+		}
 		TextView bottomtext = (TextView) view.findViewById(R.id.bottomtext);
 		if (bottomtext.length() < 5) { // 区切り線とか
 			return false;
@@ -53,11 +57,13 @@ public class FutabaThreadOnLongClickListener implements
 		dlg = new AlertDialog.Builder(fthread);
 		dlg.setTitle("レスに対する操作");
 		String[] strs_temp = null;
+		FutabaStatus item = (FutabaStatus)fthread.adapter.items.get(arg2);
+
 		//これもっと良い書き方ないのか・・・
 		if(arg2==0){
 			String[] temp = { "削除", "引用して返信", "他アプリと共有"};
 			strs_temp = temp;
-		}else if(arg2 != fthread.adapter.shioriPosition){
+		}else if(item!=null && item.id != fthread.adapter.shioriPosition){
 			String[] temp = { "削除", "引用して返信", "他アプリと共有", "栞をはさむ" };
 			strs_temp = temp;	
 		}else{
@@ -293,7 +299,8 @@ public class FutabaThreadOnLongClickListener implements
 	
 	public void modifyShiori(View view) {
 		
-		if(currentPosition == fthread.adapter.shioriPosition){ //栞があるー＞削除
+		FutabaStatus item = (FutabaStatus)fthread.adapter.items.get(currentPosition);
+		if(item.id == fthread.adapter.shioriPosition){ //栞があるー＞削除
 			fthread.removeShiori(currentPosition);			
 		}else{ //栞がない場所－＞栞追加
 			fthread.registerShiori(currentPosition);

@@ -279,23 +279,28 @@ public class FutabaThread extends Activity implements Runnable {
 				Toast.makeText(this, "スレッドの最初では栞を登録できません", Toast.LENGTH_SHORT)
 						.show();
 			} else {
-				// FutabaStatus item = (FutabaStatus) items.get(position);
+				FutabaStatus item = (FutabaStatus) adapter.items.get(position);
+				if (FutabaStatus.isBlank(item)) {
+					// 新着のための空白部分の場合、次のレスに
+					position += 1;
+					item = (FutabaStatus) adapter.items.get(position);
+				}
 				// スレッドファイルに書き込み
 				HistoryManager man = new HistoryManager();
 				man.Load();
 				FutabaThreadContent thread = new FutabaThreadContent();
-				thread.pointAt = position;
+				thread.pointAt = item.id;
 				thread.threadNum = threadNum;
 				FLog.d(thread.toString());
 				man.updateThread(thread);
 				man.Save();
 				View view = listView.getChildAt(0);
-				adapter.shioriPosition = position;
+				adapter.shioriPosition = item.id;
 				adapter.setShioriStatus(view);
 				adapter.notifyDataSetChanged();// 再描画
 				listView.invalidate();
 
-				Toast.makeText(this, "しおりを登録しました。", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "栞を登録しました。", Toast.LENGTH_SHORT).show();
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -321,12 +326,51 @@ public class FutabaThread extends Activity implements Runnable {
 			adapter.notifyDataSetChanged();// 再描画
 			listView.invalidate();
 
-			Toast.makeText(this, "しおりを削除しました。", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "栞を削除しました。", Toast.LENGTH_SHORT).show();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			FLog.d("message", e);
 		}
-
+	}
+	
+	public void searchShiori() {
+		try {
+			HistoryManager man = new HistoryManager();
+			man.Load();
+			FutabaThreadContent thread = man.get(threadNum);
+			/*
+			 * int position = thread.pointAt; if (position != 0) {
+			 * listView.setSelection(Math.min(position, adapter.items.size() -
+			 * 1)); Toast.makeText(this, "栞に移動しました", Toast.LENGTH_SHORT).show();
+			 * } else { Toast.makeText(this, "栞が登録されていません",
+			 * Toast.LENGTH_SHORT).show(); }
+			 */
+			int position = thread.pointAt;
+			if (position == 0) {
+				Toast.makeText(this, "栞が登録されていません", Toast.LENGTH_SHORT)
+				.show();
+			} else {
+				int i = 0;
+				for (i = 0; i < adapter.items.size(); ++i) {
+					FutabaStatus status = (FutabaStatus) adapter.items.get(i);
+					if (status.id == position) {
+						listView.setSelection(i);
+						Toast.makeText(this, "栞に移動しました", Toast.LENGTH_SHORT)
+								.show();
+						break;
+					}
+					
+				}
+				if (i == adapter.items.size()) {
+					Toast.makeText(this, "栞の位置が見つかりませんでした", Toast.LENGTH_SHORT)
+							.show();
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			FLog.d("message", e);
+			Toast.makeText(this, "栞が見つかりませんでした", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	// メニューをクリック
@@ -347,26 +391,7 @@ public class FutabaThread extends Activity implements Runnable {
 			return true;
 		case R.id.posload:
 			// 栞を読み込む(位置移動)
-			try {
-				HistoryManager man = new HistoryManager();
-				man.Load();
-				FutabaThreadContent thread = man.get(threadNum);
-				int position = thread.pointAt;
-				if (position != 0) {
-					listView.setSelection(Math.min(position,
-							adapter.items.size() - 1));
-					Toast.makeText(this, "しおりを読み込みました", Toast.LENGTH_SHORT)
-							.show();
-				} else {
-					Toast.makeText(this, "しおりが登録されていません", Toast.LENGTH_SHORT)
-							.show();
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				FLog.d("message", e);
-				Toast.makeText(this, "しおりが見つかりませんでした", Toast.LENGTH_SHORT)
-						.show();
-			}
+			searchShiori();
 			return true;
 		case R.id.share:
 			intent = new Intent(Intent.ACTION_SEND);
