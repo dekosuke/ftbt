@@ -30,13 +30,13 @@ import java.net.URL;
 
 import android.graphics.BitmapFactory;
 
-//File Saver
+//SDカードといいつつSDカードへの保存に加えてHTTPアクセスも扱っているクラス
 public class SDCard {
 
 	public static String getCacheDir() {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		//String sdcard_dir = Environment.getDataDirectory().getPath();
-		//FLog.d("dir="+sdcard_dir);
+		// String sdcard_dir = Environment.getDataDirectory().getPath();
+		// FLog.d("dir="+sdcard_dir);
 		String cacheDir = sdcard_dir + "/.ftbtcache/";
 		File file = new File(cacheDir);
 		file.mkdir(); // ディレクトリないときにつくる
@@ -49,6 +49,16 @@ public class SDCard {
 		File file = new File(saveDir);
 		file.mkdir(); // ディレクトリないときにつくる
 		return saveDir;
+	}
+
+	// 保存ディレクトリ内にサブディレクトリを生成する
+	public static String getThreadDir(int threadNum) {
+		String saveDir = getSaveDir();
+		String threadDir = saveDir + threadNum + "/";
+		File file = new File(threadDir);
+		file.mkdir(); // ディレクトリないときにつくる
+		return threadDir;
+
 	}
 
 	public static String getSeriarizedDir() {
@@ -78,7 +88,7 @@ public class SDCard {
 		} catch (Exception e) {
 			FLog.d("failed to write file" + name);
 		}
-		
+
 		// Environment.getDataDirectory().getPath(); // /dataなど
 		// Environment.getDownloadCacheDirectory().getPath(); // cacheなど
 	}
@@ -151,6 +161,28 @@ public class SDCard {
 			throws IOException {
 		String srcfilename = getCacheDir() + urlhash;
 		String dstfilename = getSaveDir() + url;
+		// ファイルコピーのフェーズ
+		InputStream input = null;
+		OutputStream output = null;
+		File dstFile = new File(dstfilename);
+		input = new FileInputStream(new File(srcfilename));
+		output = new FileOutputStream(dstFile);
+
+		int DEFAULT_BUFFER_SIZE = 1024 * 4;
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int n = 0;
+		while (-1 != (n = input.read(buffer))) {
+			output.write(buffer, 0, n);
+		}
+		input.close();
+		output.close();
+		return dstFile;
+	}
+
+	public static File copyCacheToThreadFile(String urlhash, String url, int threadNum)
+			throws IOException {
+		String srcfilename = getCacheDir() + urlhash;
+		String dstfilename = getThreadDir(threadNum) + url;
 		// ファイルコピーのフェーズ
 		InputStream input = null;
 		OutputStream output = null;
@@ -284,10 +316,9 @@ public class SDCard {
 	}
 
 	// Galaxy S以外だと使えるらしいSDカードマウントチェック
-	//http://sakaneya.blogspot.com/2011/02/galaxy-ssd.html
+	// http://sakaneya.blogspot.com/2011/02/galaxy-ssd.html
 	public static boolean isMountedExSD() {
 		return Environment.MEDIA_MOUNTED.equals(Environment.MEDIA_MOUNTED);
 	}
-
 
 }
