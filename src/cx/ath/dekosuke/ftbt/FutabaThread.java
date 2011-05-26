@@ -70,6 +70,7 @@ public class FutabaThread extends Activity implements Runnable {
 	public String threadURL = null;
 	public String baseURL = null;
 	public int threadNum;
+	public Toast toast;
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
@@ -488,11 +489,18 @@ public class FutabaThread extends Activity implements Runnable {
 		public void run() {
 			// 保存ディレクトリ作成
 			// SDCard.createThreadDir(thread)
+			int saveItemNum = 0;
 			for (int i = 0; i < imgURLs.size(); ++i) {
+				if(!waitDialog.isShowing()){ //キャンセルされた
+					return;
+				}
 				try {
 					final String imgURL = imgURLs.get(i);
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
+					if(SDCard.savedImageToThreadExist(file.getName(), threadNum)){ //すでにファイルある
+						continue;
+					}
 					File saved_file = ImageCache.saveImageToThread(imgURL,
 							threadNum);
 					if (saved_file == null) { // キャッシュにファイルがない
@@ -500,11 +508,14 @@ public class FutabaThread extends Activity implements Runnable {
 						saved_file = ImageCache.saveImageToThread(imgURL,
 								threadNum);
 					}
+					if (saved_file != null) {
+						saveItemNum += 1;
+					}
 					final File saved_file_f = saved_file;
 					// 描画に関わる処理はここに集約(メインスレッド実行)
 					handler3.post(new Runnable() {
 						public void run() {
-							waitDialog.show();
+							//waitDialog.show();
 							if (saved_file_f != null) {
 
 								waitDialog.setMessage("ファイル"+saved_file_f+"に保存しました");
@@ -536,7 +547,10 @@ public class FutabaThread extends Activity implements Runnable {
 										Images.Media.EXTERNAL_CONTENT_URI,
 										values);
 							} else {
-								Toast.makeText(adapter.getContext(),
+								if(toast!=null){
+									toast.cancel();
+								}
+								toast.makeText(adapter.getContext(),
 										"画像"+imgURL+"の取得に失敗しました", Toast.LENGTH_SHORT)
 										.show();
 
@@ -548,9 +562,14 @@ public class FutabaThread extends Activity implements Runnable {
 					FLog.d("message", e);
 				}
 			}
+			final int saveItemNum_f = saveItemNum;
 			handler3.post(new Runnable() {
 				public void run() {
 					waitDialog.dismiss();
+					if(toast!=null){
+						toast.cancel();
+					}
+					toast.makeText(adapter.getContext(), ""+saveItemNum_f+"個のファイルを新規に保存しました", Toast.LENGTH_SHORT ).show();
 				}
 			});
 		}

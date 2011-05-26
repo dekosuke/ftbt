@@ -7,7 +7,7 @@
     />
     <item android:title="Tweet" android:id="@+id/tweet"
     android:icon="@drawable/ic_menu_dialog" />
-    <item android:title="スレを保存" android:id="@+id/download"
+    <item android:title="スレの全保存" android:id="@+id/download"
     android:icon="@android:drawable/ic_menu_save" />
     <item android:title="共有" android:id="@+id/share"
     android:icon="@android:drawable/ic_menu_share"/>

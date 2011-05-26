@@ -178,6 +178,12 @@ public class SDCard {
 		output.close();
 		return dstFile;
 	}
+	
+	public static boolean savedImageToThreadExist(String fileName, int threadNum){
+		String dstfilename = getThreadDir(threadNum) + fileName;
+		File file = new File(dstfilename);
+		return file.exists();
+	}
 
 	public static File copyCacheToThreadFile(String urlhash, String url, int threadNum)
 			throws IOException {
