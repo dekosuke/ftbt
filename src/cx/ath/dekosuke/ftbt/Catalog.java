@@ -69,7 +69,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private ProgressDialog waitDialog;
 	private Thread thread;
 	// private ListView listView;
-	private String BBSName = ""; // 板名
+	public String BBSName = ""; // 板名
 	private ListView listView;
 
 	// 履歴モードか通常モードか

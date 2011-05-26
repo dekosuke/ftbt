@@ -77,12 +77,12 @@ public class ImageCache {
 		return null;
 	}
 	
-	public static File saveImageToThread(String url, int threadNum) {
+	public static File saveImageToThread(String url, String threadName) {
 		String urlHash = FutabaCrypt.createDigest(url);
 		File file = new File(url);
 		if (SDCard.cacheExist(urlHash)) {
 			try {
-				return SDCard.copyCacheToThreadFile(urlHash, file.getName(), threadNum);
+				return SDCard.copyCacheToThreadFile(urlHash, file.getName(), threadName);
 			} catch (Exception e) {
 				FLog.d("message", e);
 			}

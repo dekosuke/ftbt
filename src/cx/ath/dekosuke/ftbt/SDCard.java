@@ -52,9 +52,9 @@ public class SDCard {
 	}
 
 	// 保存ディレクトリ内にサブディレクトリを生成する
-	public static String getThreadDir(int threadNum) {
+	public static String getThreadDir(String threadName) {
 		String saveDir = getSaveDir();
-		String threadDir = saveDir + threadNum + "/";
+		String threadDir = saveDir + threadName + "/";
 		File file = new File(threadDir);
 		file.mkdir(); // ディレクトリないときにつくる
 		return threadDir;
@@ -179,16 +179,16 @@ public class SDCard {
 		return dstFile;
 	}
 	
-	public static boolean savedImageToThreadExist(String fileName, int threadNum){
-		String dstfilename = getThreadDir(threadNum) + fileName;
+	public static boolean savedImageToThreadExist(String fileName, String threadName){
+		String dstfilename = getThreadDir(threadName) + fileName;
 		File file = new File(dstfilename);
 		return file.exists();
 	}
 
-	public static File copyCacheToThreadFile(String urlhash, String url, int threadNum)
+	public static File copyCacheToThreadFile(String urlhash, String url, String threadName)
 			throws IOException {
 		String srcfilename = getCacheDir() + urlhash;
-		String dstfilename = getThreadDir(threadNum) + url;
+		String dstfilename = getThreadDir(threadName) + url;
 		// ファイルコピーのフェーズ
 		InputStream input = null;
 		OutputStream output = null;

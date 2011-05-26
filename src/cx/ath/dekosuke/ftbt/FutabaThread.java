@@ -69,6 +69,7 @@ public class FutabaThread extends Activity implements Runnable {
 	public FutabaThreadAdapter adapter = null;
 	public String threadURL = null;
 	public String baseURL = null;
+	public String BBSName = null;
 	public int threadNum;
 	public Toast toast;
 
@@ -98,6 +99,8 @@ public class FutabaThread extends Activity implements Runnable {
 		baseURL = (String) intent.getSerializableExtra("baseUrl");
 		threadNum = Integer.parseInt((String) intent
 				.getSerializableExtra("threadNum"));
+		BBSName = (String) intent
+				.getSerializableExtra("BBSName");
 		threadURL = baseURL + "res/" + threadNum + ".htm";
 		FLog.d("threadurl=" + threadURL);
 
@@ -496,17 +499,18 @@ public class FutabaThread extends Activity implements Runnable {
 				}
 				try {
 					final String imgURL = imgURLs.get(i);
+					final String threadName = BBSName + "_スレ" + threadNum;
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
-					if(SDCard.savedImageToThreadExist(file.getName(), threadNum)){ //すでにファイルある
+					if(SDCard.savedImageToThreadExist(file.getName(), threadName)){ //すでにファイルある
 						continue;
 					}
 					File saved_file = ImageCache.saveImageToThread(imgURL,
-							threadNum);
+							threadName);
 					if (saved_file == null) { // キャッシュにファイルがない
 						ImageCache.setImage(imgURL); // 画像をネットから取ってくる(ここが重い)
 						saved_file = ImageCache.saveImageToThread(imgURL,
-								threadNum);
+								threadName);
 					}
 					if (saved_file != null) {
 						saveItemNum += 1;
@@ -518,7 +522,7 @@ public class FutabaThread extends Activity implements Runnable {
 							//waitDialog.show();
 							if (saved_file_f != null) {
 
-								waitDialog.setMessage("ファイル"+saved_file_f+"に保存しました");
+								waitDialog.setMessage("ファイル\n"+saved_file_f+"\nに保存しました");
 
 								// ギャラリーに反映されるように登録
 								// http://www.adakoda.com/adakoda/2010/08/android-34.html
