@@ -576,6 +576,8 @@ public class FutabaThread extends Activity implements Runnable {
 					toast.makeText(adapter.getContext(), ""+saveItemNum_f+"個のファイルを新規に保存しました", Toast.LENGTH_SHORT ).show();
 				}
 			});
+			
+			System.gc();
 		}
 
 	}
