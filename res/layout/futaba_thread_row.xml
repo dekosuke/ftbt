@@ -18,7 +18,8 @@
 			android:layout_height="fill_parent" android:scaleType="center"
 			android:layout_marginRight="6dip" />
 		<Button android:text="画像を保存" android:id="@+id/save"
-			android:layout_height="wrap_content" android:layout_width="wrap_content"
+			android:gravity="center_vertical"
+			android:layout_height="40dip" android:layout_width="wrap_content"
 			android:layout_gravity="center">
 		</Button>
 		<TextView android:layout_width="fill_parent"
