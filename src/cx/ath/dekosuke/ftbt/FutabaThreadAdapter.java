@@ -221,7 +221,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	void setShioriStatus(View view){
 		view.setBackgroundColor(Color.parseColor("#BBFFBB"));					
 		TextView bottomText = (TextView) view.findViewById(R.id.bottomtext);
-		String bottomTextStr = "[しおり]"+bottomText.getText().toString();
+		String bottomTextStr = "[栞]"+bottomText.getText().toString();
 		
 		bottomText.setText(bottomTextStr);
 	}
