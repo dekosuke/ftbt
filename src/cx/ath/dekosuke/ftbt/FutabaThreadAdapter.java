@@ -108,7 +108,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					bottomtext.setVisibility(View.GONE);
 					bottomtext.setText("");
 					view.setBackgroundColor(Color.parseColor("#CCCCFF"));
-					Button saveButton = (Button) view.findViewById(R.id.save);
+					Button saveButton = (Button) view
+							.findViewById(R.id.savebutton);
 					saveButton.setVisibility(View.GONE);
 				} else if (FutabaStatus.isEndTime(item)) {
 					// 区切り線
@@ -126,7 +127,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					bottomtext.setVisibility(View.GONE);
 					bottomtext.setText("");
 					view.setBackgroundColor(Color.parseColor("#FFFFEE"));
-					Button saveButton = (Button) view.findViewById(R.id.save);
+					Button saveButton = (Button) view
+							.findViewById(R.id.savebutton);
 					saveButton.setVisibility(View.GONE);
 
 				} else {
@@ -188,7 +190,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					LinearLayout imageframe = (LinearLayout) view
 							.findViewById(R.id.imageframe);
 					// imageframe.setVisibility(View.GONE);
-					Button saveButton = (Button) view.findViewById(R.id.save);
+					Button saveButton = (Button) view
+							.findViewById(R.id.savebutton);
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 					iv.setImageBitmap(bm);
 
@@ -198,15 +201,21 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							iv.setTag(item.bigImgURL);
 							bm = Bitmap.createBitmap(item.width, item.height,
 									Bitmap.Config.ALPHA_8);
-							//↓crashする・・
-							/*
-							imageframe.setLayoutParams(new LayoutParams(
-									item.width, LayoutParams.FILL_PARENT));
-									*/
+							//imageframe.setLayoutParams(createParam(item.width, LayoutParams.FILL_PARENT));
 							iv.setImageBitmap(bm);
 							ImageGetTask task = new ImageGetTask(view);
-							task.execute(item.imgURL);
 							saveButton.setVisibility(View.VISIBLE);
+							view.setLongClickable(true);
+							// view.setOnLongClickListener(new
+							// FutabaThreadOnLongClickListener());
+							/*
+							 * saveButton .setOnLongClickListener(new
+							 * View.OnLongClickListener() { public boolean
+							 * onLongClick(View arg0) { // TODO Auto-generated
+							 * method stub FLog.d("onLongClick"); return false;
+							 * } });
+							 */
+							task.execute(item.imgURL);
 							// title.setText("(画像あり)");
 						} else { // 画像なし
 							saveButton.setVisibility(View.GONE);
@@ -239,6 +248,10 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		}
 
 		return view;
+	}
+
+	private LinearLayout.LayoutParams createParam(int width, int height) {
+		return new LinearLayout.LayoutParams(width, height);
 	}
 
 	void setShioriStatus(View view) {
@@ -275,7 +288,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 		public ImageGetTask(View view) {
 			image = (ImageView) view.findViewById(R.id.image);
-			saveButton = (Button) view.findViewById(R.id.save);
+			saveButton = (Button) view.findViewById(R.id.savebutton);
 			// imageFrame = (LinearLayout) view.findViewById(R.id.imageframe);
 			if (image == null) {
 				FLog.d("imageview is null!!!");
@@ -358,9 +371,13 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					// 保存ボタン
 					saveButton.setOnClickListener(new View.OnClickListener() {
 						public void onClick(View v) {
-							FutabaThread fthread = (FutabaThread) v
-									.getContext();
-							fthread.saveImage(tag);
+							try {
+								FutabaThread fthread = (FutabaThread) v
+										.getContext();
+								fthread.saveImage(tag);
+							} catch (Exception e) {
+								FLog.d("message", e);
+							}
 						}
 					});
 

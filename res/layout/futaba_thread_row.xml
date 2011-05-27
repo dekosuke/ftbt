@@ -17,16 +17,16 @@
 		<ImageView android:id="@+id/image" android:layout_width="fill_parent"
 			android:layout_height="fill_parent" android:scaleType="center"
 			android:layout_marginRight="6dip" />
-		<Button android:text="画像を保存" android:id="@+id/save"
-			android:gravity="center_vertical"
+		<Button android:text="画像を保存" android:id="@+id/savebutton"
+			android:gravity="center_vertical" android:layout_marginTop="8dip"
 			android:layout_height="40dip" android:layout_width="wrap_content"
 			android:layout_gravity="center">
 		</Button>
+	</LinearLayout>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="fill_parent" android:layout_weight="1"
 			android:id="@+id/maintext" android:textSize="16sp" android:autoLink="web"
 			android:textColor="#800000" android:ellipsize="none" />
-	</LinearLayout>
 	<LinearLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="wrap_content">
 		<TextView android:layout_width="fill_parent"
