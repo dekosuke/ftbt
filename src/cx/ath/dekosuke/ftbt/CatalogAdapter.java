@@ -125,10 +125,12 @@ public class CatalogAdapter extends ArrayAdapter {
 						if (!activity.mode.equals("history")) { // 通常
 							String baseUrl = activity.baseUrl;
 							intent.putExtra("baseUrl", baseUrl);
+							intent.putExtra("BBSName", activity.BBSName);
 							FLog.d("normal intent");
 						} else {
 							String baseUrl = item.baseUrl; // 履歴モード
 							intent.putExtra("baseUrl", baseUrl);
+							intent.putExtra("BBSName", item.BBSName);
 							FLog.d("history intent");
 						}
 						intent.putExtra("threadNum", threadNum);

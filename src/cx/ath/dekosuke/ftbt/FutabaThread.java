@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,6 +49,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore.Images;
 
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -65,7 +69,9 @@ public class FutabaThread extends Activity implements Runnable {
 	public FutabaThreadAdapter adapter = null;
 	public String threadURL = null;
 	public String baseURL = null;
+	public String BBSName = null;
 	public int threadNum;
+	public Toast toast;
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
@@ -93,6 +99,8 @@ public class FutabaThread extends Activity implements Runnable {
 		baseURL = (String) intent.getSerializableExtra("baseUrl");
 		threadNum = Integer.parseInt((String) intent
 				.getSerializableExtra("threadNum"));
+		BBSName = (String) intent
+				.getSerializableExtra("BBSName");
 		threadURL = baseURL + "res/" + threadNum + ".htm";
 		FLog.d("threadurl=" + threadURL);
 
@@ -148,6 +156,7 @@ public class FutabaThread extends Activity implements Runnable {
 	};
 
 	final Handler handler2 = new Handler();
+	final Handler handler3 = new Handler();
 
 	private void loading() {
 		FutabaThreadContentGetter getterThread = new FutabaThreadContentGetter();
@@ -332,7 +341,7 @@ public class FutabaThread extends Activity implements Runnable {
 			FLog.d("message", e);
 		}
 	}
-	
+
 	public void searchShiori() {
 		try {
 			HistoryManager man = new HistoryManager();
@@ -347,8 +356,7 @@ public class FutabaThread extends Activity implements Runnable {
 			 */
 			int position = thread.pointAt;
 			if (position == 0) {
-				Toast.makeText(this, "栞が登録されていません", Toast.LENGTH_SHORT)
-				.show();
+				Toast.makeText(this, "栞が登録されていません", Toast.LENGTH_SHORT).show();
 			} else {
 				int i = 0;
 				for (i = 0; i < adapter.items.size(); ++i) {
@@ -359,7 +367,7 @@ public class FutabaThread extends Activity implements Runnable {
 								.show();
 						break;
 					}
-					
+
 				}
 				if (i == adapter.items.size()) {
 					Toast.makeText(this, "栞の位置が見つかりませんでした", Toast.LENGTH_SHORT)
@@ -378,6 +386,10 @@ public class FutabaThread extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
+		case R.id.download:
+			// スレ全体を保存
+			saveAll();
+			return true;
 		case R.id.post:
 			onClickPostBtn(null);
 			return true;
@@ -445,6 +457,129 @@ public class FutabaThread extends Activity implements Runnable {
 			return true;
 		}
 		return false;
+	}
+
+	// スレ全体を保存
+	public void saveAll() {
+
+		if (waitDialog != null) {
+			waitDialog.dismiss();
+		}
+		waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
+
+		// 画像を順番に保存
+		ArrayList<String> imgURLs = getImageURLs();
+		// imgといいつつhtmlも足す
+		imgURLs.add(threadURL);
+		FutabaThreadAllImageRetriever getterThread = new FutabaThreadAllImageRetriever();
+		getterThread.setImageURLs(imgURLs);
+		getterThread.start();
+	}
+
+	// 全画像取得用スレッド
+	private class FutabaThreadAllImageRetriever extends Thread {
+		private ArrayList<String> imgURLs;
+
+		public void setImageURLs(ArrayList<String> imgURLs) {
+			this.imgURLs = imgURLs;
+		}
+
+		@Override
+		public void run() {
+			// 保存ディレクトリ作成
+			// SDCard.createThreadDir(thread)
+			int saveItemNum = 0;
+			for (int i = 0; i < imgURLs.size(); ++i) {
+				if(!waitDialog.isShowing()){ //キャンセルされた
+					return;
+				}
+				try {
+					final String imgURL = imgURLs.get(i);
+					final String threadName = BBSName + "_スレ" + threadNum;
+					FLog.d("trying to save" + imgURL);
+					File file = new File(imgURL);
+					if(SDCard.savedImageToThreadExist(file.getName(), threadName)){ //すでにファイルある
+						continue;
+					}
+					File saved_file = ImageCache.saveImageToThread(imgURL,
+							threadName);
+					if (saved_file == null) { // キャッシュにファイルがない
+						ImageCache.setImage(imgURL); // 画像をネットから取ってくる(ここが重い)
+						saved_file = ImageCache.saveImageToThread(imgURL,
+								threadName);
+					}
+					if (saved_file != null) {
+						saveItemNum += 1;
+					}
+					final File saved_file_f = saved_file;
+					// 描画に関わる処理はここに集約(メインスレッド実行)
+					handler3.post(new Runnable() {
+						public void run() {
+							//waitDialog.show();
+							if (saved_file_f != null) {
+
+								waitDialog.setMessage("ファイル\n"+saved_file_f+"\nに保存しました");
+
+								// ギャラリーに反映されるように登録
+								// http://www.adakoda.com/adakoda/2010/08/android-34.html
+								String mimeType = StringUtil
+										.getMIMEType(saved_file_f.getName());
+
+								FLog.d("name=" + saved_file_f.getName());
+								FLog.d("mime=" + mimeType);
+
+								// ContentResolver を使用する場合
+								ContentResolver contentResolver = getContentResolver();
+								ContentValues values = new ContentValues(7);
+								values.put(Images.Media.TITLE,
+										saved_file_f.getName());
+								values.put(Images.Media.DISPLAY_NAME,
+										saved_file_f.getName());
+								values.put(Images.Media.DATE_TAKEN,
+										System.currentTimeMillis());
+								values.put(Images.Media.MIME_TYPE, mimeType);
+								values.put(Images.Media.ORIENTATION, 0);
+								values.put(Images.Media.DATA,
+										saved_file_f.getPath());
+								values.put(Images.Media.SIZE,
+										saved_file_f.length());
+								contentResolver.insert(
+										Images.Media.EXTERNAL_CONTENT_URI,
+										values);
+							} else {
+								if(toast!=null){
+									toast.cancel();
+								}
+								toast.makeText(adapter.getContext(),
+										"画像"+imgURL+"の取得に失敗しました", Toast.LENGTH_SHORT)
+										.show();
+
+							}
+						}
+					});
+
+				} catch (Exception e) {
+					FLog.d("message", e);
+				}
+			}
+			final int saveItemNum_f = saveItemNum;
+			handler3.post(new Runnable() {
+				public void run() {
+					waitDialog.dismiss();
+					if(toast!=null){
+						toast.cancel();
+					}
+					toast.makeText(adapter.getContext(), ""+saveItemNum_f+"個のファイルを新規に保存しました", Toast.LENGTH_SHORT ).show();
+				}
+			});
+			
+			System.gc();
+		}
+
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode,
@@ -656,6 +791,92 @@ public class FutabaThread extends Activity implements Runnable {
 			} catch (Exception e) {
 				FLog.d("message", e);
 			}
+		}
+	}
+
+	// 画像を保存する
+	public void saveImage(String imgURL) {
+		if (waitDialog != null) {
+			waitDialog.dismiss();
+		}
+		waitDialog = new ProgressDialog(this);
+		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		// waitDialog.setCancelable(true);
+		waitDialog.show();
+
+		FutabaThreadImageRetriever getterThread = new FutabaThreadImageRetriever();
+		getterThread.setImageURL(imgURL);
+		getterThread.start();
+	}
+
+	private class FutabaThreadImageRetriever extends Thread {
+		private String imgURL;
+
+		public void setImageURL(String imgURL) {
+			this.imgURL = imgURL;
+		}
+
+		@Override
+		public void run() {
+
+			try {
+				// 画像を保存する
+				String imgFile = imgURL;
+				FLog.d("trying to save" + imgURL);
+				File file = new File(imgFile);
+				File saved_file = ImageCache.saveImage(imgFile);
+				if (saved_file == null) { // キャッシュにファイルがない
+					ImageCache.setImage(imgFile); // 画像をネットから取ってくる(ここが重い)
+					saved_file = ImageCache.saveImage(imgFile);
+				}
+				final File saved_file_f = saved_file;
+				// 描画に関わる処理はここに集約(メインスレッド実行)
+				handler3.post(new Runnable() {
+					public void run() {
+						if (saved_file_f != null) {
+
+							Toast.makeText(adapter.getContext(),
+									saved_file_f.getAbsolutePath() + "に保存しました",
+									Toast.LENGTH_SHORT).show();
+
+							// ギャラリーに反映されるように登録
+							// http://www.adakoda.com/adakoda/2010/08/android-34.html
+							String mimeType = StringUtil
+									.getMIMEType(saved_file_f.getName());
+
+							FLog.d("name=" + saved_file_f.getName());
+							FLog.d("mime=" + mimeType);
+
+							// ContentResolver を使用する場合
+							ContentResolver contentResolver = getContentResolver();
+							ContentValues values = new ContentValues(7);
+							values.put(Images.Media.TITLE,
+									saved_file_f.getName());
+							values.put(Images.Media.DISPLAY_NAME,
+									saved_file_f.getName());
+							values.put(Images.Media.DATE_TAKEN,
+									System.currentTimeMillis());
+							values.put(Images.Media.MIME_TYPE, mimeType);
+							values.put(Images.Media.ORIENTATION, 0);
+							values.put(Images.Media.DATA,
+									saved_file_f.getPath());
+							values.put(Images.Media.SIZE, saved_file_f.length());
+							contentResolver.insert(
+									Images.Media.EXTERNAL_CONTENT_URI, values);
+						} else {
+							Toast.makeText(adapter.getContext(),
+									"画像の取得に失敗しました", Toast.LENGTH_SHORT).show();
+
+						}
+						waitDialog.dismiss();
+					}
+				});
+
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
+
 		}
 	}
 }

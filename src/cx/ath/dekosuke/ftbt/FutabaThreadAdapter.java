@@ -4,15 +4,22 @@ import java.util.ArrayList;
 
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.graphics.Typeface;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.text.Html;
 import android.util.Log;
 import android.os.AsyncTask;
+import android.provider.MediaStore.Images;
 import android.content.Intent;
 
 import java.io.InputStream;
@@ -21,6 +28,7 @@ import java.net.URL;
 //BufferedStreamのエラー問題対応
 import java.io.ByteArrayOutputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
@@ -47,9 +55,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	// 画面サイズ
 	private int width;
 	private int height;
-	
-	//しおり位置
-	public int shioriPosition=0;
+
+	// しおり位置
+	public int shioriPosition = 0;
 
 	public FutabaThreadAdapter(Context context, int textViewResourceId,
 			ArrayList items) {
@@ -100,7 +108,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					bottomtext.setVisibility(View.GONE);
 					bottomtext.setText("");
 					view.setBackgroundColor(Color.parseColor("#CCCCFF"));
-				} else if(FutabaStatus.isEndTime(item)){
+					Button saveButton = (Button) view.findViewById(R.id.save);
+					saveButton.setVisibility(View.GONE);
+				} else if (FutabaStatus.isEndTime(item)) {
 					// 区切り線
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 					iv.setImageBitmap(null);
@@ -116,7 +126,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					bottomtext.setVisibility(View.GONE);
 					bottomtext.setText("");
 					view.setBackgroundColor(Color.parseColor("#FFFFEE"));
-					
+					Button saveButton = (Button) view.findViewById(R.id.save);
+					saveButton.setVisibility(View.GONE);
+
 				} else {
 					TextView title = (TextView) view.findViewById(R.id.title);
 					String title_base = item.title;// StringUtil.safeCut(, 30);
@@ -131,13 +143,14 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 								&& position >= activity.prevSize) { // 新着
 							title_base += " New!";
 							if (position != 0) { // レス番号
-								title_base = "<font color=\"#800000\">" + (position-1)
-										+ "</font> " + title_base;
+								title_base = "<font color=\"#800000\">"
+										+ (position - 1) + "</font> "
+										+ title_base;
 							}
-						}else{
+						} else {
 							if (position != 0) { // レス番号
-								title_base = "<font color=\"#800000\">" + position
-										+ "</font> " + title_base;
+								title_base = "<font color=\"#800000\">"
+										+ position + "</font> " + title_base;
 							}
 						}
 						// name.setText(item.name);// item.getImgURL());
@@ -146,7 +159,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					CharSequence cs_title = Html.fromHtml(title_base); // HTML表示
 					title.setText(cs_title);// item.getImgURL());
 					// TextView name = (TextView) view.findViewById(R.id.name);
-					
+
 					// スクリーンネームをビューにセット
 					TextView text = (TextView) view.findViewById(R.id.maintext);
 					TextView bottomtext = (TextView) view
@@ -154,25 +167,28 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					if (item.datestr != null) {
 						bottomtext.setText(item.datestr + " No." + item.id);
 					}
-					
 
 					if (position == 0) { // 最初だけ色違う
 						view.setBackgroundColor(Color.rgb(255, 255, 238));
 					} else {
 						// ここのルーチンがないとおかしくなるので,view再利用の様子が良く分かる
-						if(item.id!=0 && item.id == shioriPosition){ //しおり位置
+						if (item.id != 0 && item.id == shioriPosition) { // しおり位置
 							setShioriStatus(view);
-						}else{
+						} else {
 							view.setBackgroundColor(Color.rgb(240, 224, 214));
 						}
 					}
-					
-					//ここらへんは区切り線で変えた可能性のあるデータを元に戻す
+
+					// ここらへんは区切り線で変えた可能性のあるデータを元に戻す
 					text.setGravity(Gravity.LEFT);
 					title.setVisibility(View.VISIBLE);
 					bottomtext.setVisibility(View.VISIBLE);
 
 					Bitmap bm = null;
+					LinearLayout imageframe = (LinearLayout) view
+							.findViewById(R.id.imageframe);
+					// imageframe.setVisibility(View.GONE);
+					Button saveButton = (Button) view.findViewById(R.id.save);
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 					iv.setImageBitmap(bm);
 
@@ -182,11 +198,18 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							iv.setTag(item.bigImgURL);
 							bm = Bitmap.createBitmap(item.width, item.height,
 									Bitmap.Config.ALPHA_8);
+							//↓crashする・・
+							/*
+							imageframe.setLayoutParams(new LayoutParams(
+									item.width, LayoutParams.FILL_PARENT));
+									*/
 							iv.setImageBitmap(bm);
-							ImageGetTask task = new ImageGetTask(iv);
+							ImageGetTask task = new ImageGetTask(view);
 							task.execute(item.imgURL);
+							saveButton.setVisibility(View.VISIBLE);
 							// title.setText("(画像あり)");
 						} else { // 画像なし
+							saveButton.setVisibility(View.GONE);
 							/*
 							 * FLog.d("w="+item.width+" h="+item.height ); bm =
 							 * Bitmap.createBitmap(item.width, item.height,
@@ -201,10 +224,10 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					if (text != null) {
 						String text_html = item.text;
 						/*
-						if(!item.endTime.equals("")){
-							text_html+="<br><font color=\"red\">("+item.endTime+")</font>";
-						}
-						*/
+						 * if(!item.endTime.equals("")){
+						 * text_html+="<br><font color=\"red\">("
+						 * +item.endTime+")</font>"; }
+						 */
 						CharSequence cs = Html.fromHtml(text_html); // HTML表示
 						text.setText(cs);
 					}
@@ -217,12 +240,11 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 		return view;
 	}
-	
-	void setShioriStatus(View view){
-		view.setBackgroundColor(Color.parseColor("#BBFFBB"));					
+
+	void setShioriStatus(View view) {
+		view.setBackgroundColor(Color.parseColor("#BBFFBB"));
 		TextView bottomText = (TextView) view.findViewById(R.id.bottomtext);
 		String bottomTextStr = "[栞]"+bottomText.getText().toString();
-		
 		bottomText.setText(bottomTextStr);
 	}
 
@@ -247,11 +269,15 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	// 画像取得用スレッド
 	class ImageGetTask extends AsyncTask<String, Void, Bitmap> {
 		private ImageView image;
+		// private LinearLayout imageFrame;
+		private Button saveButton;
 		private String tag;
 
-		public ImageGetTask(ImageView _image) {
-			image = _image;
-			if (_image == null) {
+		public ImageGetTask(View view) {
+			image = (ImageView) view.findViewById(R.id.image);
+			saveButton = (Button) view.findViewById(R.id.save);
+			// imageFrame = (LinearLayout) view.findViewById(R.id.imageframe);
+			if (image == null) {
 				FLog.d("imageview is null!!!");
 			}
 			tag = image.getTag().toString();
@@ -297,35 +323,46 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						}
 						return;
 					}
+
+					// imageFrame.setVisibility(View.VISIBLE);
 					image.setImageBitmap(result);
-					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
-						image.setOnClickListener(new View.OnClickListener() {
-							public void onClick(View v) {
-								try {
-									FLog.d("intent calling thread activity");
-									Intent intent = new Intent();
-									FutabaThread activity = (FutabaThread) getContext();
-									// Log.d ( "ftbt", threadNum );
-									// これスレッドごとに作られているのが結構ひどい気がする
-									intent.putExtra("imgURLs",
-											activity.getImageURLs());
-									intent.putExtra("thumbURLs",
-											activity.getThumbURLs());
-									intent.putExtra("myImgURL", tag);
-									intent.setClassName(
-											activity.getPackageName(), activity
-													.getClass().getPackage()
-													.getName()
-													+ ".ImageCatalog");
-									// http://android.roof-balcony.com/intent/intent/
-									activity.startActivityForResult(intent,
-											activity.TO_IMAGECATALOG);
-								} catch (Exception e) {
-									FLog.d("message", e);
-								}
+					// imageFrame.setMinimumWidth(image.getWidth());
+					// imageFrame.invalidate();
+					// imageFrame.notify();
+
+					image.setOnClickListener(new View.OnClickListener() {
+						public void onClick(View v) {
+							try {
+								FLog.d("intent calling thread activity");
+								Intent intent = new Intent();
+								FutabaThread activity = (FutabaThread) getContext();
+								// Log.d ( "ftbt", threadNum );
+								// これスレッドごとに作られているのが結構ひどい気がする
+								intent.putExtra("imgURLs",
+										activity.getImageURLs());
+								intent.putExtra("thumbURLs",
+										activity.getThumbURLs());
+								intent.putExtra("myImgURL", tag);
+								intent.setClassName(activity.getPackageName(),
+										activity.getClass().getPackage()
+												.getName()
+												+ ".ImageCatalog");
+								// http://android.roof-balcony.com/intent/intent/
+								activity.startActivityForResult(intent,
+										activity.TO_IMAGECATALOG);
+							} catch (Exception e) {
+								FLog.d("message", e);
 							}
-						});
-					}
+						}
+					});
+					// 保存ボタン
+					saveButton.setOnClickListener(new View.OnClickListener() {
+						public void onClick(View v) {
+							FutabaThread fthread = (FutabaThread) v
+									.getContext();
+							fthread.saveImage(tag);
+						}
+					});
 
 				}
 
