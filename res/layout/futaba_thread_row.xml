@@ -31,6 +31,7 @@
 		android:layout_width="fill_parent" android:layout_height="wrap_content">
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="fill_parent" android:layout_weight="0"
+			android:layout_marginTop="4dip"
 			android:id="@+id/bottomtext" android:textSize="12sp"
 			android:textColor="#800000" android:ellipsize="marquee"
 			android:layout_gravity="right" android:gravity="right" />
