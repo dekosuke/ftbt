@@ -68,6 +68,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	private String catalogURL;
 	private ProgressDialog waitDialog;
 	private Thread thread;
+	private int sortType = 0;
 	// private ListView listView;
 	public String BBSName = ""; // 板名
 	private ListView listView;
@@ -127,6 +128,12 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();
+		
+		try{
+			sortType = StateMan.getSortParam(this);
+		}catch(Exception e){
+			FLog.d("message", e);
+		}
 
 		thread = new Thread(this);
 		thread.start();
@@ -177,6 +184,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			reloadButton.setVisibility(View.GONE);
 			Button historyButton = (Button) findViewById(id.history_btn);
 			historyButton.setVisibility(View.GONE);
+			Button sortTypeButton = (Button) findViewById(id.sorttype_btn);
+			sortTypeButton.setVisibility(View.GONE);
 		}
 
 		// searchbuttonでenter押したときのイベント取る
@@ -203,15 +212,15 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			}
 		});
 
-		/*(
-		LinearLayout footer = new LinearLayout(this);
-		footer.setLayoutParams(createParam(0, 40));
-		listView.addFooterView(footer);
-	*/
+		/*
+		 * ( LinearLayout footer = new LinearLayout(this);
+		 * footer.setLayoutParams(createParam(0, 40));
+		 * listView.addFooterView(footer);
+		 */
 		Button btn = new Button(this);
 		btn.setText("hoge\fuga");
 		btn.setVisibility(View.INVISIBLE);
-		//listView.addFooterView(btn);
+		// listView.addFooterView(btn);
 		listView.setAdapter(adapter);
 
 		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
@@ -222,10 +231,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		// FutabaThreadContentGetter();
 		// getterThread.start();
 	}
-	
-    private LinearLayout.LayoutParams createParam(int w, int h){
-        return new LinearLayout.LayoutParams(w, h);
-    }
+
+	private LinearLayout.LayoutParams createParam(int w, int h) {
+		return new LinearLayout.LayoutParams(w, h);
+	}
 
 	private class FutabaCatalogContentGetter extends Thread {
 		@Override
@@ -243,7 +252,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					Boolean network_ok = true;
 					Boolean cache_ok = true;
 					try {
-						catalogHtml = CatalogHtmlReader.Read(catalogURL);
+						catalogHtml = CatalogHtmlReader.Read(catalogURL, sortType);
 						network_ok = true;
 					} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
 						FLog.d("hoge");
@@ -481,6 +490,38 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
 				+ ".Post");
 		startActivity(intent);
+	}
+
+	public void onClickSortTypeBtn(View v) {
+		//Toast.makeText(this, "ソート選択ボタンが押されました", Toast.LENGTH_SHORT).show();
+		final String[] strs = {"カタログ", "新順", "古順", "多順", "少順"};
+		AlertDialog.Builder dlg;
+		final Catalog catalog = this;
+		dlg = new AlertDialog.Builder(this);
+		dlg.setTitle("ソート方法の選択");
+		// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
+		dlg.setCancelable(true);
+		dlg.setSingleChoiceItems(strs, sortType,  new DialogInterface.OnClickListener() {
+    	    public void onClick(DialogInterface dialog, int item) {
+    	    	//button.setText(String.format("%sが選択されました。",items[item]));
+    	    	sortType = item; //この実装こういうものなんですかね・・・
+    	    }
+    	});
+		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				FLog.d("sortType=" + sortType);
+				if (sortType >= 0 && sortType < strs.length) {
+					StateMan.setSortParam(catalog, sortType);
+					catalog.onClickReloadBtn(null);
+				}
+			}
+		});
+		dlg.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+			}
+		});
+		dlg.show();
+
 	}
 
 	// メニューをクリック

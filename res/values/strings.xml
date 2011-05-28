@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">"ふたばと"</string>
+    <string name="ok">OK</string>
+    <string name="cancel">"キャンセル"</string>
     <string name="cachesize">myCacheSize</string>
     <string name="historynum">myHistoryNum</string>
+    <string name="deletekey">myDeleteKey</string>
     <string name="dispcensored">dispCensored</string>
     <string name="fontsize">fontSize</string>
     <string name="about">ブラウザを起動し、ヘルプページを表示する予定です（まだ完成してません）</string>

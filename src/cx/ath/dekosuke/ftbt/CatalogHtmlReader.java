@@ -25,7 +25,7 @@ import android.webkit.CookieManager;
 //長い理由は２回アクセスしているからだったり
 public class CatalogHtmlReader {
 
-	public static String Read(String urlStr) throws Exception {
+	public static String Read(String urlStr, int sortType) throws Exception {
 
 		CookieManager.getInstance().setAcceptCookie(true);
 		CookieManager.getInstance().removeExpiredCookie();
@@ -46,6 +46,9 @@ public class CatalogHtmlReader {
 		nameValuePair.add(new BasicNameValuePair("cl", "50"));
 
 		String urlStrAppend = urlStr + "?mode=cat"; // カタログです
+		if(sortType>0 && sortType<5){
+			urlStrAppend += "&sort="+sortType;
+		}
 		String data = null;
 		// cookie取得->カタログ取得と2度HTTPアクセスしている
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePair));

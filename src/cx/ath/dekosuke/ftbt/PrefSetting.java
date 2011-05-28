@@ -34,9 +34,18 @@ public class PrefSetting extends PreferenceActivity {
 					return HistorySizeChange(preference, newValue);
 				}
 			});
+			EditTextPreference etp_delkey = (EditTextPreference) this
+					.findPreference(getString(R.string.deletekey));
+			// リスナーを設定する
+			etp_delkey.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(Preference preference,
+						Object newValue) {
+					return DeleteKeyChange(preference, newValue);
+				}
+			});
 
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -71,8 +80,22 @@ public class PrefSetting extends PreferenceActivity {
 		} catch (Exception e) {
 
 		}
-		Toast.makeText(this, "記憶する履歴は100件以下にしてください", Toast.LENGTH_LONG)
-				.show();
+		Toast.makeText(this, "記憶する履歴は100件以下にしてください", Toast.LENGTH_LONG).show();
+		return false;
+	}
+	
+	private boolean DeleteKeyChange(Preference preference, Object newValue) {
+		String input = newValue.toString();
+		try {
+			if (input != null && input.length()<=8) {
+				preference.setSummary(input);
+				return true;
+			} else {
+			}
+		} catch (Exception e) {
+
+		}
+		Toast.makeText(this, "パスワードは8文字以下にしてください", Toast.LENGTH_LONG).show();
 		return false;
 	}
 }

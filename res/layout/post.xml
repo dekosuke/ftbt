@@ -68,7 +68,8 @@
             android:gravity="center_vertical"/>
         <EditText android:text="" android:id="@+id/deletekey" android:layout_height="wrap_content" 
         android:layout_width="wrap_content" 
-        android:layout_weight="1" android:inputType="numberDecimal"></EditText>
+        android:maxLength="8"
+        android:layout_weight="1" android:inputType="textPassword"></EditText>
     </TableRow>
     </TableLayout>
     <Button android:id="@+id/postbutton" 
