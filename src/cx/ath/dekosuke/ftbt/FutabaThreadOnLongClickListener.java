@@ -43,35 +43,42 @@ public class FutabaThreadOnLongClickListener implements
 
 	public boolean onItemLongClick(AdapterView<?> arg0, View view, int arg2,
 			long arg3) {
-		if(view == null){
+		if (view == null) {
 			FLog.d("null view at onItemLongClick");
 			return false;
 		}
-		TextView bottomtext = (TextView) view.findViewById(R.id.bottomtext);
-		if (bottomtext.length() < 5) { // 区切り線とか
-			return false;
-		}
+		/*
+		 * これバグい TextView bottomtext = (TextView)
+		 * view.findViewById(R.id.bottomtext); if (bottomtext==null ||
+		 * bottomtext.getText().length() < 5) { // 区切り線とか
+		 * FLog.d("no bottomtext"); return false; }else{
+		 * FLog.d("bottomtext="+bottomtext.getText()); }
+		 */
 		fthread = (FutabaThread) view.getContext();
-		FLog.d("longclick arg2="+arg2+" arg3="+arg3);
+		FLog.d("longclick arg2=" + arg2 + " arg3=" + arg3);
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(fthread);
 		dlg.setTitle("レスに対する操作");
 		String[] strs_temp = null;
-		FutabaStatus item = (FutabaStatus)fthread.adapter.items.get(arg2);
+		FutabaStatus item = (FutabaStatus) fthread.adapter.items.get(arg2);
 
-		//これもっと良い書き方ないのか・・・
-		if(arg2==0){
-			String[] temp = { "削除", "引用して返信", "他アプリと共有"};
+		// これもっと良い書き方ないのか・・・
+		if (arg2 == 0) {
+			String[] temp = { "削除", "引用して返信", "他アプリと共有" };
 			strs_temp = temp;
-		}else if(item!=null && item.id != fthread.adapter.shioriPosition){
+		} else if (item != null && item.id != fthread.adapter.shioriPosition) {
 			String[] temp = { "削除", "引用して返信", "他アプリと共有", "栞をはさむ" };
-			strs_temp = temp;	
-		}else{
+			strs_temp = temp;
+		} else {
 			String[] temp = { "削除", "引用して返信", "他アプリと共有", "栞を削除" };
-			strs_temp = temp;	
+			strs_temp = temp;
+		}
+		if (arg2 < 0 || arg2 >= fthread.adapter.items.size() ||
+				FutabaStatus.isBlank((FutabaStatus)(fthread.adapter.items.get(arg2))) ){
+				return false;
 		}
 		currentPosition = arg2;
-		final String[] strs= strs_temp;
+		final String[] strs = strs_temp;
 		final View view_f = view;
 		dlg.setSingleChoiceItems(strs, 0, this);
 		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -296,16 +303,17 @@ public class FutabaThreadOnLongClickListener implements
 			FLog.d("message", e);
 		}
 	}
-	
+
 	public void modifyShiori(View view) {
-		
-		FutabaStatus item = (FutabaStatus)fthread.adapter.items.get(currentPosition);
-		if(item.id == fthread.adapter.shioriPosition){ //栞があるー＞削除
-			fthread.removeShiori(currentPosition);			
-		}else{ //栞がない場所－＞栞追加
+
+		FutabaStatus item = (FutabaStatus) fthread.adapter.items
+				.get(currentPosition);
+		if (item.id == fthread.adapter.shioriPosition) { // 栞があるー＞削除
+			fthread.removeShiori(currentPosition);
+		} else { // 栞がない場所－＞栞追加
 			fthread.registerShiori(currentPosition);
 		}
-	}	
+	}
 }
 
 /*
