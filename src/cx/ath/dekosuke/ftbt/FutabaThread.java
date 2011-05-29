@@ -90,6 +90,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 	// 画像カタログから戻ってきたときにどの画像から戻ってきたか判定用
 	final int TO_IMAGECATALOG = 0;
+	final int TO_POST = 1;
 
 	private int itemLongClick_chosen = 0; // ここに変数置くの可能ならやめたい・・
 
@@ -292,7 +293,8 @@ public class FutabaThread extends Activity implements Runnable {
 		intent.putExtra("threadNum", threadNum);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
 				+ ".Post");
-		startActivity(intent);
+		startActivityForResult(intent, TO_POST);
+
 	}
 
 	@Override
@@ -523,8 +525,9 @@ public class FutabaThread extends Activity implements Runnable {
 					final String threadName = BBSName + "_スレ" + threadNum;
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
-					if (!imgURL.contains("htm") || SDCard.savedImageToThreadExist(file.getName(),
-							threadName)) { // すでにファイルある
+					if (!imgURL.contains("htm")
+							&& SDCard.savedImageToThreadExist(file.getName(),
+									threadName)) { // すでにファイルある
 						continue;
 					}
 					File saved_file = ImageCache.saveImageToThread(imgURL,
@@ -610,9 +613,10 @@ public class FutabaThread extends Activity implements Runnable {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 		try {
-			String imgURL = (String) intent.getSerializableExtra("imgURL");
 			// FLog.d("return intent imgURL="+imgURL);
+			FLog.d("after activity " + requestCode);
 			if (requestCode == TO_IMAGECATALOG) {
+				String imgURL = (String) intent.getSerializableExtra("imgURL");
 				for (int i = 0; i < statuses.size(); ++i) {
 					// FLog.d("image"+i+"="+statuses.get(i).bigImgURL);
 					if (imgURL.equals(statuses.get(i).bigImgURL)) {
@@ -620,6 +624,16 @@ public class FutabaThread extends Activity implements Runnable {
 						listView.setSelection(Math.min(i, listView.getCount()));
 						break;
 					}
+				}
+			} else if (requestCode == TO_POST) {
+				String posted = "";
+				try {
+					 posted = (String) intent.getSerializableExtra("posted");
+				} catch (Exception e) {
+				}
+				if (!posted.equals("")) {
+					// 再読み込み
+					this.onClickReloadBtn(null);
 				}
 			} else {
 				FLog.d("unknown result code");
@@ -693,7 +707,7 @@ public class FutabaThread extends Activity implements Runnable {
 							HistoryManager man = new HistoryManager();
 							FutabaThreadContent thread = new FutabaThreadContent();
 							thread.threadNum = threadNum;
-							thread.resNum = "" + webParser.getStatuses().size();
+							thread.resNum = "" + Math.max(0, webParser.getStatuses().size() - 1);
 							man.Load();
 							man.updateThread(thread);
 							man.Save();

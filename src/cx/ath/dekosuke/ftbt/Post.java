@@ -406,6 +406,7 @@ public class Post extends Activity implements Runnable {
 			} else {
 				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();
 			}
+			setOnReturn();
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
@@ -414,5 +415,12 @@ public class Post extends Activity implements Runnable {
 		// スレッドに戻る
 		finish();
 
+	}
+	
+	// 戻ったときのインテントにパラメータ渡す(再読み込みするか判定のため)
+	public void setOnReturn() {
+		Intent ret_i = new Intent();
+		ret_i.putExtra("posted", "true");
+		setResult(RESULT_OK, ret_i);
 	}
 }

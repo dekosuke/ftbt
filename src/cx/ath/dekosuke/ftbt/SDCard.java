@@ -37,9 +37,11 @@ public class SDCard {
 
 	static String cacheDir = null;
 	static String saveDir = null;
-	
-	public static boolean isSDCardMounted(){
-		return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED;
+
+	public static boolean isSDCardMounted() {
+		FLog.d("mount=" + Environment.getExternalStorageState());
+		return Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED);
 	}
 
 	public static boolean setCacheDir(Context context) {
@@ -79,12 +81,12 @@ public class SDCard {
 
 		return sdcard_dir;
 	}
-	
-	private static boolean isUsableDirectory(File file){
+
+	private static boolean isUsableDirectory(File file) {
 		return file.exists() && file.isDirectory() && file.canWrite();
 	}
-	
-	public static String getDefaultCacheDir(){
+
+	public static String getDefaultCacheDir() {
 		String base_dir = getBaseDir();
 		String cacheDir = base_dir + "/.ftbtcache/";
 		File file = new File(cacheDir);
@@ -92,7 +94,7 @@ public class SDCard {
 		return cacheDir;
 	}
 
-	public static String getDefaultSaveDir(){
+	public static String getDefaultSaveDir() {
 		String sdcard_dir = getBaseDir();
 		String saveDir = sdcard_dir + "/ふたばと/";
 		File file = new File(saveDir);
@@ -101,9 +103,12 @@ public class SDCard {
 	}
 
 	public static String getCacheDir() {
+		if (1 == 1) {
+			return getDefaultCacheDir();
+		}
 		String base_dir = getBaseDir();
-		if(cacheDir!=null){
-			//ユーザ指定キャッシュディレクトリ
+		if (cacheDir != null) {
+			// ユーザ指定キャッシュディレクトリ
 			base_dir = cacheDir;
 		}
 		// String sdcard_dir = Environment.getDataDirectory().getPath();
@@ -111,24 +116,27 @@ public class SDCard {
 		String cacheDir = base_dir + "/.ftbtcache/";
 		File file = new File(cacheDir);
 		file.mkdir(); // ディレクトリないときにつくる
-		if(!isUsableDirectory(file)){
-			//ディレクトリが存在しないか書き込み権限がない
+		if (!isUsableDirectory(file)) {
+			// ディレクトリが存在しないか書き込み権限がない
 			return null;
 		}
 		return cacheDir;
 	}
 
 	public static String getSaveDir() {
+		if (1 == 1) {
+			return getDefaultSaveDir();
+		}
 		String base_dir = getBaseDir();
-		if(saveDir!=null){
-			//ユーザ指定保存ディレクトリ
+		if (saveDir != null) {
+			// ユーザ指定保存ディレクトリ
 			base_dir = saveDir;
 		}
 		String saveDir = base_dir + "/ふたばと/";
 		File file = new File(saveDir);
 		file.mkdir(); // ディレクトリないときにつくる
-		if(!isUsableDirectory(file)){
-			//ディレクトリが存在しないか書き込み権限がない
+		if (!isUsableDirectory(file)) {
+			// ディレクトリが存在しないか書き込み権限がない
 			return null;
 		}
 		return saveDir;
