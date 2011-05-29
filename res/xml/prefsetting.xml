@@ -18,14 +18,6 @@
       android:summaryOff="表示しない" 
     android:defaultValue="Off"
     android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
-        <cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
-        android:key="cacheDir" android:title="キャッシュ先の指定" 
-        android:summary="@string/cachedirsummary"
-        />
-        <cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
-        android:key="saveDir" android:title="画像保存先の指定" 
- 		android:summary="@string/savedirsummary" 
-        />
     <EditTextPreference android:title="投稿の削除キー"
     android:key="@string/deletekey" 
     android:inputType="textPassword"
