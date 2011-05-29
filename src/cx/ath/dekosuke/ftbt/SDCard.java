@@ -33,6 +33,11 @@ import android.graphics.BitmapFactory;
 //SDカードといいつつSDカードへの保存に加えてHTTPアクセスも扱っているクラス
 public class SDCard {
 
+	public static String getBaseDir(){
+		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+		return sdcard_dir;
+	}
+	
 	public static String getCacheDir() {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
 		// String sdcard_dir = Environment.getDataDirectory().getPath();

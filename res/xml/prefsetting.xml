@@ -18,9 +18,18 @@
       android:summaryOff="表示しない" 
     android:defaultValue="Off"
     android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
+        <cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
+        android:key="cacheDir" android:title="キャッシュ先の指定" 
+        android:summary="指定したディレクトリ以下に「.ftbtcache」ディレクトリを作成し、キャッシュ用に使用します" 
+        />
+        <cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
+        android:key="saveDir" android:title="画像保存先の指定" 
+ 		android:summary="指定したディレクトリ以下に「ふたばと」ディレクトリを作成し、画像の保存先に使用します" 
+        />
     <EditTextPreference android:title="投稿の削除キー"
     android:key="@string/deletekey" 
     android:inputType="textPassword"
+		android:textSize="20sp"
     android:defaultValue=""
     android:summary="投稿時の削除キーを設定します"></EditTextPreference>
 </PreferenceScreen>

@@ -145,8 +145,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 								&& position >= activity.prevSize) { // 新着
 							title_base += " New!";
 							if (position != 0) { // レス番号
-								title_base = "<font color=\"#800000\">"
-										+ (position - 1) + "</font> "
+								title_base = "<font color=\"#800000\">["
+										+ (position - 1) + "]</font> "
 										+ title_base;
 							}
 						} else {

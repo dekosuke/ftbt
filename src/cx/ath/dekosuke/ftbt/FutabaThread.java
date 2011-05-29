@@ -523,7 +523,7 @@ public class FutabaThread extends Activity implements Runnable {
 					final String threadName = BBSName + "_スレ" + threadNum;
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
-					if (SDCard.savedImageToThreadExist(file.getName(),
+					if (!imgURL.contains("htm") || SDCard.savedImageToThreadExist(file.getName(),
 							threadName)) { // すでにファイルある
 						continue;
 					}
