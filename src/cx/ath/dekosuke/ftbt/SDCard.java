@@ -7,11 +7,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.os.StatFs;
+import android.preference.PreferenceManager;
 
 import java.io.File;
 
@@ -33,26 +35,102 @@ import android.graphics.BitmapFactory;
 //SDカードといいつつSDカードへの保存に加えてHTTPアクセスも扱っているクラス
 public class SDCard {
 
-	public static String getBaseDir(){
+	static String cacheDir = null;
+	static String saveDir = null;
+	
+	public static boolean isSDCardMounted(){
+		return Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED;
+	}
+
+	public static boolean setCacheDir(Context context) {
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			cacheDir = preferences.getString(
+					context.getString(R.string.cachedirsummary), null);
+		} catch (Exception e) {
+			FLog.d("message", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean setSaveDir(Context context) {
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			saveDir = preferences.getString(
+					context.getString(R.string.savedirsummary), null);
+		} catch (Exception e) {
+			FLog.d("message", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static String getBaseDir() {
 		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+
+		/*
+		 * if(baseDir==null || baseDir==""){ return sdcard_dir; }else{
+		 * 
+		 * }
+		 */
+
 		return sdcard_dir;
 	}
 	
-	public static String getCacheDir() {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
-		// String sdcard_dir = Environment.getDataDirectory().getPath();
-		// FLog.d("dir="+sdcard_dir);
-		String cacheDir = sdcard_dir + "/.ftbtcache/";
+	private static boolean isUsableDirectory(File file){
+		return file.exists() && file.isDirectory() && file.canWrite();
+	}
+	
+	public static String getDefaultCacheDir(){
+		String base_dir = getBaseDir();
+		String cacheDir = base_dir + "/.ftbtcache/";
 		File file = new File(cacheDir);
 		file.mkdir(); // ディレクトリないときにつくる
 		return cacheDir;
 	}
 
-	public static String getSaveDir() {
-		String sdcard_dir = Environment.getExternalStorageDirectory().getPath();
+	public static String getDefaultSaveDir(){
+		String sdcard_dir = getBaseDir();
 		String saveDir = sdcard_dir + "/ふたばと/";
 		File file = new File(saveDir);
 		file.mkdir(); // ディレクトリないときにつくる
+		return saveDir;
+	}
+
+	public static String getCacheDir() {
+		String base_dir = getBaseDir();
+		if(cacheDir!=null){
+			//ユーザ指定キャッシュディレクトリ
+			base_dir = cacheDir;
+		}
+		// String sdcard_dir = Environment.getDataDirectory().getPath();
+		// FLog.d("dir="+sdcard_dir);
+		String cacheDir = base_dir + "/.ftbtcache/";
+		File file = new File(cacheDir);
+		file.mkdir(); // ディレクトリないときにつくる
+		if(!isUsableDirectory(file)){
+			//ディレクトリが存在しないか書き込み権限がない
+			return null;
+		}
+		return cacheDir;
+	}
+
+	public static String getSaveDir() {
+		String base_dir = getBaseDir();
+		if(saveDir!=null){
+			//ユーザ指定保存ディレクトリ
+			base_dir = saveDir;
+		}
+		String saveDir = base_dir + "/ふたばと/";
+		File file = new File(saveDir);
+		file.mkdir(); // ディレクトリないときにつくる
+		if(!isUsableDirectory(file)){
+			//ディレクトリが存在しないか書き込み権限がない
+			return null;
+		}
 		return saveDir;
 	}
 
@@ -183,15 +261,16 @@ public class SDCard {
 		output.close();
 		return dstFile;
 	}
-	
-	public static boolean savedImageToThreadExist(String fileName, String threadName){
+
+	public static boolean savedImageToThreadExist(String fileName,
+			String threadName) {
 		String dstfilename = getThreadDir(threadName) + fileName;
 		File file = new File(dstfilename);
 		return file.exists();
 	}
 
-	public static File copyCacheToThreadFile(String urlhash, String url, String threadName)
-			throws IOException {
+	public static File copyCacheToThreadFile(String urlhash, String url,
+			String threadName) throws IOException {
 		String srcfilename = getCacheDir() + urlhash;
 		String dstfilename = getThreadDir(threadName) + url;
 		// ファイルコピーのフェーズ

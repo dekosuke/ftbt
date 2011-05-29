@@ -96,6 +96,27 @@ public class ftbt extends TabActivity implements Runnable {
 	};
 
 	public void loading() {
+		/*
+		//ユーザの指定したディレクトリ設定を読み込む
+		try {
+			SDCard.setCacheDir(this);
+			SDCard.setSaveDir(this);
+			String cacheDir = SDCard.getCacheDir();
+			String saveDir = SDCard.getSaveDir();
+			if(cacheDir==null || saveDir==null){
+				throw new Exception("bad userdir");
+			}
+		} catch (Exception e) {
+			FLog.d("message", e);
+			Toast.makeText(this, "設定したキャッシュ/保存ディレクトリが存在しないか、書き込み権限がありません。\n再設定をお願いします。", Toast.LENGTH_LONG).show();
+		}
+		*/
+		
+		if(!SDCard.isSDCardMounted()){
+			Toast.makeText(this, "SDカードが挿入されていません。\nSDカードを挿入し、再起動してください", Toast.LENGTH_LONG).show();
+			return;
+		}
+		
 		// キャッシュを削除する(重い)
 		try {
 			//ダイアログ出すの大変なのでToastに

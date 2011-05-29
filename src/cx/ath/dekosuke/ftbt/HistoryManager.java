@@ -28,10 +28,10 @@ public class HistoryManager {
 	public void clear() {
 		threads = new LinkedHashMap<Integer, FutabaThreadContent>();
 	}
-	
-	public FutabaThreadContent get(int threadNum) throws Exception{
+
+	public FutabaThreadContent get(int threadNum) throws Exception {
 		if (!threads.containsKey(threadNum)) {
-			throw new Exception("Thread "+threadNum+"not found");
+			throw new Exception("Thread " + threadNum + "not found");
 		}
 		return threads.get(threadNum);
 	}
@@ -45,12 +45,12 @@ public class HistoryManager {
 			// このときの差分更新アルゴリズムがなんとも・・・
 			FutabaThreadContent currentThread = threads.get(thread.threadNum);
 			thread.pointAt = currentThread.pointAt;
-			threads.remove(thread.threadNum); //一度削除することで挿入順を最後に
+			threads.remove(thread.threadNum); // 一度削除することで挿入順を最後に
 			threads.put(thread.threadNum, thread);
 		}
 		FLog.d("maxHistoryNum=" + maxHistoryNum);
 		if (threads.size() > maxHistoryNum) {
-			for (Object key : threads.keySet()) { //これが挿入順であることを期待してる
+			for (Object key : threads.keySet()) { // これが挿入順であることを期待してる
 				threads.remove(key);
 				break;
 			}
@@ -69,14 +69,15 @@ public class HistoryManager {
 				thread.resNum = thread_a.resNum;
 			}
 			if (thread_a.pointAt != 0) {
-				//FLog.d("pointat written"+thread_a.pointAt);
+				// FLog.d("pointat written"+thread_a.pointAt);
 				thread.pointAt = thread_a.pointAt;
 			}
 			threads.put(thread.threadNum, thread);
 		}
 	}
 
-	public void updateThreadRemoveShiori(FutabaThreadContent thread_a) throws Exception {
+	public void updateThreadRemoveShiori(FutabaThreadContent thread_a)
+			throws Exception {
 		if (!threads.containsKey(thread_a.threadNum)) {
 			throw new Exception("thread not found in history");
 		} else {
@@ -133,10 +134,10 @@ public class HistoryManager {
 			threads_array.add(threads.get(it.next()));
 		}
 		// 更新日時順ソート
-		//Collections.sort(threads_array, comparator);
-		//反転
+		// Collections.sort(threads_array, comparator);
+		// 反転
 		ArrayList<FutabaThreadContent> threads_array_rev = new ArrayList<FutabaThreadContent>();
-		for(int i=threads_array.size()-1;i>=0;--i){
+		for (int i = threads_array.size() - 1; i >= 0; --i) {
 			threads_array_rev.add(threads_array.get(i));
 		}
 		return threads_array_rev;
