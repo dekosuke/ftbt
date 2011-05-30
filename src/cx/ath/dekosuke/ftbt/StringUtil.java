@@ -13,6 +13,13 @@ public class StringUtil {
 		return str;
 	}
 
+	static String safeCutNoDot(String str, int length) {
+		if (str.length() > length) {
+			return str.substring(0, length);
+		}
+		return str;
+	}
+
 	// これ汎用じゃない・・
 	static String[] nonBlankSplit(String str, String[] addition) {
 		String[] elems = str.split("\n");

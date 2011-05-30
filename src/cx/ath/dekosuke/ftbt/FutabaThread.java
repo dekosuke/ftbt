@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -522,7 +524,16 @@ public class FutabaThread extends Activity implements Runnable {
 				}
 				try {
 					final String imgURL = imgURLs.get(i);
-					final String threadName = BBSName + "_スレ" + threadNum;
+					String threadName = "";
+					if(false && statuses.size()!=0){
+						//スレ名表示に問題があるのでここ断念
+						FutabaStatus status = statuses.get(0); //スレの最初のコメント
+						Date date = new Date();
+						SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMDD");
+						threadName = "" + BBSName + "_" + sdf1.format(date) + "_スレ" + threadNum;
+					}else{ //今は常にここに来る
+						threadName = "" +BBSName + "_スレ" + threadNum; 
+					}
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
 					if (!imgURL.contains("htm")
