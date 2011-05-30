@@ -34,9 +34,38 @@ public class PrefSetting extends PreferenceActivity {
 					return HistorySizeChange(preference, newValue);
 				}
 			});
-
+			EditTextPreference etp_delkey = (EditTextPreference) this
+					.findPreference(getString(R.string.deletekey));
+			// リスナーを設定する
+			etp_delkey
+					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+						public boolean onPreferenceChange(
+								Preference preference, Object newValue) {
+							return DeleteKeyChange(preference, newValue);
+						}
+					});
+			DirectorySelectDialogPreference cachedir = (DirectorySelectDialogPreference) this
+					.findPreference(getString(R.string.cachedirsummary));
+			cachedir.setSummary(R.string.cachedirsummary);
+			// リスナーを設定する
+			cachedir.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(Preference preference,
+						Object newValue) {
+					return CacheDirChange(preference, newValue);
+				}
+			});
+			DirectorySelectDialogPreference savedir = (DirectorySelectDialogPreference) this
+					.findPreference(getString(R.string.savedirsummary));
+			cachedir.setSummary(R.string.savedirsummary);
+			// リスナーを設定する
+			cachedir.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(Preference preference,
+						Object newValue) {
+					return SaveDirChange(preference, newValue);
+				}
+			});
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -71,8 +100,59 @@ public class PrefSetting extends PreferenceActivity {
 		} catch (Exception e) {
 
 		}
-		Toast.makeText(this, "記憶する履歴は100件以下にしてください", Toast.LENGTH_LONG)
-				.show();
+		Toast.makeText(this, "記憶する履歴は100件以下にしてください", Toast.LENGTH_LONG).show();
 		return false;
 	}
+
+	private boolean DeleteKeyChange(Preference preference, Object newValue) {
+		String input = newValue.toString();
+		try {
+			if (input != null && input.length() <= 8) {
+				preference.setSummary(input);
+				return true;
+			} else {
+			}
+		} catch (Exception e) {
+
+		}
+		Toast.makeText(this, "パスワードは8文字以下にしてください", Toast.LENGTH_LONG).show();
+		return false;
+	}
+
+	private boolean CacheDirChange(Preference preference, Object newValue) {
+		String input = newValue.toString();
+		try {
+			if (input != null ) {
+				preference.setSummary(R.string.cachedirsummary);
+				SDCard.setCacheDir(this);
+				return true;
+			} else {
+			}
+		} catch (Exception e) {
+
+		}
+		// ディレクトリの作成ができるか確認(作成できない場合、警告を出しデフォルトに戻す)
+		return false;
+	}
+
+	private boolean SaveDirChange(Preference preference, Object newValue) {
+		String input = newValue.toString();
+		try {
+			if (input != null) {
+				preference.setSummary(R.string.savedirsummary);
+				SDCard.setSaveDir(this);
+				return true;
+			} else {
+			}
+		} catch (Exception e) {
+
+		}
+		// ディレクトリの作成ができるか確認(作成できない場合、警告を出しデフォルトに戻す)
+		return false;
+	}
+	
+	private String getDirFooter(){
+		return "(推奨は"+SDCard.getBaseDir()+"です)";
+	}
+	
 }

@@ -29,6 +29,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,6 +38,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -66,9 +68,9 @@ public class Post extends Activity implements Runnable {
 	// multipart 画像添付回り
 	final int REQUEST_IMAGEPICK_CONSTANT = 0x100200;
 	Uri imageContent = null;
-	
-	//スレ建てか返信かどうか
-	boolean newthread=false;
+
+	// スレ建てか返信かどうか
+	boolean newthread = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -98,6 +100,24 @@ public class Post extends Activity implements Runnable {
 			}
 			TextView comment_v = (TextView) findViewById(id.comment);
 			comment_v.setText(postText);
+			
+			String deleteKey = "";
+			try {
+				SharedPreferences preferences = PreferenceManager
+						.getDefaultSharedPreferences(this);
+				deleteKey = preferences.getString(
+						getString(R.string.deletekey),
+						"");
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
+			if(!deleteKey.equals("")){
+				TextView deleteKey_v = (TextView) findViewById(id.deletekey);
+				deleteKey_v.setText(deleteKey);
+				
+			}
+			FLog.d("deletekey="+deleteKey);
+			
 			Button postbutton = (Button) findViewById(id.postbutton);
 			postbutton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -175,8 +195,8 @@ public class Post extends Activity implements Runnable {
 	};
 
 	public void onClickPostButton(View v) {
-		
-		//確認
+
+		// 確認
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(Post.this);
 		dlg.setTitle("投稿の確認");
@@ -185,7 +205,7 @@ public class Post extends Activity implements Runnable {
 		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Catalog.this.finish();
-				//Catalog.this.deleteThreads();
+				// Catalog.this.deleteThreads();
 				Post.this.setWait();
 			}
 		});
@@ -196,9 +216,8 @@ public class Post extends Activity implements Runnable {
 			}
 		});
 		dlg.show();
-		
-		
-		//setWait();
+
+		// setWait();
 	}
 
 	public void onClickImageChooseButton(View v) {
@@ -346,7 +365,7 @@ public class Post extends Activity implements Runnable {
 			entity.addPart("email", new StringBody(email, sjisCharset));
 			entity.addPart("name", new StringBody(name, sjisCharset));
 			entity.addPart("mode", new StringBody("regist"));
-			if(!newthread){
+			if (!newthread) {
 				entity.addPart("resto", new StringBody("" + threadNum));
 			}
 			entity.addPart("com", new StringBody(comment, sjisCharset));
@@ -387,6 +406,7 @@ public class Post extends Activity implements Runnable {
 			} else {
 				Toast.makeText(this, "投稿しました", Toast.LENGTH_LONG).show();
 			}
+			setOnReturn();
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
@@ -395,5 +415,12 @@ public class Post extends Activity implements Runnable {
 		// スレッドに戻る
 		finish();
 
+	}
+	
+	// 戻ったときのインテントにパラメータ渡す(再読み込みするか判定のため)
+	public void setOnReturn() {
+		Intent ret_i = new Intent();
+		ret_i.putExtra("posted", "true");
+		setResult(RESULT_OK, ret_i);
 	}
 }

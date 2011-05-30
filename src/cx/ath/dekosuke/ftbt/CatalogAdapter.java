@@ -103,13 +103,13 @@ public class CatalogAdapter extends ArrayAdapter {
 							thread.lastAccessed = calendar.getTimeInMillis();
 							HistoryManager man = new HistoryManager();
 							man.Load();
-							int maxHistoryNum = 5;
+							int maxHistoryNum = 20;
 							try {
 								SharedPreferences preferences = PreferenceManager
 										.getDefaultSharedPreferences(activity);
 								maxHistoryNum = Integer.parseInt(preferences.getString(
 										activity.getString(R.string.historynum),
-										"5"));
+										"20"));
 							} catch (Exception e) {
 								FLog.d("message", e);
 							}

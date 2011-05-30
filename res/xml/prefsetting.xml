@@ -15,7 +15,13 @@
       android:key="@string/dispcensored"
       android:title="警告付きBBSも一覧に表示する" 
       android:summaryOn="表示する"
-      android:summaryOff="表示しない" />
+      android:summaryOff="表示しない" 
     android:defaultValue="Off"
-    android:summary="PCで見る際に警告画面の出る掲示板も表示します">
+    android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
+    <EditTextPreference android:title="投稿の削除キー"
+    android:key="@string/deletekey" 
+    android:inputType="textPassword"
+		android:textSize="20sp"
+    android:defaultValue=""
+    android:summary="投稿時の削除キーを設定します"></EditTextPreference>
 </PreferenceScreen>

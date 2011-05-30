@@ -20,16 +20,16 @@ public class FutabaBBSMenuParser {
 	private String urlStr;
 	public boolean network_ok;
 	public boolean cache_ok;
-	public boolean display_censored=false;
+	public boolean display_censored = false;
 
 	public FutabaBBSMenuParser(String urlStr) {
 		this.urlStr = urlStr;
 		BBSs = new ArrayList<FutabaBBSContent>();
 		network_ok = true;
-		cache_ok = true;	
+		cache_ok = true;
 	}
-	
-	public void setDisplayCensored(boolean bool){
+
+	public void setDisplayCensored(boolean bool) {
 		display_censored = bool;
 	}
 
@@ -51,10 +51,10 @@ public class FutabaBBSMenuParser {
 						.loadTextCache(FutabaCrypt.createDigest(urlStr));
 				network_ok = true;
 			} catch (Exception e) { // ネットワークつながってないときとか
-			FLog.d("failed to get catalog html");
+				FLog.d("failed to get catalog html");
 				network_ok = false;
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(urlStr))) {
-				FLog.d("getting html from cache");
+					FLog.d("getting html from cache");
 					allData = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(urlStr));
 				} else { // キャッシュもない
@@ -66,27 +66,27 @@ public class FutabaBBSMenuParser {
 				FutabaBBSContent bbs = new FutabaBBSContent();
 				bbs.url = mcBBS.group(1);
 				bbs.name = mcBBS.group(2);
-				if(bbs.name.equals("二次元裏")){
-					if(bbs.url.contains("may")){
-						bbs.name="二次元裏(may)";
-						//imgを手動追加
+				if (bbs.name.equals("二次元裏")) {
+					if (bbs.url.contains("may")) {
+						bbs.name = "二次元裏(may)";
+						// imgを手動追加
 						FutabaBBSContent img_bbs = new FutabaBBSContent();
 						img_bbs.name = "二次元裏(img)";
 						img_bbs.url = "http://img.2chan.net/b/";
 						BBSs.add(img_bbs);
-					}else if(bbs.url.contains("dec")){
-						bbs.name="二次元裏(dec)";						
-						//datを手動追加
+					} else if (bbs.url.contains("dec")) {
+						bbs.name = "二次元裏(dec)";
+						// datを手動追加
 						FutabaBBSContent dat_bbs = new FutabaBBSContent();
 						dat_bbs.name = "二次元裏(dat)";
 						dat_bbs.url = "http://dat.2chan.net/b/";
 						BBSs.add(dat_bbs);
-					}else if(bbs.url.contains("jun")){
-						bbs.name="二次元裏(jun)";						
+					} else if (bbs.url.contains("jun")) {
+						bbs.name = "二次元裏(jun)";
 					}
 				}
-				//自作PCの直前に特殊掲示板３つ
-				if(bbs.name.equals("自作PC") && display_censored){
+				// 自作PCの直前に特殊掲示板３つ
+				if (bbs.name.equals("自作PC") && display_censored) {
 					FutabaBBSContent other_bbs = new FutabaBBSContent();
 					other_bbs.name = "二次元グロ";
 					other_bbs.url = "http://cgi.2chan.net/o/";
@@ -100,10 +100,17 @@ public class FutabaBBSMenuParser {
 					other_bbs.url = "http://zip.2chan.net/5/";
 					BBSs.add(other_bbs);
 				}
+				if (bbs.name.equals("二次元ID") ) {
+					// てすとjunを手動追加
+					FutabaBBSContent dat_bbs = new FutabaBBSContent();
+					dat_bbs.name = "てすとjun";
+					dat_bbs.url = "http://www.2chan.net/30/";
+					BBSs.add(dat_bbs);
+				}
 				BBSs.add(bbs);
 			}
 		} catch (Exception e) {
-		FLog.d("failure in FutabaBBSMenuParser", e);
+			FLog.d("failure in FutabaBBSMenuParser", e);
 		}
 		// return list;
 	}

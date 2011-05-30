@@ -25,8 +25,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -88,6 +92,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 	// 画像カタログから戻ってきたときにどの画像から戻ってきたか判定用
 	final int TO_IMAGECATALOG = 0;
+	final int TO_POST = 1;
 
 	private int itemLongClick_chosen = 0; // ここに変数置くの可能ならやめたい・・
 
@@ -96,13 +101,32 @@ public class FutabaThread extends Activity implements Runnable {
 		super.onCreate(savedInstanceState);
 
 		Intent intent = getIntent();
-		baseURL = (String) intent.getSerializableExtra("baseUrl");
-		threadNum = Integer.parseInt((String) intent
-				.getSerializableExtra("threadNum"));
-		BBSName = (String) intent
-				.getSerializableExtra("BBSName");
-		threadURL = baseURL + "res/" + threadNum + ".htm";
-		FLog.d("threadurl=" + threadURL);
+		String superFutabaLinkURL = intent.getDataString();
+		if (superFutabaLinkURL != null) { // スーパーふたばリンク（urlからのリンク)
+			FLog.d("superFutabaLink:" + superFutabaLinkURL);
+			Pattern baseURLpattern = Pattern.compile(
+					"(http://[^.]+[.]2chan[.]net/[^/]+/)res/([0-9]+)",
+					Pattern.DOTALL);
+			Matcher threadm = baseURLpattern.matcher(superFutabaLinkURL);
+			if (threadm.find()) {
+				baseURL = threadm.group(1);
+				threadNum = Integer.parseInt(threadm.group(2));
+				BBSName = "ふたばリンク"; // ここは本当は板名ほしい・・
+				threadURL = baseURL + "res/" + threadNum + ".htm";
+				FLog.d("threadURL=" + threadURL);
+			} else {
+				Toast.makeText(this, "URLの解読エラー", Toast.LENGTH_LONG).show();
+			}
+
+		} else { // 通常フロー
+
+			baseURL = (String) intent.getSerializableExtra("baseUrl");
+			threadNum = Integer.parseInt((String) intent
+					.getSerializableExtra("threadNum"));
+			BBSName = (String) intent.getSerializableExtra("BBSName");
+			threadURL = baseURL + "res/" + threadNum + ".htm";
+		}
+		// FLog.d("threadurl=" + threadURL);
 
 		statuses = new ArrayList<FutabaStatus>();
 
@@ -271,7 +295,8 @@ public class FutabaThread extends Activity implements Runnable {
 		intent.putExtra("threadNum", threadNum);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
 				+ ".Post");
-		startActivity(intent);
+		startActivityForResult(intent, TO_POST);
+
 	}
 
 	@Override
@@ -494,15 +519,26 @@ public class FutabaThread extends Activity implements Runnable {
 			// SDCard.createThreadDir(thread)
 			int saveItemNum = 0;
 			for (int i = 0; i < imgURLs.size(); ++i) {
-				if(!waitDialog.isShowing()){ //キャンセルされた
+				if (!waitDialog.isShowing()) { // キャンセルされた
 					return;
 				}
 				try {
 					final String imgURL = imgURLs.get(i);
-					final String threadName = BBSName + "_スレ" + threadNum;
+					String threadName = "";
+					if(false && statuses.size()!=0){
+						//スレ名表示に問題があるのでここ断念
+						FutabaStatus status = statuses.get(0); //スレの最初のコメント
+						Date date = new Date();
+						SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMDD");
+						threadName = "" + BBSName + "_" + sdf1.format(date) + "_スレ" + threadNum;
+					}else{ //今は常にここに来る
+						threadName = "" +BBSName + "_スレ" + threadNum; 
+					}
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
-					if(SDCard.savedImageToThreadExist(file.getName(), threadName)){ //すでにファイルある
+					if (!imgURL.contains("htm")
+							&& SDCard.savedImageToThreadExist(file.getName(),
+									threadName)) { // すでにファイルある
 						continue;
 					}
 					File saved_file = ImageCache.saveImageToThread(imgURL,
@@ -519,10 +555,11 @@ public class FutabaThread extends Activity implements Runnable {
 					// 描画に関わる処理はここに集約(メインスレッド実行)
 					handler3.post(new Runnable() {
 						public void run() {
-							//waitDialog.show();
+							// waitDialog.show();
 							if (saved_file_f != null) {
 
-								waitDialog.setMessage("ファイル\n"+saved_file_f+"\nに保存しました");
+								waitDialog.setMessage("ファイル\n" + saved_file_f
+										+ "\nに保存しました");
 
 								// ギャラリーに反映されるように登録
 								// http://www.adakoda.com/adakoda/2010/08/android-34.html
@@ -551,12 +588,12 @@ public class FutabaThread extends Activity implements Runnable {
 										Images.Media.EXTERNAL_CONTENT_URI,
 										values);
 							} else {
-								if(toast!=null){
+								if (toast != null) {
 									toast.cancel();
 								}
 								toast.makeText(adapter.getContext(),
-										"画像"+imgURL+"の取得に失敗しました", Toast.LENGTH_SHORT)
-										.show();
+										"画像" + imgURL + "の取得に失敗しました",
+										Toast.LENGTH_SHORT).show();
 
 							}
 						}
@@ -570,13 +607,15 @@ public class FutabaThread extends Activity implements Runnable {
 			handler3.post(new Runnable() {
 				public void run() {
 					waitDialog.dismiss();
-					if(toast!=null){
+					if (toast != null) {
 						toast.cancel();
 					}
-					toast.makeText(adapter.getContext(), ""+saveItemNum_f+"個のファイルを新規に保存しました", Toast.LENGTH_SHORT ).show();
+					toast.makeText(adapter.getContext(),
+							"" + saveItemNum_f + "個のファイルを新規に保存しました",
+							Toast.LENGTH_SHORT).show();
 				}
 			});
-			
+
 			System.gc();
 		}
 
@@ -585,9 +624,10 @@ public class FutabaThread extends Activity implements Runnable {
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
 		try {
-			String imgURL = (String) intent.getSerializableExtra("imgURL");
 			// FLog.d("return intent imgURL="+imgURL);
+			FLog.d("after activity " + requestCode);
 			if (requestCode == TO_IMAGECATALOG) {
+				String imgURL = (String) intent.getSerializableExtra("imgURL");
 				for (int i = 0; i < statuses.size(); ++i) {
 					// FLog.d("image"+i+"="+statuses.get(i).bigImgURL);
 					if (imgURL.equals(statuses.get(i).bigImgURL)) {
@@ -595,6 +635,16 @@ public class FutabaThread extends Activity implements Runnable {
 						listView.setSelection(Math.min(i, listView.getCount()));
 						break;
 					}
+				}
+			} else if (requestCode == TO_POST) {
+				String posted = "";
+				try {
+					 posted = (String) intent.getSerializableExtra("posted");
+				} catch (Exception e) {
+				}
+				if (!posted.equals("")) {
+					// 再読み込み
+					this.onClickReloadBtn(null);
 				}
 			} else {
 				FLog.d("unknown result code");
@@ -668,7 +718,7 @@ public class FutabaThread extends Activity implements Runnable {
 							HistoryManager man = new HistoryManager();
 							FutabaThreadContent thread = new FutabaThreadContent();
 							thread.threadNum = threadNum;
-							thread.resNum = "" + webParser.getStatuses().size();
+							thread.resNum = "" + Math.max(0, webParser.getStatuses().size() - 1);
 							man.Load();
 							man.updateThread(thread);
 							man.Save();
@@ -869,13 +919,13 @@ public class FutabaThread extends Activity implements Runnable {
 									"画像の取得に失敗しました", Toast.LENGTH_SHORT).show();
 
 						}
-						waitDialog.dismiss();
 					}
 				});
 
 			} catch (Exception e) {
 				FLog.d("message", e);
 			}
+			waitDialog.dismiss();
 
 		}
 	}

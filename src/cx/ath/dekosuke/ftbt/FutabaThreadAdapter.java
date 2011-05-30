@@ -145,17 +145,23 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 								&& position >= activity.prevSize) { // 新着
 							title_base += " New!";
 							if (position != 0) { // レス番号
-								title_base = "<font color=\"#800000\">"
-										+ (position - 1) + "</font> "
+								title_base = "<font color=\"#800000\">["
+										+ (position - 1) + "]</font> "
 										+ title_base;
 							}
 						} else {
 							if (position != 0) { // レス番号
-								title_base = "<font color=\"#800000\">"
-										+ position + "</font> " + title_base;
+								title_base = "<font color=\"#800000\">["
+										+ position + "]</font> " + title_base;
 							}
 						}
 						// name.setText(item.name);// item.getImgURL());
+					}else{
+						if (position != 0) { // レス番号
+							title_base = "<font color=\"#800000\">["
+									+ position + "</font>] " + title_base;
+						}
+						
 					}
 
 					CharSequence cs_title = Html.fromHtml(title_base); // HTML表示

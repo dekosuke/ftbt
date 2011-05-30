@@ -37,7 +37,7 @@ public class ftbt extends TabActivity implements Runnable {
 
 	ProgressDialog waitDialog;
 	Thread thread;
-	
+
 	TabHost tabs;
 
 	@Override
@@ -46,8 +46,8 @@ public class ftbt extends TabActivity implements Runnable {
 
 		// TabHostのインスタンスを取得
 		tabs = getTabHost();
-		
-		//2.1で落ちる問題対策のためのダミータブ
+
+		// 2.1で落ちる問題対策のためのダミータブ
 		TabSpec tab00 = tabs.newTabSpec("TabSheet0");
 		View v1 = new MyView(this, "読み込み中・・・");
 		tab00.setIndicator(v1);
@@ -55,20 +55,21 @@ public class ftbt extends TabActivity implements Runnable {
 				.getPackage().getName() + ".DummyTab");
 		tab00.setContent(intent);
 		tabs.addTab(tab00);
-		
+
 		setWait();
-		
+
 	}
 
 	public void setWait() {
 		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("キャッシュ整理中...");
+		waitDialog
+				.setMessage("キャッシュを整理しています。\n(前回起動から開いたページ数に応じて時間がかかります)");
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();
 
 		thread = new Thread(this);
-		thread.start();		
+		thread.start();
 
 	}
 
@@ -77,7 +78,7 @@ public class ftbt extends TabActivity implements Runnable {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
-		}		
+		}
 
 		handler.sendEmptyMessage(0);
 	}
@@ -86,7 +87,7 @@ public class ftbt extends TabActivity implements Runnable {
 		public void handleMessage(Message msg) {
 			// HandlerクラスではActivityを継承してないため
 			// 別の親クラスのメソッドにて処理を行うようにした。
-			FLog.d("handle msg"+msg);
+			FLog.d("handle msg" + msg);
 			try {
 				loading();
 			} catch (Exception e) {
@@ -96,10 +97,27 @@ public class ftbt extends TabActivity implements Runnable {
 	};
 
 	public void loading() {
+		/*
+		 * //ユーザの指定したディレクトリ設定を読み込む try { SDCard.setCacheDir(this);
+		 * SDCard.setSaveDir(this); String cacheDir = SDCard.getCacheDir();
+		 * String saveDir = SDCard.getSaveDir(); if(cacheDir==null ||
+		 * saveDir==null){ throw new Exception("bad userdir"); } } catch
+		 * (Exception e) { FLog.d("message", e); Toast.makeText(this,
+		 * "設定したキャッシュ/保存ディレクトリが存在しないか、書き込み権限がありません。\n再設定をお願いします。",
+		 * Toast.LENGTH_LONG).show(); }
+		 */
+
+		if (!SDCard.isSDCardMounted()) {
+			Toast.makeText(this, "SDカードが挿入されていません。\nSDカードを挿入し、再起動してください",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+
 		// キャッシュを削除する(重い)
 		try {
-			//ダイアログ出すの大変なのでToastに
-			//Toast.makeText(this, "キャッシュを整理しています・・・", Toast.LENGTH_LONG).show();
+			// ダイアログ出すの大変なのでToastに
+			// Toast.makeText(this, "キャッシュを整理しています・・・",
+			// Toast.LENGTH_LONG).show();
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			int cacheSize = Integer.parseInt(preferences.getString(
@@ -107,11 +125,11 @@ public class ftbt extends TabActivity implements Runnable {
 
 			FLog.d("cachesize=" + cacheSize);
 			SDCard.limitCache(cacheSize);
-		
+
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
-		
+
 		FLog.d("after cachecheck");
 
 		try {
@@ -121,7 +139,7 @@ public class ftbt extends TabActivity implements Runnable {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		/*
 		 * // レイアウトを設定 -> これあると2.1で落ちるよ(2.2だとok)
 		 * LayoutInflater.from(this).inflate(R.layout.tabmain,
@@ -130,9 +148,9 @@ public class ftbt extends TabActivity implements Runnable {
 		Intent intent;
 
 		try {
-			//ダミータブ消す
+			// ダミータブ消す
 			tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
-			
+
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBSContent>();
 			FLog.d("favbbs=" + favoriteBBSs);
@@ -158,7 +176,7 @@ public class ftbt extends TabActivity implements Runnable {
 			tabs.addTab(tab02);
 			// 初期表示のタブ設定
 			tabs.setCurrentTab(1);
-			
+
 			setTitle("BBS一覧 - " + getString(R.string.app_name));
 		} catch (Exception e) {
 			FLog.d("message", e);
