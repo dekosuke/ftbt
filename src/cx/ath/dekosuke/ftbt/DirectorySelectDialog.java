@@ -54,7 +54,7 @@ public class DirectorySelectDialog extends Activity implements
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								System.out.println(path);
+								//System.out.println(path);
 								mListenner.onClickFileList(path);
 							}
 						});

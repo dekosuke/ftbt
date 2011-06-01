@@ -1,7 +1,9 @@
 package cx.ath.dekosuke.ftbt;
 
+import cx.ath.dekosuke.ftbt.DirectorySelectDialog.onDirectoryListDialogListener;
 import android.os.Bundle;
 
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -44,26 +46,52 @@ public class PrefSetting extends PreferenceActivity {
 							return DeleteKeyChange(preference, newValue);
 						}
 					});
-			DirectorySelectDialogPreference cachedir = (DirectorySelectDialogPreference) this
-					.findPreference(getString(R.string.cachedirsummary));
-			cachedir.setSummary(R.string.cachedirsummary);
 			// リスナーを設定する
-			cachedir.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-				public boolean onPreferenceChange(Preference preference,
-						Object newValue) {
-					return CacheDirChange(preference, newValue);
+			/*
+			 * cachedir.setOnFileListDialogListener(new
+			 * onDirectoryListDialogListener() { public void
+			 * onClickFileList(String path){ return CacheDirChange(cachedir,
+			 * path); } });
+			 */
+			final DirectorySelectDialogPreference savedir = (DirectorySelectDialogPreference) this
+					.findPreference("saveDir");
+			// savedir.setSummary(R.string.savedirsummary);
+			String saveSummaryFooter = "";
+			if (SDCard.saveDir != null) {
+				saveSummaryFooter += "。\n現在の設定:\"" + SDCard.saveDir + "\"";
+			}
+			savedir.setSummary(getString(R.string.savedirsummary)
+					+ saveSummaryFooter);
+			savedir.addListener(new onDirectoryListDialogListener() {
+				public void onClickFileList(String path) {
+					// SDCard.setSaveDir(activity);
+					/*
+					 * String saveSummaryFooter = ""; if(SDCard.saveDir !=
+					 * null){
+					 * saveSummaryFooter+="。\n現在の設定:\""+SDCard.saveDir+"\""; }
+					 * savedir.setSummary(getString(R.string.savedirsummary)+
+					 * saveSummaryFooter);
+					 */
+					savedir.setSummary(path);
 				}
 			});
-			DirectorySelectDialogPreference savedir = (DirectorySelectDialogPreference) this
-					.findPreference(getString(R.string.savedirsummary));
-			cachedir.setSummary(R.string.savedirsummary);
 			// リスナーを設定する
-			cachedir.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-				public boolean onPreferenceChange(Preference preference,
-						Object newValue) {
-					return SaveDirChange(preference, newValue);
+			/*
+			 * savedir.setOnPreferenceChangeListener(new
+			 * OnPreferenceChangeListener() { public boolean
+			 * onPreferenceChange(Preference preference, Object newValue) {
+			 * return SaveDirChange(preference, newValue); } });
+			 */
+			FLog.d("hoge");
+			CheckBoxPreference innerCache = (CheckBoxPreference) this
+					.findPreference("innerCache");
+			innerCache.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+				public boolean onPreferenceChange(
+						Preference preference, Object newValue) {
+					return InnerCacheChange(preference, newValue);
 				}
 			});
+			//innerCache.setSummary("内部メモリをキャッシュに使用します。変更は次回起動時から有効になります\n（注：お気に入り・履歴もキャッシュにあるので消えます）");
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
@@ -119,19 +147,21 @@ public class PrefSetting extends PreferenceActivity {
 		return false;
 	}
 
-	private boolean CacheDirChange(Preference preference, Object newValue) {
+	private boolean InnerCacheChange(Preference preference, Object newValue) {
 		String input = newValue.toString();
+		FLog.d("newvalue=" + newValue);
 		try {
-			if (input != null ) {
-				preference.setSummary(R.string.cachedirsummary);
-				SDCard.setCacheDir(this);
+			if (input != null) {
+				FLog.d("input=" + input);
+				//SDCard.setCacheDir(this);
+				//この時点ではまだキャッシュディレクトリ更新されてない
+				SDCard.copyCacheSetting(this);
 				return true;
 			} else {
 			}
 		} catch (Exception e) {
 
 		}
-		// ディレクトリの作成ができるか確認(作成できない場合、警告を出しデフォルトに戻す)
 		return false;
 	}
 
@@ -139,7 +169,7 @@ public class PrefSetting extends PreferenceActivity {
 		String input = newValue.toString();
 		try {
 			if (input != null) {
-				preference.setSummary(R.string.savedirsummary);
+				// preference.setSummary(R.string.savedirsummary);
 				SDCard.setSaveDir(this);
 				return true;
 			} else {
@@ -150,9 +180,23 @@ public class PrefSetting extends PreferenceActivity {
 		// ディレクトリの作成ができるか確認(作成できない場合、警告を出しデフォルトに戻す)
 		return false;
 	}
-	
-	private String getDirFooter(){
-		return "(推奨は"+SDCard.getBaseDir()+"です)";
+
+	private String getDirFooter() {
+		return "(推奨は" + SDCard.getBaseDir() + "です)";
 	}
-	
+
+	@Override
+	public void onDestroy() {
+		FLog.d("PrefSetting::onDestroy()");
+
+		super.onDestroy();
+
+		// ユーザの指定したディレクトリ設定を読み込む
+		try {
+			SDCard.setCacheDir(this);
+			SDCard.setSaveDir(this); // String saveDir = SDCard.getSaveDir(); }
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
+	}
 }

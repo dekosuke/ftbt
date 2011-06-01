@@ -6,9 +6,12 @@
 	<string name="cachesize">myCacheSize</string>
 	<string name="historynum">myHistoryNum</string>
 	<string name="deletekey">myDeleteKey</string>
-	<string name="cachedirsummary">"指定したディレクトリ以下に「.ftbtcache」ディレクトリを作成し、キャッシュ用に使用します。"
+	<string name="enablesavebutton">"enablesavebutton"</string>
+	<string name="innerCache">innerCache</string>
+	<string name="saveInnerMemory">saveInnerMemory</string>
+	<string name="cachedirsummary">"指定したディレクトリの下に「.ftbtcache」ディレクトリを作成し、キャッシュ用に使用します" 
 	</string>
-	<string name="savedirsummary">"指定したディレクトリ以下に「ふたばと」ディレクトリを作成し、画像の保存先に使用します。"
+	<string name="savedirsummary">"指定したディレクトリを画像の保存先に使用します"
 	</string>
 	<string name="dispcensored">dispCensored</string>
 	<string name="fontsize">fontSize</string>

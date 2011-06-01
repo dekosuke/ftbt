@@ -18,10 +18,26 @@
       android:summaryOff="表示しない" 
     android:defaultValue="Off"
     android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
+    <CheckBoxPreference 
+      android:key="@string/enablesavebutton"
+      android:title="画像を保存するボタンを表示する" 
+      android:summaryOn="表示する"
+      android:summaryOff="表示しない" 
+    android:defaultValue="On"
+    android:summary="スレッドで「画像を保存する」ボタンを表示します" />
     <EditTextPreference android:title="投稿の削除キー"
     android:key="@string/deletekey" 
     android:inputType="textPassword"
 		android:textSize="20sp"
     android:defaultValue=""
     android:summary="投稿時の削除キーを設定します"></EditTextPreference>
+    <CheckBoxPreference 
+      android:key="innerCache"
+      android:title="内蔵メモリにキャッシュを保存" 
+      android:summaryOn="はい"
+      android:summaryOff="いいえ" 
+    android:defaultValue="Oｆｆ"
+    android:summary="キャッシュデータを内蔵ディレクトリに保存します" />
+	<cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
+		android:key="saveDir" android:title="画像保存先の指定" android:summary="@string/savedirsummary" />
 </PreferenceScreen>

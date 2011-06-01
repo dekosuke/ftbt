@@ -35,8 +35,8 @@ import android.graphics.BitmapFactory;
 //SDカードといいつつSDカードへの保存に加えてHTTPアクセスも扱っているクラス
 public class SDCard {
 
-	static String cacheDir = null;
-	static String saveDir = null;
+	public static String cacheDir = null;
+	public static String saveDir = null;
 
 	public static boolean isSDCardMounted() {
 		FLog.d("mount=" + Environment.getExternalStorageState());
@@ -44,12 +44,17 @@ public class SDCard {
 				Environment.MEDIA_MOUNTED);
 	}
 
-	public static boolean setCacheDir(Context context) {
+	public static boolean setAntiCacheDir(Context context) {
 		try {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(context);
-			cacheDir = preferences.getString(
-					context.getString(R.string.cachedirsummary), null);
+			Boolean innerCache = preferences.getBoolean("innerCache", false);
+			if (!innerCache) {
+				cacheDir = context.getFilesDir().getPath();
+			} else { // 外部メモリ
+				cacheDir = null;
+			}
+			FLog.d("cacheDir=" + cacheDir);
 		} catch (Exception e) {
 			FLog.d("message", e);
 			return false;
@@ -57,12 +62,59 @@ public class SDCard {
 		return true;
 	}
 
+	public static boolean setCacheDir(Context context) {
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			Boolean innerCache = preferences.getBoolean("innerCache", false);
+			if (innerCache) {
+				cacheDir = context.getFilesDir().getPath();
+			} else { // 外部メモリ
+				cacheDir = null;
+			}
+			FLog.d("cacheDir=" + cacheDir);
+		} catch (Exception e) {
+			FLog.d("message", e);
+			return false;
+		}
+		return true;
+	}
+
+	// キャッシュ内部・外部切り替え時にお気に入りをコピー
+	public static void copyCacheSetting(Context context) {
+		setAntiCacheDir(context);
+		String newFile = getCacheDir() + "bin/favorites";
+		setCacheDir(context);
+		String oldFile = getCacheDir() + "bin/favorites";
+
+		FLog.d("copy file:" + oldFile + " -> " + newFile);
+
+		// ファイルコピーのフェーズ
+		InputStream input = null;
+		OutputStream output = null;
+		File dstFile = new File(newFile);
+		try {
+			input = new FileInputStream(new File(oldFile));
+			output = new FileOutputStream(dstFile);
+
+			int DEFAULT_BUFFER_SIZE = 1024 * 4;
+			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+			int n = 0;
+			while (-1 != (n = input.read(buffer))) {
+				output.write(buffer, 0, n);
+			}
+			input.close();
+			output.close();
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
+	}
+
 	public static boolean setSaveDir(Context context) {
 		try {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(context);
-			saveDir = preferences.getString(
-					context.getString(R.string.savedirsummary), null);
+			saveDir = preferences.getString("saveDir", null);
 		} catch (Exception e) {
 			FLog.d("message", e);
 			return false;
@@ -82,38 +134,18 @@ public class SDCard {
 		return sdcard_dir;
 	}
 
-	private static boolean isUsableDirectory(File file) {
+	public static boolean isUsableDirectory(File file) {
 		return file.exists() && file.isDirectory() && file.canWrite();
 	}
 
-	public static String getDefaultCacheDir() {
-		String base_dir = getBaseDir();
-		String cacheDir = base_dir + "/.ftbtcache/";
-		File file = new File(cacheDir);
-		file.mkdir(); // ディレクトリないときにつくる
-		return cacheDir;
-	}
-
-	public static String getDefaultSaveDir() {
-		String sdcard_dir = getBaseDir();
-		String saveDir = sdcard_dir + "/ふたばと/";
-		File file = new File(saveDir);
-		file.mkdir(); // ディレクトリないときにつくる
-		return saveDir;
-	}
-
 	public static String getCacheDir() {
-		if (1 == 1) {
-			return getDefaultCacheDir();
-		}
-		String base_dir = getBaseDir();
+		String base_dir = getBaseDir() + "/.ftbtcache/";
 		if (cacheDir != null) {
 			// ユーザ指定キャッシュディレクトリ
-			base_dir = cacheDir;
+			base_dir = cacheDir + "/";
 		}
-		// String sdcard_dir = Environment.getDataDirectory().getPath();
-		// FLog.d("dir="+sdcard_dir);
-		String cacheDir = base_dir + "/.ftbtcache/";
+		FLog.d("cacheDir=" + cacheDir);
+		String cacheDir = base_dir;
 		File file = new File(cacheDir);
 		file.mkdir(); // ディレクトリないときにつくる
 		if (!isUsableDirectory(file)) {
@@ -124,15 +156,13 @@ public class SDCard {
 	}
 
 	public static String getSaveDir() {
-		if (1 == 1) {
-			return getDefaultSaveDir();
-		}
-		String base_dir = getBaseDir();
+		String base_dir = getBaseDir() + "/ふたばと/";
 		if (saveDir != null) {
 			// ユーザ指定保存ディレクトリ
-			base_dir = saveDir;
+			base_dir = saveDir + "/";
 		}
-		String saveDir = base_dir + "/ふたばと/";
+		FLog.d("base_dir=" + base_dir);
+		String saveDir = base_dir;
 		File file = new File(saveDir);
 		file.mkdir(); // ディレクトリないときにつくる
 		if (!isUsableDirectory(file)) {
@@ -340,7 +370,7 @@ public class SDCard {
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
-			// Log.d("ftbt", f.toString()+" lastmodified="+f.lastModified());
+			Log.d("ftbt", f.toString() + " lastmodified=" + f.lastModified());
 			// FLog.d(f.getName() + "," + toCalendarString(f));
 			if (f.isDirectory()) { // 強制ディレクトリ削除
 				// deleteDir(f);

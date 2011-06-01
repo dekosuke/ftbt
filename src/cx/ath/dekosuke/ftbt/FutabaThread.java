@@ -525,14 +525,15 @@ public class FutabaThread extends Activity implements Runnable {
 				try {
 					final String imgURL = imgURLs.get(i);
 					String threadName = "";
-					if(false && statuses.size()!=0){
-						//スレ名表示に問題があるのでここ断念
-						FutabaStatus status = statuses.get(0); //スレの最初のコメント
+					if (false && statuses.size() != 0) {
+						// スレ名表示に問題があるのでここ断念
+						FutabaStatus status = statuses.get(0); // スレの最初のコメント
 						Date date = new Date();
 						SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMDD");
-						threadName = "" + BBSName + "_" + sdf1.format(date) + "_スレ" + threadNum;
-					}else{ //今は常にここに来る
-						threadName = "" +BBSName + "_スレ" + threadNum; 
+						threadName = "" + BBSName + "_" + sdf1.format(date)
+								+ "_スレ" + threadNum;
+					} else { // 今は常にここに来る
+						threadName = "" + BBSName + "_スレ" + threadNum;
 					}
 					FLog.d("trying to save" + imgURL);
 					File file = new File(imgURL);
@@ -639,7 +640,7 @@ public class FutabaThread extends Activity implements Runnable {
 			} else if (requestCode == TO_POST) {
 				String posted = "";
 				try {
-					 posted = (String) intent.getSerializableExtra("posted");
+					posted = (String) intent.getSerializableExtra("posted");
 				} catch (Exception e) {
 				}
 				if (!posted.equals("")) {
@@ -718,7 +719,9 @@ public class FutabaThread extends Activity implements Runnable {
 							HistoryManager man = new HistoryManager();
 							FutabaThreadContent thread = new FutabaThreadContent();
 							thread.threadNum = threadNum;
-							thread.resNum = "" + Math.max(0, webParser.getStatuses().size() - 1);
+							thread.resNum = ""
+									+ Math.max(0, webParser.getStatuses()
+											.size() - 1);
 							man.Load();
 							man.updateThread(thread);
 							man.Save();
@@ -846,13 +849,14 @@ public class FutabaThread extends Activity implements Runnable {
 
 	// 画像を保存する
 	public void saveImage(String imgURL) {
+		// 見せなくていいや...
 		if (waitDialog != null) {
 			waitDialog.dismiss();
 		}
 		waitDialog = new ProgressDialog(this);
 		waitDialog.setMessage("ネットワーク接続中...");
-		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		// waitDialog.setCancelable(true);
+		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); //
+		waitDialog.setCancelable(true);
 		waitDialog.show();
 
 		FutabaThreadImageRetriever getterThread = new FutabaThreadImageRetriever();

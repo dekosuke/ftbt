@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -39,11 +40,10 @@ public class ftbt extends TabActivity implements Runnable {
 	Thread thread;
 
 	TabHost tabs;
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-
+	
+	final int ON_SETTING=10000;
+	
+	public void myStart(){
 		// TabHostのインスタンスを取得
 		tabs = getTabHost();
 
@@ -56,14 +56,20 @@ public class ftbt extends TabActivity implements Runnable {
 		tab00.setContent(intent);
 		tabs.addTab(tab00);
 
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		myStart();
 		setWait();
 
 	}
 
 	public void setWait() {
 		waitDialog = new ProgressDialog(this);
-		waitDialog
-				.setMessage("キャッシュを整理しています。\n(前回起動から開いたページ数に応じて時間がかかります)");
+		waitDialog.setMessage("キャッシュを整理しています。\n(前回起動から開いたページ数に応じて時間がかかります)");
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();
@@ -97,19 +103,38 @@ public class ftbt extends TabActivity implements Runnable {
 	};
 
 	public void loading() {
-		/*
-		 * //ユーザの指定したディレクトリ設定を読み込む try { SDCard.setCacheDir(this);
-		 * SDCard.setSaveDir(this); String cacheDir = SDCard.getCacheDir();
-		 * String saveDir = SDCard.getSaveDir(); if(cacheDir==null ||
-		 * saveDir==null){ throw new Exception("bad userdir"); } } catch
-		 * (Exception e) { FLog.d("message", e); Toast.makeText(this,
-		 * "設定したキャッシュ/保存ディレクトリが存在しないか、書き込み権限がありません。\n再設定をお願いします。",
-		 * Toast.LENGTH_LONG).show(); }
-		 */
+
+		// ユーザの指定したディレクトリ設定を読み込む
+		try {
+			SDCard.setCacheDir(this);
+			SDCard.setSaveDir(this);
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
 
 		if (!SDCard.isSDCardMounted()) {
-			Toast.makeText(this, "SDカードが挿入されていません。\nSDカードを挿入し、再起動してください",
-					Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "SDカードが挿入されていません", Toast.LENGTH_LONG).show();
+			//return;
+		}
+		
+		try {
+			String saveDir = SDCard.getSaveDir();
+			if (saveDir == null) {
+				throw new Exception("bad userdir");
+			}
+		} catch (Exception e) {
+			FLog.d("message", e);
+			if (waitDialog != null) {
+				waitDialog.dismiss();
+			}
+			Toast.makeText(
+					this,
+					"保存先指定ディレクトリ\""
+							+ SDCard.saveDir
+							+ "\"が存在しないか、もしくは書き込みできないディレクトリです。\nメニューから再設定をお願いします。"
+							+ "設定がわからない場合、"
+							+ Environment.getExternalStorageDirectory()
+							+ "を推奨します。", Toast.LENGTH_LONG).show();
 			return;
 		}
 
@@ -150,6 +175,9 @@ public class ftbt extends TabActivity implements Runnable {
 		try {
 			// ダミータブ消す
 			tabs.getTabWidget().getChildAt(0).setVisibility(View.GONE);
+			//tabs.clearAllTabs();
+			
+			int tabNum = tabs.getTabWidget().getChildCount();
 
 			// お気に入りスレッドリスト
 			favoriteBBSs = new ArrayList<FutabaBBSContent>();
@@ -159,6 +187,7 @@ public class ftbt extends TabActivity implements Runnable {
 			intent = new Intent().setClassName(getPackageName(), getClass()
 					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "all");
+			//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			TabSpec tab01 = tabs.newTabSpec("TabSheet1");
 			View v1 = new MyView(this, "すべて");
 			tab01.setIndicator(v1);
@@ -168,6 +197,7 @@ public class ftbt extends TabActivity implements Runnable {
 			intent = new Intent().setClassName(getPackageName(), getClass()
 					.getPackage().getName() + ".FutabaBBSMenu");
 			intent.putExtra("mode", "fav");
+			//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			TabSpec tab02 = tabs.newTabSpec("TabSheet2");
 			// tab02.setIndicator("お気に入り");
 			View v2 = new MyView(this, "お気に入り");
@@ -229,7 +259,7 @@ public class ftbt extends TabActivity implements Runnable {
 			intent = new Intent();
 			intent.setClassName(getPackageName(), getClass().getPackage()
 					.getName() + ".PrefSetting");
-			startActivity(intent);
+			startActivityForResult(intent, ON_SETTING);
 			return true;
 		case R.id.about:
 			Uri uri = Uri.parse(getString(R.string.helpurl));
@@ -268,6 +298,30 @@ public class ftbt extends TabActivity implements Runnable {
 			} catch (Exception e) {
 				FLog.d("message", e);
 			}
+		}
+	}
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		FLog.d("onhoge");
+		if(requestCode == ON_SETTING){ //プリファレンス変更後はキャッシュ変更→お気に入り初期化がされている可能性があるので再起動
+			//tabs.getTabWidget().getChildAt(0).setVisibility(View.VISIBLE);
+			/*
+			LocalActivityManager manager = getLocalActivityManager();
+			manager.destroyActivity("TabSheet1", true);
+			manager.destroyActivity("TabSheet2", true);
+			Intent intent;
+			// タブシートの設定
+			intent = new Intent().setClassName(getPackageName(), getClass()
+					.getPackage().getName() + ".FutabaBBSMenu");
+			intent.putExtra("mode", "all");
+			manager.startActivity("TabSheet1", intent);
+			intent = new Intent().setClassName(getPackageName(), getClass()
+					.getPackage().getName() + ".FutabaBBSMenu");
+			intent.putExtra("mode", "fav");
+			manager.startActivity("TabSheet2", intent);
+			*/
+			//tabs.getTabWidget().getChildAt(1).notifyAll();
+			//tabs.getTabWidget().getChildAt(2).notifyAll();
 		}
 	}
 

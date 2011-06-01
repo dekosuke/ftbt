@@ -15,10 +15,12 @@ import android.widget.ArrayAdapter;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.text.Html;
 import android.util.Log;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore.Images;
 import android.content.Intent;
 
@@ -210,7 +212,15 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							//imageframe.setLayoutParams(createParam(item.width, LayoutParams.FILL_PARENT));
 							iv.setImageBitmap(bm);
 							ImageGetTask task = new ImageGetTask(view);
-							saveButton.setVisibility(View.VISIBLE);
+							SharedPreferences preferences = PreferenceManager
+								.getDefaultSharedPreferences(getContext());
+							boolean enableSaveButton = preferences.getBoolean(
+									getContext().getString(R.string.enablesavebutton), true);
+							if(enableSaveButton){
+								saveButton.setVisibility(View.VISIBLE);
+							}else{
+								saveButton.setVisibility(View.GONE);
+							}
 							view.setLongClickable(true);
 							// view.setOnLongClickListener(new
 							// FutabaThreadOnLongClickListener());
