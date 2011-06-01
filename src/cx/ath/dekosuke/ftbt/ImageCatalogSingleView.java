@@ -91,7 +91,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 			if (bm != null) {
 				int size = bm.getWidth() * bm.getHeight();
 				bm = null;
-				if (size > 640 * 480) { // そこそこの画像ならGC呼ぶよ
+				if (true) { //GC呼ぶよ
 					FLog.d("calling GC");
 					System.gc();
 				}
