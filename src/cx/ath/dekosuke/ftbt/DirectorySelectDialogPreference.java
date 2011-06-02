@@ -76,8 +76,7 @@ public class DirectorySelectDialogPreference extends DialogPreference implements
 						getContext());
 				builder.setMessage(
 						"本当にディレクトリを変更してよろしいですか？\n"
-								+ "選択したディレクトリは「ふたばと」専用の（他のアプリケーションと競合しない）ディレクトリですか？\n"
-								+ "また、ディレクトリの変更は非推奨です。とくに理由がない場合は設定変更しないことをお勧めします")
+								+ "選択したディレクトリは「ふたばと」専用の（他のアプリケーションと競合しない）ディレクトリですか？")
 						.setCancelable(true)
 						.setPositiveButton("OK",
 								new DialogInterface.OnClickListener() {

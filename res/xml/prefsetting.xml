@@ -1,43 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <EditTextPreference android:title="キャッシュ(単位:MB)"
-    android:key="@string/cachesize" 
-    android:inputType="number"
-    android:defaultValue="10"
-    android:summary="大きくすると起動時に時間がかかる可能性があります"></EditTextPreference>
-    <EditTextPreference android:title="記憶する履歴スレッド数"
-    android:key="@string/historynum" 
-    android:inputType="number"
-    android:defaultValue="20"
-    android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
-    <CheckBoxPreference 
-      android:key="@string/dispcensored"
-      android:title="警告付きBBSも一覧に表示する" 
-      android:summaryOn="表示する"
-      android:summaryOff="表示しない" 
-    android:defaultValue="Off"
-    android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
-    <CheckBoxPreference 
-      android:key="@string/enablesavebutton"
-      android:title="画像を保存するボタンを表示する" 
-      android:summaryOn="表示する"
-      android:summaryOff="表示しない" 
-    android:defaultValue="On"
-    android:summary="スレッドで「画像を保存する」ボタンを表示します" />
-    <EditTextPreference android:title="投稿の削除キー"
-    android:key="@string/deletekey" 
-    android:inputType="textPassword"
-		android:textSize="20sp"
-    android:defaultValue=""
-    android:summary="投稿時の削除キーを設定します"></EditTextPreference>
-    <CheckBoxPreference 
-      android:key="innerCache"
-      android:title="内蔵メモリにキャッシュを保存" 
-      android:summaryOn="はい"
-      android:summaryOff="いいえ" 
-    android:defaultValue="Oｆｆ"
-    android:summary="キャッシュデータを内蔵ディレクトリに保存します" />
-	<cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
-		android:key="saveDir" android:title="画像保存先の指定" android:summary="@string/savedirsummary" />
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<EditTextPreference android:title="キャッシュ(単位:MB)"
+		android:key="@string/cachesize" android:inputType="number"
+		android:defaultValue="10" android:summary="大きくすると起動時に時間がかかる可能性があります"></EditTextPreference>
+	<EditTextPreference android:title="記憶する履歴スレッド数"
+		android:key="@string/historynum" android:inputType="number"
+		android:defaultValue="20" android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
+	<CheckBoxPreference android:key="@string/dispcensored"
+		android:title="警告付きBBSも一覧に表示する" android:summaryOn="表示する"
+		android:summaryOff="表示しない" android:defaultValue="Off"
+		android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
+	<EditTextPreference android:title="投稿の削除キー"
+		android:key="@string/deletekey" android:inputType="textPassword"
+		android:textSize="20sp" android:defaultValue="" android:summary="投稿時の削除キーを設定します"></EditTextPreference>
+	<CheckBoxPreference android:key="@string/enablesavebutton"
+		android:title="画像を保存するボタンを表示" android:summaryOn="表示する"
+		android:summaryOff="表示しない" android:defaultValue="On"
+		android:summary="スレッドで「画像を保存する」ボタンを表示します" />
+
+	<PreferenceCategory android:title="保存先の設定">
+
+		<CheckBoxPreference android:key="innerCache"
+			android:title="内蔵メモリにキャッシュを保存" android:summaryOn="はい"
+			android:summaryOff="いいえ" android:defaultValue="Oｆｆ"
+			android:summary="キャッシュデータを内蔵ディレクトリに保存します" />
+		<cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
+			android:key="saveDir" android:title="画像保存先の指定" android:summary="@string/savedirsummary" />
+	</PreferenceCategory>
+
 </PreferenceScreen>

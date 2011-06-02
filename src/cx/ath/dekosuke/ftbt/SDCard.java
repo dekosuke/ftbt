@@ -370,7 +370,7 @@ public class SDCard {
 		int sizeSum = 0;
 		for (int i = 0; i < list.size(); i++) {
 			File f = (File) list.get(i);
-			Log.d("ftbt", f.toString() + " lastmodified=" + f.lastModified());
+			FLog.d(f.toString() + " lastmodified=" + f.lastModified());
 			// FLog.d(f.getName() + "," + toCalendarString(f));
 			if (f.isDirectory()) { // 強制ディレクトリ削除
 				// deleteDir(f);
