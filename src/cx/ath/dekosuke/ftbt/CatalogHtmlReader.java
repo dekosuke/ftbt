@@ -18,6 +18,9 @@ import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.webkit.CookieManager;
 
@@ -25,10 +28,26 @@ import android.webkit.CookieManager;
 //長い理由は２回アクセスしているからだったり
 public class CatalogHtmlReader {
 
-	public static String Read(String urlStr, int sortType) throws Exception {
+	public static String Read(String urlStr, Context context, int sortType)
+			throws Exception {
 
 		CookieManager.getInstance().setAcceptCookie(true);
 		CookieManager.getInstance().removeExpiredCookie();
+
+		int catalogX = 10;
+		int catalogY = 5;
+		String threadStrNum = "50";
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			int temp = Integer.parseInt(preferences.getString(
+					"catalogThreadNum", "50"));
+			catalogX = temp / 5;
+			threadStrNum = preferences.getString(
+					"threadStrNum", "50");
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
 
 		// HttpClientの準備
 		DefaultHttpClient httpClient;
@@ -41,13 +60,15 @@ public class CatalogHtmlReader {
 		HttpPost httppost = new HttpPost(urlStr);
 		List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(4);
 		nameValuePair.add(new BasicNameValuePair("mode", "catset"));
-		nameValuePair.add(new BasicNameValuePair("cx", "10"));
-		nameValuePair.add(new BasicNameValuePair("cy", "5"));
-		nameValuePair.add(new BasicNameValuePair("cl", "50"));
+		nameValuePair
+				.add(new BasicNameValuePair("cx", String.valueOf(catalogX)));
+		nameValuePair
+				.add(new BasicNameValuePair("cy", String.valueOf(catalogY)));
+		nameValuePair.add(new BasicNameValuePair("cl", threadStrNum));
 
 		String urlStrAppend = urlStr + "?mode=cat"; // カタログです
-		if(sortType>0 && sortType<5){
-			urlStrAppend += "&sort="+sortType;
+		if (sortType > 0 && sortType < 5) {
+			urlStrAppend += "&sort=" + sortType;
 		}
 		String data = null;
 		// cookie取得->カタログ取得と2度HTTPアクセスしている
@@ -68,7 +89,7 @@ public class CatalogHtmlReader {
 			data = outputStream.toString("SHIFT-JIS");
 			// parse(outputStream.toString());
 		} else {
-		FLog.d("NON-OK Status" + status);
+			FLog.d("NON-OK Status" + status);
 			throw new Exception("HTTP BAD RESULT");
 		}
 		return data;

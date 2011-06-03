@@ -36,6 +36,17 @@ public class PrefSetting extends PreferenceActivity {
 					return HistorySizeChange(preference, newValue);
 				}
 			});
+
+			EditTextPreference etp_threadStrNum = (EditTextPreference) this
+					.findPreference("threadStrNum");
+			// リスナーを設定する
+			etp_threadStrNum
+					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+						public boolean onPreferenceChange(
+								Preference preference, Object newValue) {
+							return ThreadStrNumChange(preference, newValue);
+						}
+					});
 			EditTextPreference etp_delkey = (EditTextPreference) this
 					.findPreference(getString(R.string.deletekey));
 			// リスナーを設定する
@@ -85,13 +96,14 @@ public class PrefSetting extends PreferenceActivity {
 			FLog.d("hoge");
 			CheckBoxPreference innerCache = (CheckBoxPreference) this
 					.findPreference("innerCache");
-			innerCache.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-				public boolean onPreferenceChange(
-						Preference preference, Object newValue) {
-					return InnerCacheChange(preference, newValue);
-				}
-			});
-			//innerCache.setSummary("内部メモリをキャッシュに使用します。変更は次回起動時から有効になります\n（注：お気に入り・履歴もキャッシュにあるので消えます）");
+			innerCache
+					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+						public boolean onPreferenceChange(
+								Preference preference, Object newValue) {
+							return InnerCacheChange(preference, newValue);
+						}
+					});
+			// innerCache.setSummary("内部メモリをキャッシュに使用します。変更は次回起動時から有効になります\n（注：お気に入り・履歴もキャッシュにあるので消えます）");
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
@@ -132,6 +144,23 @@ public class PrefSetting extends PreferenceActivity {
 		return false;
 	}
 
+	private boolean ThreadStrNumChange(Preference preference, Object newValue) {
+		String input = newValue.toString();
+		try {
+			if (input != null && Integer.parseInt(input) >= 4
+					&& Integer.parseInt(input) <= 50) {
+				preference.setSummary(input);
+				return true;
+			} else {
+			}
+		} catch (Exception e) {
+
+		}
+		Toast.makeText(this, "一覧の文字数は4文字から50文字以内にしてください", Toast.LENGTH_LONG).show();
+		return false;
+	}
+
+	
 	private boolean DeleteKeyChange(Preference preference, Object newValue) {
 		String input = newValue.toString();
 		try {
@@ -153,8 +182,8 @@ public class PrefSetting extends PreferenceActivity {
 		try {
 			if (input != null) {
 				FLog.d("input=" + input);
-				//SDCard.setCacheDir(this);
-				//この時点ではまだキャッシュディレクトリ更新されてない
+				// SDCard.setCacheDir(this);
+				// この時点ではまだキャッシュディレクトリ更新されてない
 				SDCard.copyCacheSetting(this);
 				return true;
 			} else {

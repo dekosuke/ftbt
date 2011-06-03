@@ -17,7 +17,15 @@
 		android:title="画像を保存するボタンを表示" android:summaryOn="表示する"
 		android:summaryOff="表示しない" android:defaultValue="On"
 		android:summary="スレッドで「画像を保存する」ボタンを表示します" />
-
+	<EditTextPreference android:title="スレッド一覧の文字数"
+		android:key="threadStrNum" android:inputType="number"
+		android:defaultValue="50" android:summary="カタログ（スレッド一覧）での文字数を設定します" />
+	<ListPreference android:key="catalogThreadNum"
+		android:title="一覧の最大スレッド数"
+		android:entries="@array/entriesThreadNum"
+		android:entryValues="@array/entryvaluesThreadNum"
+		android:summary="カタログ（スレッド一覧）での表示スレッド数の最大を設定します。サイズを大きくすると、動作に時間がかかることがあります" />
+	 />
 	<PreferenceCategory android:title="保存先の設定">
 
 		<CheckBoxPreference android:key="innerCache"

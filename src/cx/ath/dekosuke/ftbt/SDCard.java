@@ -83,8 +83,12 @@ public class SDCard {
 	// キャッシュ内部・外部切り替え時にお気に入りをコピー
 	public static void copyCacheSetting(Context context) {
 		setAntiCacheDir(context);
+		File fbin = new File(getCacheDir() + "bin/");
+		fbin.mkdir();
 		String newFile = getCacheDir() + "bin/favorites";
 		setCacheDir(context);
+		fbin = new File(getCacheDir() + "bin/");
+		fbin.mkdir();
 		String oldFile = getCacheDir() + "bin/favorites";
 
 		FLog.d("copy file:" + oldFile + " -> " + newFile);

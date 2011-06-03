@@ -252,7 +252,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					Boolean network_ok = true;
 					Boolean cache_ok = true;
 					try {
-						catalogHtml = CatalogHtmlReader.Read(catalogURL, sortType);
+						catalogHtml = CatalogHtmlReader.Read(catalogURL, adapter.getContext(), sortType);
 						network_ok = true;
 					} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
 						FLog.d("hoge");

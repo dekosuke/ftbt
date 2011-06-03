@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entriesThreadNum">
+        <item>50件</item>
+        <item>100件</item>
+        <item>150件</item>
+        <item>200件</item>
+        <item>250件</item>
+        <item>300件</item>
+        <item>350件</item>
+        <item>400件</item>
+        <item>450件</item>
+        <item>500件</item>
+    </string-array>
+    <string-array name="entryvaluesThreadNum">
+        <item>50</item>
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+        <item>350</item>
+        <item>400</item>
+        <item>450</item>
+        <item>500</item>
+    </string-array>
+</resources>
