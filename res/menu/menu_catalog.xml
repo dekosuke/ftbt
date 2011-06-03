@@ -4,8 +4,6 @@
     <item android:title="スレッドを建てる" android:id="@+id/post"
             android:titleCondensed="スレ建て"
     android:icon="@android:drawable/ic_menu_edit"></item>
-    <item android:title="Tweet" android:id="@+id/tweet"
-    android:icon="@drawable/ic_menu_dialog"></item>
     <item android:title="検索" android:id="@+id/search"
     android:icon="@android:drawable/ic_menu_search"></item>
     <item android:title="URLを共有" android:id="@+id/share"

@@ -57,12 +57,15 @@ import android.provider.MediaStore.Images;
 
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import cx.ath.dekosuke.ftbt.FutabaThreadAdapter.ImageGetTask;
 import cx.ath.dekosuke.ftbt.R.id;
 
@@ -183,6 +186,9 @@ public class FutabaThread extends Activity implements Runnable {
 	final Handler handler3 = new Handler();
 
 	private void loading() {
+		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+		searchBar.setVisibility(View.GONE);
+
 		FutabaThreadContentGetter getterThread = new FutabaThreadContentGetter();
 		getterThread.start();
 	}
@@ -411,6 +417,14 @@ public class FutabaThread extends Activity implements Runnable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
+		case R.id.search:
+			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+			if (searchBar.getVisibility() == View.GONE) {
+				searchBar.setVisibility(View.VISIBLE);
+			} else {
+				searchBar.setVisibility(View.GONE);
+			}
+			return true;
 		case R.id.download:
 			// スレ全体を保存
 			saveAll();
@@ -933,4 +947,63 @@ public class FutabaThread extends Activity implements Runnable {
 
 		}
 	}
+	
+	public void onClickSearchButton(View v) {
+		// Toast.makeText(this, "検索ボタンが押されました", Toast.LENGTH_SHORT).show();
+		
+		if (true) {
+			EditText searchEdit = (EditText) findViewById(id.searchinput);
+			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
+			String[] query = StringUtil.queryNormalize(searchText);
+			adapter.items.clear();
+			// 検索テキストから絞込み
+			for (int i = listView.getFirstVisiblePosition()+1; i < statuses.size(); ++i) {
+				String text = statuses.get(i).text;
+				// Toast.makeText(this, "text=" + text,
+				// Toast.LENGTH_SHORT).show();
+				if (StringUtil.isQueryMatch(text, query)) { //みつかった
+					listView.setSelection(i);
+				}
+			}
+			/*
+			adapter.notifyDataSetChanged(); // 再描画命令
+			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+			// searchBar.setVisibility(View.GONE);
+			String toastText = "全" + fthreads.size() + "スレッド中、"
+					+ adapter.items.size() + "スレッドを表示します";
+			if (fthreads.size() == adapter.items.size()) {
+				toastText = "すべてのスレッドを表示します";
+			} else if (adapter.items.size() == 0) {
+				toastText = "該当するスレッドは見つかりませんでした";
+			}
+			Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
+			*/
+
+			// ソフトウェアキーボードかくす
+			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+		}
+	}
+
+	public void onClickSearchHideButton(View v) {
+		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+		searchBar.setVisibility(View.GONE);
+		// ソフトウェアキーボードかくす
+		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+	}
+
+	public boolean onSearchRequested() {
+		// Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
+		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+		if (searchBar.getVisibility() == View.GONE) {
+			searchBar.setVisibility(View.VISIBLE);
+		} else {
+			searchBar.setVisibility(View.GONE);
+		}
+		return false;
+
+	}
+
 }

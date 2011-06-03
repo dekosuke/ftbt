@@ -1,54 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-	android:background="#FFFFEE"
-     > 
-<RelativeLayout android:layout_width="fill_parent"
-android:layout_height="wrap_content" android:id="@+id/top_control_bar">
-</RelativeLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical" android:background="#FFFFEE">
 
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_alignParentBottom="true"
-    android:id="@+id/bottom_control_bar" android:orientation="horizontal">
-    <Button android:text="リロード"
-        android:id="@+id/reload_btn"
-        android:layout_height="wrap_content"
-        android:onClick="onClickReloadBtn" android:layout_width="fill_parent" android:layout_weight="3">
-    </Button>
-    <Button android:text="画像一覧"
-        android:id="@+id/gridview_btn"
-        android:layout_height="wrap_content"
-        android:onClick="onClickGridViewBtn"
-         android:layout_width="fill_parent" android:layout_weight="3">
-    </Button>
-    <Button android:text="最初"
-        android:id="@+id/gotop_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickGoTopBtn" android:layout_weight="3">
-    </Button>
+	<LinearLayout android:orientation="horizontal"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:id="@+id/search_bar" android:background="#FFCC99"
+		android:gravity="center_vertical" android:layout_gravity="center_vertical">
+		<Button android:id="@+id/searchhidebutton" android:onClick="onClickSearchHideButton"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" android:textSize="12sp"
+			android:singleLine="true" android:background="@android:drawable/ic_delete" />
+		<EditText android:text="" android:id="@+id/searchinput"
+			android:layout_weight="1" android:layout_gravity="center_vertical"
+			android:singleLine="true" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" />
+		<ImageButton android:id="@+id/searchbutton" android:src="@drawable/ic_btn_search"
+			android:onClick="onClickSearchButton" android:layout_gravity="center_vertical"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" />
+	</LinearLayout>
 
-    <Button android:text="最後"
-        android:id="@+id/gobottom_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:onClick="onClickGoBottomBtn" android:layout_weight="3">
-    </Button>
+
+	<RelativeLayout android:orientation="vertical"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:background="#FFFFEE">
+
+		<RelativeLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:id="@+id/top_control_bar">
+		</RelativeLayout>
+
+		<LinearLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true" android:id="@+id/bottom_control_bar"
+			android:orientation="horizontal">
+			<Button android:text="リロード" android:id="@+id/reload_btn"
+				android:layout_height="wrap_content" android:onClick="onClickReloadBtn"
+				android:layout_width="fill_parent" android:layout_weight="3">
+			</Button>
+			<Button android:text="画像一覧" android:id="@+id/gridview_btn"
+				android:layout_height="wrap_content" android:onClick="onClickGridViewBtn"
+				android:layout_width="fill_parent" android:layout_weight="3">
+			</Button>
+			<Button android:text="最初" android:id="@+id/gotop_btn"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:onClick="onClickGoTopBtn" android:layout_weight="3">
+			</Button>
+
+			<Button android:text="最後" android:id="@+id/gobottom_btn"
+				android:layout_width="fill_parent" android:layout_height="wrap_content"
+				android:onClick="onClickGoBottomBtn" android:layout_weight="3">
+			</Button>
+		</LinearLayout>
+
+		<ListView android:id="@+id/threadlistview"
+			android:layout_width="fill_parent" android:layout_height="fill_parent"
+			android:layout_below="@id/top_control_bar" android:layout_above="@id/bottom_control_bar"
+			android:divider="#FFFFEE" android:dividerHeight="5dip"
+			android:padding="5dip" />
+	</RelativeLayout>
+
 </LinearLayout>
-
-<ListView android:id="@+id/threadlistview"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_below="@id/top_control_bar" 
-    android:layout_above="@id/bottom_control_bar"
-    android:divider="#FFFFEE"
-android:dividerHeight="5dip"
-	android:padding="5dip"
-     />
-</RelativeLayout>
-
-
