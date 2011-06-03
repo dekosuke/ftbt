@@ -844,7 +844,9 @@ public class FutabaThread extends Activity implements Runnable {
 						Toast.makeText(adapter.getContext(), toast_text_f,
 								Toast.LENGTH_SHORT).show();
 						setTitle(title);
-						waitDialog.dismiss();
+						if (waitDialog != null) {
+							waitDialog.dismiss();
+						}
 						adapter.notifyDataSetChanged();
 						listView.invalidate();
 						if (position != 0) {
@@ -947,37 +949,35 @@ public class FutabaThread extends Activity implements Runnable {
 
 		}
 	}
-	
+
 	public void onClickSearchButton(View v) {
 		// Toast.makeText(this, "検索ボタンが押されました", Toast.LENGTH_SHORT).show();
-		
+
 		if (true) {
 			EditText searchEdit = (EditText) findViewById(id.searchinput);
 			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
 			String[] query = StringUtil.queryNormalize(searchText);
 			adapter.items.clear();
 			// 検索テキストから絞込み
-			for (int i = listView.getFirstVisiblePosition()+1; i < statuses.size(); ++i) {
+			for (int i = listView.getFirstVisiblePosition() + 1; i < statuses
+					.size(); ++i) {
 				String text = statuses.get(i).text;
 				// Toast.makeText(this, "text=" + text,
 				// Toast.LENGTH_SHORT).show();
-				if (StringUtil.isQueryMatch(text, query)) { //みつかった
+				if (StringUtil.isQueryMatch(text, query)) { // みつかった
 					listView.setSelection(i);
 				}
 			}
 			/*
-			adapter.notifyDataSetChanged(); // 再描画命令
-			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
-			// searchBar.setVisibility(View.GONE);
-			String toastText = "全" + fthreads.size() + "スレッド中、"
-					+ adapter.items.size() + "スレッドを表示します";
-			if (fthreads.size() == adapter.items.size()) {
-				toastText = "すべてのスレッドを表示します";
-			} else if (adapter.items.size() == 0) {
-				toastText = "該当するスレッドは見つかりませんでした";
-			}
-			Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
-			*/
+			 * adapter.notifyDataSetChanged(); // 再描画命令 LinearLayout searchBar =
+			 * (LinearLayout) findViewById(id.search_bar); //
+			 * searchBar.setVisibility(View.GONE); String toastText = "全" +
+			 * fthreads.size() + "スレッド中、" + adapter.items.size() + "スレッドを表示します";
+			 * if (fthreads.size() == adapter.items.size()) { toastText =
+			 * "すべてのスレッドを表示します"; } else if (adapter.items.size() == 0) {
+			 * toastText = "該当するスレッドは見つかりませんでした"; } Toast.makeText(this,
+			 * toastText, Toast.LENGTH_SHORT).show();
+			 */
 
 			// ソフトウェアキーボードかくす
 			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
