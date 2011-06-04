@@ -14,8 +14,8 @@
 		android:key="@string/deletekey" android:inputType="textPassword"
 		android:textSize="20sp" android:defaultValue="" android:summary="投稿時の削除キーを設定します"></EditTextPreference>
 	<CheckBoxPreference android:key="@string/enablesavebutton"
-		android:title="画像を保存するボタンを表示" android:summaryOn="表示する"
-		android:summaryOff="表示しない" android:defaultValue="On"
+		android:title="画像を保存ボタンを表示" 
+		android:defaultValue="On"
 		android:summary="スレッドで「画像を保存する」ボタンを表示します" />
 	<EditTextPreference android:title="スレッド一覧の文字数"
 		android:key="threadStrNum" android:inputType="number"
@@ -26,12 +26,17 @@
 		android:entryValues="@array/entryvaluesThreadNum"
 		android:summary="カタログ（スレッド一覧）での表示スレッド数の最大を設定します。サイズを大きくすると、動作に時間がかかることがあります" />
 	 />
+	<ListPreference android:key="fontSizeSetting"
+		android:title="フォントの大きさ"
+		android:entries="@array/baseFontSize"
+		android:entryValues="@array/baseFontSizeValue"
+		android:summary="フォントの大きさを設定します" />
+	 />
 	<PreferenceCategory android:title="保存先の設定">
 
 		<CheckBoxPreference android:key="innerCache"
-			android:title="内蔵メモリにキャッシュを保存" android:summaryOn="はい"
-			android:summaryOff="いいえ" android:defaultValue="Oｆｆ"
-			android:summary="キャッシュデータを内蔵ディレクトリに保存します" />
+			android:title="内蔵メモリでキャッシュ" android:defaultValue="Oｆｆ"
+			android:summary="@string/innerCacheSummary" />
 		<cx.ath.dekosuke.ftbt.DirectorySelectDialogPreference
 			android:key="saveDir" android:title="画像保存先の指定" android:summary="@string/savedirsummary" />
 	</PreferenceCategory>

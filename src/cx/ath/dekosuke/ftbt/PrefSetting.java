@@ -93,9 +93,9 @@ public class PrefSetting extends PreferenceActivity {
 			 * onPreferenceChange(Preference preference, Object newValue) {
 			 * return SaveDirChange(preference, newValue); } });
 			 */
-			FLog.d("hoge");
 			CheckBoxPreference innerCache = (CheckBoxPreference) this
 					.findPreference("innerCache");
+			innerCache.setSummary(R.string.innerCacheSummary);
 			innerCache
 					.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 						public boolean onPreferenceChange(

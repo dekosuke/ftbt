@@ -8,6 +8,7 @@
 	<string name="deletekey">myDeleteKey</string>
 	<string name="enablesavebutton">"enablesavebutton"</string>
 	<string name="innerCache">innerCache</string>
+	<string name="innerCacheSummary">"キャッシュデータを、内蔵メモリのディレクトリに保存するかどうかを選択します"</string>
 	<string name="saveInnerMemory">saveInnerMemory</string>
 	<string name="cachedirsummary">"指定したディレクトリの下に「.ftbtcache」ディレクトリを作成し、キャッシュ用に使用します" 
 	</string>

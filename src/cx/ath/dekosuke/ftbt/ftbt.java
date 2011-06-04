@@ -205,7 +205,11 @@ public class ftbt extends TabActivity implements Runnable {
 			tab02.setContent(intent);
 			tabs.addTab(tab02);
 			// 初期表示のタブ設定
-			tabs.setCurrentTab(1);
+			if(favoriteBBSs.size()>0){ //お気に入りあるならお気に入りのタブを表示
+				tabs.setCurrentTab(2);
+			}else{
+				tabs.setCurrentTab(1);				
+			}
 
 			setTitle("BBS一覧 - " + getString(R.string.app_name));
 		} catch (Exception e) {

@@ -3,6 +3,7 @@ package cx.ath.dekosuke.ftbt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 
 //設定項目外のデータを取得するマネージャ
 public class StateMan {
@@ -24,5 +25,29 @@ public class StateMan {
 		Editor e = pref.edit();
 		e.putInt(SORTKEY, i);
 		e.commit();
+	}
+	
+	public static int getFontSizeSetting(Context context){
+		int fontSizeSetting = 0 ;
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			fontSizeSetting = Integer.parseInt(preferences.getString("fontSizeSetting","0"));
+		} catch (Exception e) {
+			FLog.d("message", e);
+			return 0;
+		}
+		return fontSizeSetting;
+	}
+	
+	public double getMainFontSize(Context context){
+		int fontSizeSetting = getFontSizeSetting(context);
+		return 16.0d+fontSizeSetting;
+	}
+	
+	public double getDescFontSize(Context context){
+		int fontSizeSetting = getFontSizeSetting(context);
+		return 14.0d+fontSizeSetting;
+
 	}
 }
