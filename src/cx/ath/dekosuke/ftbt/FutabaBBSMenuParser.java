@@ -34,6 +34,7 @@ public class FutabaBBSMenuParser {
 	}
 
 	// スレッドの形式:
+	//<li><a href="http://boards.4chan.org/int/" class="boardlink" title="International">International</a></li>
 	public void parse() {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
