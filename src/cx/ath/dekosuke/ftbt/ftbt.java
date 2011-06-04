@@ -31,6 +31,7 @@ import android.widget.TabHost.TabSpec;
 import cx.ath.dekosuke.ftbt.R.id;
 
 //タブ式トップページ
+//commit test
 
 public class ftbt extends TabActivity implements Runnable {
 
