@@ -124,7 +124,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			waitDialog.dismiss();
 		}
 		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setMessage(this.getString(R.string.loading));
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();

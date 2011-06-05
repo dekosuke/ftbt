@@ -81,7 +81,7 @@ public class ThumbGrid extends Activity implements Runnable {
 
 	public void setWait() {
 		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setMessage(this.getString(R.string.loading));
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();

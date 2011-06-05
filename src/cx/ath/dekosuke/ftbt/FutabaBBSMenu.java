@@ -54,7 +54,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 
 	public void setWait() {
 		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage("ネットワーク接続中...");
+		waitDialog.setMessage(this.getString(R.string.loading));
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();
@@ -99,7 +99,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			ArrayList<FutabaBBSContent> BBSs = new ArrayList<FutabaBBSContent>();
 			if (mode == null || mode.equals("all")) {
 				FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
-						"http://www.4chan.org/bbsmenu.html");
+						"http://www.2chan.net/bbsmenu.html");
 				parser.setDisplayCensored(dispCensored);
 				parser.parse();
 				if (!parser.network_ok) {

@@ -2,14 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	<EditTextPreference android:title="キャッシュ(単位:MB)"
 		android:key="@string/cachesize" android:inputType="number"
-		android:defaultValue="10" android:summary="大きくすると起動時に時間がかかる可能性があります"></EditTextPreference>
+		android:defaultValue="10" android:summary="起動時のチェックでこのサイズまでキャッシュを切り詰めます。大きくすると起動に時間がかかる可能性があります"></EditTextPreference>
 	<EditTextPreference android:title="記憶する履歴スレッド数"
 		android:key="@string/historynum" android:inputType="number"
 		android:defaultValue="20" android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
 	<CheckBoxPreference android:key="@string/dispcensored"
-		android:title="警告付きBBSも一覧に表示する" android:summaryOn="表示する"
-		android:summaryOff="表示しない" android:defaultValue="Off"
-		android:summary="PCで見る際に警告画面の出る掲示板も表示します" />
+		android:title="警告付きBBSも一覧に表示する"
+		android:defaultValue="Off"
+		android:summary="PCで見る際に警告画面の出る掲示板(エロとかグロとか)も表示します" />
 	<EditTextPreference android:title="投稿の削除キー"
 		android:key="@string/deletekey" android:inputType="textPassword"
 		android:textSize="20sp" android:defaultValue="" android:summary="投稿時の削除キーを設定します"></EditTextPreference>
