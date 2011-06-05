@@ -3,6 +3,10 @@
 	<EditTextPreference android:title="キャッシュ(単位:MB)"
 		android:key="@string/cachesize" android:inputType="number"
 		android:defaultValue="10" android:summary="起動時のチェックでこのサイズまでキャッシュを切り詰めます。大きくすると起動に時間がかかる可能性があります"></EditTextPreference>
+	<CheckBoxPreference android:key="checkCache"
+		android:title="キャッシュ整理前に確認"
+		android:defaultValue="Off"
+		android:summary="起動時にキャッシュを整理するかどうかを確認します。OFFにした場合、*確認なしでキャッシュ整理を開始します*。	" />
 	<EditTextPreference android:title="記憶する履歴スレッド数"
 		android:key="@string/historynum" android:inputType="number"
 		android:defaultValue="20" android:summary="何件までスレッドを覚えておくか"></EditTextPreference>
