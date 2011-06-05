@@ -99,7 +99,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			ArrayList<FutabaBBSContent> BBSs = new ArrayList<FutabaBBSContent>();
 			if (mode == null || mode.equals("all")) {
 				FutabaBBSMenuParser parser = new FutabaBBSMenuParser(
-						"http://www.2chan.net/bbsmenu.html");
+						"http://www.4chan.org/");
 				parser.setDisplayCensored(dispCensored);
 				parser.parse();
 				if (!parser.network_ok) {

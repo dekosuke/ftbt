@@ -35,11 +35,12 @@ public class FutabaBBSMenuParser {
 
 	// スレッドの形式:
 	//<li><a href="http://boards.4chan.org/int/" class="boardlink" title="International">International</a></li>
+	//http://boards.4chan.org/i/
 	public void parse() {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
 			Pattern BBSPattern = Pattern.compile(
-					"<a href=\"(http://[^>]+?/)futaba.html?\"[^>]+>(.+?)</a",
+					"<a href=\"http://boards.4chan.org/([^/])+/[^>]+?title=\"([^\"]+)\"",
 					Pattern.DOTALL);
 
 			String allData = "";
@@ -62,52 +63,13 @@ public class FutabaBBSMenuParser {
 					cache_ok = false;
 				}
 			}
+			FLog.d("AllData:"+allData);
 			Matcher mcBBS = BBSPattern.matcher(allData);
 			while (mcBBS.find()) {
 				FutabaBBSContent bbs = new FutabaBBSContent();
-				bbs.url = mcBBS.group(1);
+				bbs.url = "http://boards.4chan.org/"+mcBBS.group(1)+"/";
 				bbs.name = mcBBS.group(2);
-				if (bbs.name.equals("二次元裏")) {
-					if (bbs.url.contains("may")) {
-						bbs.name = "二次元裏(may)";
-						// imgを手動追加
-						FutabaBBSContent img_bbs = new FutabaBBSContent();
-						img_bbs.name = "二次元裏(img)";
-						img_bbs.url = "http://img.2chan.net/b/";
-						BBSs.add(img_bbs);
-					} else if (bbs.url.contains("dec")) {
-						bbs.name = "二次元裏(dec)";
-						// datを手動追加
-						FutabaBBSContent dat_bbs = new FutabaBBSContent();
-						dat_bbs.name = "二次元裏(dat)";
-						dat_bbs.url = "http://dat.2chan.net/b/";
-						BBSs.add(dat_bbs);
-					} else if (bbs.url.contains("jun")) {
-						bbs.name = "二次元裏(jun)";
-					}
-				}
-				// 自作PCの直前に特殊掲示板３つ
-				if (bbs.name.equals("自作PC") && display_censored) {
-					FutabaBBSContent other_bbs = new FutabaBBSContent();
-					other_bbs.name = "二次元グロ";
-					other_bbs.url = "http://cgi.2chan.net/o/";
-					BBSs.add(other_bbs);
-					other_bbs = new FutabaBBSContent();
-					other_bbs.name = "二次元グロ裏";
-					other_bbs.url = "http://jun.2chan.net/51/";
-					BBSs.add(other_bbs);
-					other_bbs = new FutabaBBSContent();
-					other_bbs.name = "えろげ";
-					other_bbs.url = "http://zip.2chan.net/5/";
-					BBSs.add(other_bbs);
-				}
-				if (bbs.name.equals("二次元ID") ) {
-					// てすとjunを手動追加
-					FutabaBBSContent dat_bbs = new FutabaBBSContent();
-					dat_bbs.name = "てすとjun";
-					dat_bbs.url = "http://www.2chan.net/30/";
-					BBSs.add(dat_bbs);
-				}
+				FLog.d("matched BBS:"+bbs.toString());
 				BBSs.add(bbs);
 			}
 		} catch (Exception e) {
