@@ -54,9 +54,11 @@ public class ThumbGrid extends Activity implements Runnable {
 		super.onCreate(savedInstanceState);
 		
 		// 無操作で暗くなるのを防ぐ
-		Window window = getWindow();
-		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+		if (getResources().getBoolean(R.bool.avoidsleep)) {
+			Window window = getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
+		
 		try {
 			setTitle("サムネイル一覧 - " + getString(R.string.app_name));
 			Toast.makeText(this, "サムネイル一覧を読み込み中です", Toast.LENGTH_SHORT).show();

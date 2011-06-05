@@ -66,9 +66,11 @@ public class ftbt extends TabActivity implements Runnable {
 		super.onCreate(savedInstanceState);
 		
 		// 無操作で暗くなるのを防ぐ
-		Window window = getWindow();
-		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+		if (getResources().getBoolean(R.bool.avoidsleep)) {
+			Window window = getWindow();
+			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
+		
 		myStart();
 		setWait();
 
