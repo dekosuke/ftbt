@@ -90,6 +90,7 @@ public class ThumbGrid extends Activity implements Runnable {
 		thread.start();
 	}
 
+
 	public void run() {
 		try { // 細かい時間を置いて、ダイアログを確実に表示させる
 			Thread.sleep(100);
