@@ -42,6 +42,8 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Button;
@@ -76,6 +78,10 @@ public class Post extends Activity implements Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// 無操作で暗くなるのを防ぐ
+		Window window = getWindow();
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 		try {
 			FLog.d("start Post activity");
 			Intent intent = getIntent();
@@ -83,41 +89,40 @@ public class Post extends Activity implements Runnable {
 			String baseURL = (String) intent.getSerializableExtra("baseURL");
 			threadNum = (Integer) intent.getSerializableExtra("threadNum");
 			postText = (String) intent.getSerializableExtra("postText");
-			if(threadNum==0){
-				newthread=true;
+			if (threadNum == 0) {
+				newthread = true;
 			}
-			if(newthread){
-				threadURL = baseURL;				
-			}else{
-				threadURL = baseURL + threadNum;				
+			if (newthread) {
+				threadURL = baseURL;
+			} else {
+				threadURL = baseURL + threadNum;
 			}
 			urlStr = baseURL + "futaba.php";
 
 			setContentView(R.layout.post);
 			TextView titleText = (TextView) findViewById(id.titletext);
-			if(newthread){
+			if (newthread) {
 				titleText.setText("スレッドを建てる");
 			}
 			TextView comment_v = (TextView) findViewById(id.comment);
 			comment_v.setText(postText);
-			
+
 			String deleteKey = "";
 			try {
 				SharedPreferences preferences = PreferenceManager
 						.getDefaultSharedPreferences(this);
 				deleteKey = preferences.getString(
-						getString(R.string.deletekey),
-						"");
+						getString(R.string.deletekey), "");
 			} catch (Exception e) {
 				FLog.d("message", e);
 			}
-			if(!deleteKey.equals("")){
+			if (!deleteKey.equals("")) {
 				TextView deleteKey_v = (TextView) findViewById(id.deletekey);
 				deleteKey_v.setText(deleteKey);
-				
+
 			}
-			FLog.d("deletekey="+deleteKey);
-			
+			FLog.d("deletekey=" + deleteKey);
+
 			Button postbutton = (Button) findViewById(id.postbutton);
 			postbutton.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -416,7 +421,7 @@ public class Post extends Activity implements Runnable {
 		finish();
 
 	}
-	
+
 	// 戻ったときのインテントにパラメータ渡す(再読み込みするか判定のため)
 	public void setOnReturn() {
 		Intent ret_i = new Intent();

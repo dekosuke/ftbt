@@ -113,8 +113,8 @@ public class CatalogAdapter extends ArrayAdapter {
 							} catch (Exception e) {
 								FLog.d("message", e);
 							}
-							FLog.d("maxhistorynum="+maxHistoryNum);
-							FLog.d("add thread "+thread.toString());
+							FLog.d("maxhistorynum=" + maxHistoryNum);
+							FLog.d("add thread " + thread.toString());
 
 							man.addThread(thread, maxHistoryNum);
 							man.Save();
@@ -152,15 +152,21 @@ public class CatalogAdapter extends ArrayAdapter {
 			if (item != null) {
 				// テキストをビューにセット
 				TextView text = (TextView) view.findViewById(R.id.bottomtext);
+				text.setTextSize(StateMan.getMainFontSize(getContext()));
 				if (item.text != null) {
 					CharSequence cs = Html.fromHtml(item.text);
 					text.setText(cs);
 				}
 				TextView resNum = (TextView) view.findViewById(R.id.resnum);
+				resNum.setTextSize(StateMan.getDescFontSize(getContext()));
 				resNum.setText(item.resNum + "レス");
+				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
+				BBSName.setTextSize(StateMan.getDescFontSize(getContext()));
+				TextView nonclickableblank = (TextView) view
+						.findViewById(id.nonclickableblank);
+				nonclickableblank.setTextSize(StateMan
+						.getDescFontSize(getContext()));
 				if (activity.mode.equals("history")) { // 履歴モード
-					TextView BBSName = (TextView) view
-							.findViewById(R.id.bbsname);
 					BBSName.setText("(" + item.BBSName + ")");
 					view.setBackgroundColor(Color.parseColor("#F0E0D6"));
 					CheckBox checkbox = (CheckBox) view
@@ -182,8 +188,6 @@ public class CatalogAdapter extends ArrayAdapter {
 					CheckBox checkbox = (CheckBox) view
 							.findViewById(R.id.checkbox);
 					checkbox.setVisibility(View.GONE);
-					TextView nonclickableblank = (TextView) view
-							.findViewById(id.nonclickableblank);
 					nonclickableblank.setVisibility(View.GONE);
 				}
 

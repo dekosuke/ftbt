@@ -9,6 +9,7 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
 import android.view.WindowManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -103,6 +104,10 @@ public class FutabaThread extends Activity implements Runnable {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// 無操作で暗くなるのを防ぐ
+		Window window = getWindow();
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		Intent intent = getIntent();
 		String superFutabaLinkURL = intent.getDataString();
 		if (superFutabaLinkURL != null) { // スーパーふたばリンク（urlからのリンク)

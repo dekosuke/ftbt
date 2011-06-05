@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
 import android.view.WindowManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -89,6 +90,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		CookieSyncManager.createInstance(this);
 		CookieSyncManager.getInstance().startSync();
 
+		// 無操作で暗くなるのを防ぐ
+		Window window = getWindow();
+		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 		setWait();
 
 	}
@@ -128,10 +133,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		// waitDialog.setCancelable(true);
 		waitDialog.show();
-		
-		try{
+
+		try {
 			sortType = StateMan.getSortParam(this);
-		}catch(Exception e){
+		} catch (Exception e) {
 			FLog.d("message", e);
 		}
 
@@ -252,7 +257,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					Boolean network_ok = true;
 					Boolean cache_ok = true;
 					try {
-						catalogHtml = CatalogHtmlReader.Read(catalogURL, adapter.getContext(), sortType);
+						catalogHtml = CatalogHtmlReader.Read(catalogURL,
+								adapter.getContext(), sortType);
 						network_ok = true;
 					} catch (UnknownHostException e) { // ネット繋がってない(これ以外も色々あり)
 						FLog.d("hoge");
@@ -493,20 +499,21 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	}
 
 	public void onClickSortTypeBtn(View v) {
-		//Toast.makeText(this, "ソート選択ボタンが押されました", Toast.LENGTH_SHORT).show();
-		final String[] strs = {"カタログ", "新順", "古順", "多順", "少順"};
+		// Toast.makeText(this, "ソート選択ボタンが押されました", Toast.LENGTH_SHORT).show();
+		final String[] strs = { "カタログ", "新順", "古順", "多順", "少順" };
 		AlertDialog.Builder dlg;
 		final Catalog catalog = this;
 		dlg = new AlertDialog.Builder(this);
 		dlg.setTitle("ソート方法の選択");
 		// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
 		dlg.setCancelable(true);
-		dlg.setSingleChoiceItems(strs, sortType,  new DialogInterface.OnClickListener() {
-    	    public void onClick(DialogInterface dialog, int item) {
-    	    	//button.setText(String.format("%sが選択されました。",items[item]));
-    	    	sortType = item; //この実装こういうものなんですかね・・・
-    	    }
-    	});
+		dlg.setSingleChoiceItems(strs, sortType,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						// button.setText(String.format("%sが選択されました。",items[item]));
+						sortType = item; // この実装こういうものなんですかね・・・
+					}
+				});
 		dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				FLog.d("sortType=" + sortType);

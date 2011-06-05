@@ -27,7 +27,7 @@ public class StateMan {
 		e.commit();
 	}
 	
-	public static int getFontSizeSetting(Context context){
+	private static int getFontSizeSetting(Context context){
 		int fontSizeSetting = 0 ;
 		try {
 			SharedPreferences preferences = PreferenceManager
@@ -40,14 +40,28 @@ public class StateMan {
 		return fontSizeSetting;
 	}
 	
-	public double getMainFontSize(Context context){
+	public static float getMainFontSize(Context context){
 		int fontSizeSetting = getFontSizeSetting(context);
-		return 16.0d+fontSizeSetting;
+		return 16.0f+fontSizeSetting;
 	}
 	
-	public double getDescFontSize(Context context){
+	public static float getDescFontSize(Context context){
 		int fontSizeSetting = getFontSizeSetting(context);
-		return 14.0d+fontSizeSetting;
+		return 14.0f+fontSizeSetting;
+	}
+	
+	public static float getBBSFontSize(Context context){
+		int fontSizeSetting = getFontSizeSetting(context);
+		return 16.0f+fontSizeSetting*0.5f;
+	}
 
+	public static float getBBSDescFontSize(Context context){
+		int fontSizeSetting = getFontSizeSetting(context);
+		return 14.0f+fontSizeSetting*0.5f;
+	}
+
+	public static float getTabFontSize(Context context){
+		int fontSizeSetting = getFontSizeSetting(context);
+		return 20.0f+fontSizeSetting;
 	}
 }

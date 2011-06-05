@@ -76,8 +76,10 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 					.get(position);
 			if (item != null) {
 				TextView url = (TextView) view.findViewById(R.id.url);
+				url.setTextSize(StateMan.getBBSDescFontSize(getContext()));
 				url.setText(item.url);
 				TextView name = (TextView) view.findViewById(R.id.name);
+				name.setTextSize(StateMan.getBBSFontSize(getContext()));
 				name.setText(item.name);
 				//ここでスレURL表示を消してる!!!
 				//url.setVisibility(View.GONE); 

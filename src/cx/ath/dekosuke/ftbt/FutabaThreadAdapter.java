@@ -96,14 +96,17 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			FutabaStatus item = (FutabaStatus) items.get(position);
 			FLog.d("potision=" + position + " datestr=" + item.datestr);
 			if (item != null) {
+				TextView title = (TextView) view.findViewById(R.id.title);
+				title.setTextSize(StateMan.getDescFontSize(getContext()));
+				TextView bottomtext = (TextView) view
+						.findViewById(R.id.bottomtext);
+				bottomtext.setTextSize(StateMan.getDescFontSize(getContext()));
+				TextView text = (TextView) view.findViewById(R.id.maintext);
+				bottomtext.setTextSize(StateMan.getMainFontSize(getContext()));
 				if (FutabaStatus.isBlank(item)) {
 					// 区切り線
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 					iv.setImageBitmap(null);
-					TextView title = (TextView) view.findViewById(R.id.title);
-					TextView text = (TextView) view.findViewById(R.id.maintext);
-					TextView bottomtext = (TextView) view
-							.findViewById(R.id.bottomtext);
 					text.setText("----ここから新着----");
 					text.setGravity(Gravity.CENTER);
 					title.setVisibility(View.GONE);
@@ -117,10 +120,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					// 区切り線
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
 					iv.setImageBitmap(null);
-					TextView title = (TextView) view.findViewById(R.id.title);
-					TextView text = (TextView) view.findViewById(R.id.maintext);
-					TextView bottomtext = (TextView) view
-							.findViewById(R.id.bottomtext);
 					String text_html = item.text;
 					CharSequence cs = Html.fromHtml(text_html); // HTML表示
 					text.setText(cs);
@@ -134,7 +133,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					saveButton.setVisibility(View.GONE);
 
 				} else {
-					TextView title = (TextView) view.findViewById(R.id.title);
 					String title_base = item.title;// StringUtil.safeCut(, 30);
 					if (item.name != null) { // こういう風に足さないと改行時に消えてしまうのでやむなく
 						title_base += " <font color=\"#117743\">" + item.name
@@ -158,12 +156,12 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							}
 						}
 						// name.setText(item.name);// item.getImgURL());
-					}else{
+					} else {
 						if (position != 0) { // レス番号
-							title_base = "<font color=\"#800000\">["
-									+ position + "</font>] " + title_base;
+							title_base = "<font color=\"#800000\">[" + position
+									+ "</font>] " + title_base;
 						}
-						
+
 					}
 
 					CharSequence cs_title = Html.fromHtml(title_base); // HTML表示
@@ -171,9 +169,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					// TextView name = (TextView) view.findViewById(R.id.name);
 
 					// スクリーンネームをビューにセット
-					TextView text = (TextView) view.findViewById(R.id.maintext);
-					TextView bottomtext = (TextView) view
-							.findViewById(R.id.bottomtext);
+					text.setTextSize(StateMan.getMainFontSize(getContext()));
+					bottomtext.setTextSize(StateMan
+							.getDescFontSize(getContext()));
 					if (item.datestr != null) {
 						bottomtext.setText(item.datestr + " No." + item.id);
 					}
@@ -209,16 +207,18 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							iv.setTag(item.bigImgURL);
 							bm = Bitmap.createBitmap(item.width, item.height,
 									Bitmap.Config.ALPHA_8);
-							//imageframe.setLayoutParams(createParam(item.width, LayoutParams.FILL_PARENT));
+							// imageframe.setLayoutParams(createParam(item.width,
+							// LayoutParams.FILL_PARENT));
 							iv.setImageBitmap(bm);
 							ImageGetTask task = new ImageGetTask(view);
 							SharedPreferences preferences = PreferenceManager
-								.getDefaultSharedPreferences(getContext());
+									.getDefaultSharedPreferences(getContext());
 							boolean enableSaveButton = preferences.getBoolean(
-									getContext().getString(R.string.enablesavebutton), true);
-							if(enableSaveButton){
+									getContext().getString(
+											R.string.enablesavebutton), true);
+							if (enableSaveButton) {
 								saveButton.setVisibility(View.VISIBLE);
-							}else{
+							} else {
 								saveButton.setVisibility(View.GONE);
 							}
 							view.setLongClickable(true);
@@ -273,7 +273,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	void setShioriStatus(View view) {
 		view.setBackgroundColor(Color.parseColor("#BBFFBB"));
 		TextView bottomText = (TextView) view.findViewById(R.id.bottomtext);
-		String bottomTextStr = "[栞]"+bottomText.getText().toString();
+		String bottomTextStr = "[栞]" + bottomText.getText().toString();
 		bottomText.setText(bottomTextStr);
 	}
 
