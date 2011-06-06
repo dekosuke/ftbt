@@ -6,7 +6,7 @@
 	<CheckBoxPreference android:key="checkCache"
 		android:title="キャッシュ整理前に確認"
 		android:defaultValue="Off"
-		android:summary="起動時にキャッシュを整理するかどうかを確認します。OFFにした場合、*確認なしでキャッシュ整理を開始します*。	" />
+		android:summary="ONの場合、起動時にキャッシュを整理するかどうかを確認します。OFFの場合は*確認なしでキャッシュ整理を開始します*。	" />
 	<EditTextPreference android:title="記憶する履歴スレッド数"
 		android:key="@string/historynum" android:inputType="number"
 		android:defaultValue="20" android:summary="何件までスレッドを覚えておくか"></EditTextPreference>

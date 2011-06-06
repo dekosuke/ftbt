@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="entriesThreadNum">
-        <item>50件</item>
+        <item>50件(デフォルト)</item>
         <item>100件</item>
         <item>150件</item>
         <item>200件</item>
@@ -25,17 +25,17 @@
         <item>500</item>
     </string-array>
     <string-array name="baseFontSize">
-        <item>-5</item>
-        <item>-4</item>
-        <item>-3</item>
-        <item>-2</item>
-        <item>-1</item>
-        <item>0(デフォルト)</item>
-        <item>+1</item>
-        <item>+2</item>
-        <item>+3</item>
-        <item>+4</item>
-        <item>+5</item>
+        <item>11sp</item>
+        <item>12sp</item>
+        <item>13sp</item>
+        <item>14sp</item>
+        <item>15sp</item>
+        <item>16sp(デフォルト)</item>
+        <item>17sp</item>
+        <item>18sp</item>
+        <item>19sp</item>
+        <item>20sp</item>
+        <item>21sp</item>
     </string-array>
     <string-array name="baseFontSizeValue">
         <item>-5</item>
