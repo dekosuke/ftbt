@@ -95,7 +95,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			Window window = getWindow();
 			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-		
+
 		setWait();
 
 	}
@@ -591,6 +591,12 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			} catch (android.content.ActivityNotFoundException ex) {
 				Toast.makeText(this, "ブラウザが見つかりません", Toast.LENGTH_SHORT).show();
 			}
+			return true;
+		case R.id.focusword:
+			intent = new Intent();
+			intent.setClassName(getPackageName(), getClass().getPackage()
+					.getName() + ".FocusEdit");
+			startActivity(intent);
 			return true;
 		}
 		return false;

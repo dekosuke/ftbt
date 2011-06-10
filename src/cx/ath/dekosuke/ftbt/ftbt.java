@@ -40,7 +40,7 @@ import cx.ath.dekosuke.ftbt.R.id;
 public class ftbt extends TabActivity implements Runnable {
 
 	public ArrayList<FutabaBBSContent> favoriteBBSs = new ArrayList<FutabaBBSContent>();
-	private boolean doCacheCheck=false;
+	private boolean doCacheCheck = false;
 
 	ProgressDialog waitDialog;
 	Thread thread;
@@ -92,34 +92,35 @@ public class ftbt extends TabActivity implements Runnable {
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
-									doCacheCheck=true;
-									setWait2();									
+									doCacheCheck = true;
+									setWait2();
 								}
 							})
 					.setNegativeButton("いいえ",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
-									doCacheCheck=false;
+									doCacheCheck = false;
 									setWait2();
 								}
 							});
 			builder.create().show();
 		} else {
-			doCacheCheck=true;
+			doCacheCheck = true;
 			setWait2();
 		}
 	}
-	
-	public void setWait2(){
-		if(doCacheCheck){
+
+	public void setWait2() {
+		if (doCacheCheck) {
 			waitDialog = new ProgressDialog(this);
-			waitDialog.setMessage("キャッシュを整理しています。\n(前回起動から開いたページ数に応じて時間がかかります)");
+			waitDialog
+					.setMessage("キャッシュを整理しています。\n(前回起動から開いたページ数に応じて時間がかかります)");
 			waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			// waitDialog.setCancelable(true);
 			waitDialog.show();
 		}
-		
+
 		thread = new Thread(this);
 		thread.start();
 
@@ -128,6 +129,15 @@ public class ftbt extends TabActivity implements Runnable {
 	public void run() {
 		try { // 細かい時間を置いて、ダイアログを確実に表示させる
 			Thread.sleep(100);
+			// キャッシュのチェック
+			// loading();
+			if (doCacheCheck) {
+				FLog.d("do cachecheck");
+				checkCache();
+			} else {
+				FLog.d("skip cachecheck");
+			}
+
 		} catch (InterruptedException e) {
 			// スレッドの割り込み処理を行った場合に発生、catchの実装は割愛
 		}
@@ -141,7 +151,14 @@ public class ftbt extends TabActivity implements Runnable {
 			// 別の親クラスのメソッドにて処理を行うようにした。
 			FLog.d("handle msg" + msg);
 			try {
-				// loading();
+				if (doCacheCheck) {
+					try {
+						waitDialog.dismiss();
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						FLog.d("message", e);
+					}
+				}
 				loading();
 			} catch (Exception e) {
 				FLog.d("message", e);
@@ -168,23 +185,9 @@ public class ftbt extends TabActivity implements Runnable {
 		}
 
 		FLog.d("after cachecheck");
-
-		try {
-			waitDialog.dismiss();
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			FLog.d("message", e);
-		}
-
 	}
 
 	public void loading() {
-		if(doCacheCheck){
-			FLog.d("do cachecheck");
-			checkCache();
-		}else{
-			FLog.d("skip cachecheck");			
-		}
 
 		// ユーザの指定したディレクトリ設定を読み込む
 		try {
