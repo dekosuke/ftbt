@@ -243,19 +243,6 @@ public class ImageCatalog extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent intent;
 		switch (item.getItemId()) {
-		case R.id.tweet:
-			intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, myImageURL
-					+ getString(R.string.hashtagstr));
-			try {
-				startActivityForResult(intent, 0);
-			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(this, "client not found", Toast.LENGTH_LONG)
-						.show();
-			}
-			return true;
-
 		case R.id.share:
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");

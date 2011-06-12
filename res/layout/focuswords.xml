@@ -13,10 +13,11 @@
 		android:layout_width="wrap_content" android:layout_height="wrap_content">
 		<EditText android:id="@+id/newword" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text=""
+			android:singleLine="true"
 			android:textSize="18sp">
 		</EditText>
 		<Button android:id="@+id/regnewword" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="追加">
+			android:layout_height="wrap_content" android:onClick="onClickRegNewWordButton" android:text="追加">
 		</Button>
 	</LinearLayout>
 </LinearLayout>

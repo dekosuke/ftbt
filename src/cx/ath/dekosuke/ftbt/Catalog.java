@@ -336,6 +336,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 * listView.getCount())); }
 				 */
 				adapter.items.clear();
+				adapter.items.add(FutabaThreadContent.createMenu1());
+				adapter.items.add(FutabaThreadContent.createMenu2());
 				for (int i = 0; i < fthreads.size(); ++i) {
 					// FLog.d(fthreads.get(i).toString());
 					adapter.items.add(fthreads.get(i));
@@ -558,21 +560,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				searchBar.setVisibility(View.VISIBLE);
 			} else {
 				searchBar.setVisibility(View.GONE);
-			}
-			return true;
-		case R.id.tweet:
-			String bbs_title = "見てる:" + BBSName + " - ふたば";
-			String status_encoded = bbs_title + " " + baseUrl; // URIエンコードされた、ツイートしたい文章
-			intent = new Intent(Intent.ACTION_SEND);
-			intent.setType("text/plain");
-			// intent.putExtra(Intent.EXTRA_SUBJECT , );
-			intent.putExtra(Intent.EXTRA_TEXT, status_encoded
-					+ getString(R.string.hashtagstr));
-			try {
-				startActivityForResult(intent, 0);
-			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
-						.show();
 			}
 			return true;
 		case R.id.settings:

@@ -69,4 +69,24 @@ public class FutabaThreadContent implements Serializable{
 	public static boolean isBlank(FutabaThreadContent thread){
 		return thread.id==-1;
 	}
+	
+	//メニュー用仮想スレッド作成
+	public static FutabaThreadContent createMenu1(){
+		FutabaThreadContent st = new FutabaThreadContent();
+		st.text="キーワードスレッド";
+		st.id = -2;
+		return st;
+	}
+	public static FutabaThreadContent createMenu2(){
+		FutabaThreadContent st = new FutabaThreadContent();
+		st.text="その他スレッド";
+		st.id = -3;
+		return st;
+	}
+	public static boolean isMenu1(FutabaThreadContent st){
+		return st.id==-2;
+	}
+	public static boolean isMenu2(FutabaThreadContent st){
+		return st.id==-3;
+	}
 }
