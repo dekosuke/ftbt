@@ -182,7 +182,7 @@ public class CatalogAdapter extends ArrayAdapter {
 						intent.setClassName(activity.getPackageName(), activity
 								.getClass().getPackage().getName()
 								+ ".FutabaThread");
-						activity.startActivity(intent); // Never called!
+						activity.startActivity(intent); 
 					}
 				});
 			}

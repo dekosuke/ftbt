@@ -134,6 +134,19 @@ public class FutabaThread extends Activity implements Runnable {
 			threadNum = Integer.parseInt((String) intent
 					.getSerializableExtra("threadNum"));
 			BBSName = (String) intent.getSerializableExtra("BBSName");
+
+			try {
+				HistoryManager man = new HistoryManager();
+				man.Load();
+				FutabaThreadContent thread;
+				thread = man.get(threadNum);
+				FLog.d("seeAt="+thread.seeAt);
+				position = thread.seeAt;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				FLog.d("message",e);
+			}
+
 			threadURL = baseURL + "res/" + threadNum + ".htm";
 		}
 		// FLog.d("threadurl=" + threadURL);
@@ -993,4 +1006,22 @@ public class FutabaThread extends Activity implements Runnable {
 
 	}
 
+	@Override
+	public void onPause() {
+		super.onPause();
+		int seeAt = listView.getFirstVisiblePosition();
+		try {
+			// スレッドファイルに書き込み
+			HistoryManager man = new HistoryManager();
+			man.Load();
+			FutabaThreadContent thread = new FutabaThreadContent();
+			thread.seeAt = seeAt;
+			thread.threadNum = threadNum;
+			FLog.d("seeAt="+seeAt);
+			man.updateThread(thread);
+			man.Save();
+		} catch (Exception e) {
+			FLog.d("message", e);
+		}
+	}
 }

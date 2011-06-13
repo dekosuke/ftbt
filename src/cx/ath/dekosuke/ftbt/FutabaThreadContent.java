@@ -10,7 +10,7 @@ public class FutabaThreadContent implements Serializable{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	public String userName;
 	public String title;
 	public String text;
@@ -18,10 +18,12 @@ public class FutabaThreadContent implements Serializable{
 	public int id;
 	public String imgURL;
 	public int threadNum;
+	public int threadNumPrev;
 	public String baseUrl;//historyのときはこれが入っている。内容的にはFutabaThreadに渡すintentと同じ
 	public String resNum;
 	public String BBSName; //どの板か->過去ログ表示のときに使う
 	public int pointAt; //しおり
+	public int seeAt; //終了時にどの位置にいたか
 	public long lastAccessed; //最終アクセス時間(UnixTime)
 	public boolean isChecked=false;
 
@@ -41,6 +43,7 @@ public class FutabaThreadContent implements Serializable{
 		resNum="0";
 		lastAccessed = 0;
 		pointAt = 0;
+		seeAt = 0;
 	}
 	
 	public String toString(){

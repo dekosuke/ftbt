@@ -74,6 +74,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		Display display = wm.getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
+		
 	}
 
 	@Override

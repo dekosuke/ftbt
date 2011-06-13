@@ -54,7 +54,7 @@ public class SDCard {
 			} else { // 外部メモリ
 				cacheDir = null;
 			}
-			FLog.d("cacheDir=" + cacheDir);
+			//FLog.d("cacheDir=" + cacheDir);
 		} catch (Exception e) {
 			FLog.d("message", e);
 			return false;
@@ -72,7 +72,7 @@ public class SDCard {
 			} else { // 外部メモリ
 				cacheDir = null;
 			}
-			FLog.d("cacheDir=" + cacheDir);
+			//FLog.d("cacheDir=" + cacheDir);
 		} catch (Exception e) {
 			FLog.d("message", e);
 			return false;
@@ -148,7 +148,7 @@ public class SDCard {
 			// ユーザ指定キャッシュディレクトリ
 			base_dir = cacheDir + "/";
 		}
-		FLog.d("cacheDir=" + cacheDir);
+		//FLog.d("cacheDir=" + cacheDir);
 		String cacheDir = base_dir;
 		File file = new File(cacheDir);
 		file.mkdir(); // ディレクトリないときにつくる

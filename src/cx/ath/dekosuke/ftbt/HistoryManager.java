@@ -38,13 +38,15 @@ public class HistoryManager {
 
 	// スレッドの追加
 	public void addThread(FutabaThreadContent thread, int maxHistoryNum) {
+		FLog.d("addThread"+thread.threadNum);
 		if (!threads.containsKey(thread.threadNum)) {
 			threads.put(thread.threadNum, thread);
 		} else {
 			// すでにある－＞更新
-			// このときの差分更新アルゴリズムがなんとも・・・
+			// ここにない値は初期化されてしまう罠ｗ
 			FutabaThreadContent currentThread = threads.get(thread.threadNum);
 			thread.pointAt = currentThread.pointAt;
+			thread.seeAt = currentThread.seeAt;
 			threads.remove(thread.threadNum); // 一度削除することで挿入順を最後に
 			threads.put(thread.threadNum, thread);
 		}
@@ -72,10 +74,14 @@ public class HistoryManager {
 				// FLog.d("pointat written"+thread_a.pointAt);
 				thread.pointAt = thread_a.pointAt;
 			}
+			if (thread_a.seeAt != 0) {
+				FLog.d("seeat written"+thread_a.seeAt);
+				thread.seeAt = thread_a.seeAt;
+			}
 			threads.put(thread.threadNum, thread);
 		}
 	}
-
+	
 	public void updateThreadRemoveShiori(FutabaThreadContent thread_a)
 			throws Exception {
 		if (!threads.containsKey(thread_a.threadNum)) {
