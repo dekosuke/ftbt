@@ -86,6 +86,51 @@ public class CatalogAdapter extends ArrayAdapter {
 			final FutabaThreadContent item = (FutabaThreadContent) items
 					.get(position);
 			final String threadNum = "" + item.threadNum;
+			TextView text = (TextView) view.findViewById(R.id.bottomtext);
+			CheckBox checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+			TextView nonclickableblank = (TextView) view
+					.findViewById(id.nonclickableblank);
+			TextView resNum = (TextView) view.findViewById(R.id.resnum);
+			TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
+			ImageView iv = (ImageView) view.findViewById(R.id.image);
+			Bitmap bm = null;
+			iv.setImageBitmap(bm);
+			iv.setVisibility(View.VISIBLE);
+			// メニュー用区切りのとき
+			if (FutabaThreadContent.isMenu1(item)) {
+				text.setTextSize(StateMan.getDescFontSize(getContext()));
+				text.setTextColor(Color.parseColor("#FFFFFF"));
+				text.setText("キーワードを含むスレッド:");
+				view.setBackgroundColor(Color.parseColor("#996666"));				
+				checkbox.setVisibility(View.GONE);
+				nonclickableblank.setVisibility(View.GONE);
+				resNum.setVisibility(View.GONE);
+				BBSName.setVisibility(View.GONE);
+				iv.setVisibility(View.GONE);
+				view.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+					}
+				});
+				return view;
+			} else if (FutabaThreadContent.isMenu2(item)) {
+				text.setTextSize(StateMan.getDescFontSize(getContext()));
+				text.setTextColor(Color.parseColor("#FFFFFF"));
+				text.setText("その他スレッド:");
+				view.setBackgroundColor(Color.parseColor("#996666"));				
+				checkbox.setVisibility(View.GONE);
+				nonclickableblank.setVisibility(View.GONE);
+				resNum.setVisibility(View.GONE);
+				BBSName.setVisibility(View.GONE);
+				iv.setVisibility(View.GONE);
+				view.setOnClickListener(new View.OnClickListener() {
+					public void onClick(View v) {
+					}
+				});
+				return view;
+			}
+
+			text.setTextColor(Color.parseColor("#800000"));
+			resNum.setVisibility(View.VISIBLE);
 
 			// カタログからスレッドをクリックしたときのリスナー
 			if (true) {
@@ -142,35 +187,29 @@ public class CatalogAdapter extends ArrayAdapter {
 				});
 			}
 
-			Bitmap bm = null;
-			ImageView iv = (ImageView) view.findViewById(R.id.image);
-			iv.setImageBitmap(bm);
 			Catalog activity = (Catalog) getContext();
 
 			final int pos = position;
 
 			if (item != null) {
 				// テキストをビューにセット
-				TextView text = (TextView) view.findViewById(R.id.bottomtext);
 				text.setTextSize(StateMan.getMainFontSize(getContext()));
+				String mainText = item.text;
+				if (!activity.mode.equals("history")) { // 通常(not 履歴)モード
+					mainText= StringUtil.highlightFocusWordMatched(mainText, activity.focusWords);
+				}
 				if (item.text != null) {
-					CharSequence cs = Html.fromHtml(item.text);
+					CharSequence cs = Html.fromHtml(mainText);
 					text.setText(cs);
 				}
-				TextView resNum = (TextView) view.findViewById(R.id.resnum);
 				resNum.setTextSize(StateMan.getDescFontSize(getContext()));
 				resNum.setText(item.resNum + "レス");
-				TextView BBSName = (TextView) view.findViewById(R.id.bbsname);
 				BBSName.setTextSize(StateMan.getDescFontSize(getContext()));
-				TextView nonclickableblank = (TextView) view
-						.findViewById(id.nonclickableblank);
 				nonclickableblank.setTextSize(StateMan
 						.getDescFontSize(getContext()));
 				if (activity.mode.equals("history")) { // 履歴モード
 					BBSName.setText("(" + item.BBSName + ")");
 					view.setBackgroundColor(Color.parseColor("#F0E0D6"));
-					CheckBox checkbox = (CheckBox) view
-							.findViewById(R.id.checkbox);
 					checkbox.setChecked(item.isChecked);
 					checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 						public void onCheckedChanged(CompoundButton buttonView,
@@ -185,8 +224,7 @@ public class CatalogAdapter extends ArrayAdapter {
 
 					});
 				} else { // 通常モード
-					CheckBox checkbox = (CheckBox) view
-							.findViewById(R.id.checkbox);
+					view.setBackgroundColor(Color.parseColor("#FFFFEE"));
 					checkbox.setVisibility(View.GONE);
 					nonclickableblank.setVisibility(View.GONE);
 				}

@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.apache.http.HttpEntity;
@@ -73,6 +74,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	// private ListView listView;
 	public String BBSName = ""; // 板名
 	private ListView listView;
+	public ArrayList<String> focusWords=new ArrayList<String>();
 
 	// 履歴モードか通常モードか
 	public String mode;
@@ -195,7 +197,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			sortTypeButton.setVisibility(View.GONE);
 		}
 
-		// searchbuttonでenter押したときのイベント取る
+		// EditTextでenter押したときのイベント取る
 		// http://android-vl0c0lv.blogspot.com/2009/08/edittext.html
 		// このくらい簡単な処理書くのに行数多すぎるだろjk...
 		EditText searchWord = (EditText) findViewById(R.id.searchinput);
@@ -335,13 +337,38 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 * if (position != 0) { listView.setSelection(Math.min(position,
 				 * listView.getCount())); }
 				 */
+				focusWords = FocusedSettings.get(adapter
+						.getContext());
 				adapter.items.clear();
-				adapter.items.add(FutabaThreadContent.createMenu1());
-				adapter.items.add(FutabaThreadContent.createMenu2());
-				for (int i = 0; i < fthreads.size(); ++i) {
-					// FLog.d(fthreads.get(i).toString());
-					adapter.items.add(fthreads.get(i));
+				if (!mode.equals("history") && focusWords.size() > 0) { // 通常
+					adapter.items.add(FutabaThreadContent.createMenu1());
+					Iterator<FutabaThreadContent> iterator = fthreads
+							.iterator();
+					while (iterator.hasNext()) {
+						FutabaThreadContent athread = iterator.next();
+						if (StringUtil.focusWordMatched(athread.text,
+								focusWords)) {
+							adapter.items.add(athread);
+						}
+					}
+					adapter.items.add(FutabaThreadContent.createMenu2());
+					iterator = fthreads.iterator();
+					while (iterator.hasNext()) {
+						FutabaThreadContent athread = iterator.next();
+						if (!StringUtil.focusWordMatched(athread.text,
+								focusWords)) {
+							adapter.items.add(athread);
+						}
+					}
+				} else { // 履歴モード or キーワード登録0
+					Iterator<FutabaThreadContent> iterator = fthreads
+							.iterator();
+					while (iterator.hasNext()) {
+						FutabaThreadContent athread = iterator.next();
+						adapter.items.add(athread);
+					}
 				}
+
 				final String title_text_f = title_text;
 				final String toast_text_f = toast_text;
 
@@ -355,7 +382,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						setTitle(title_text_f);
 						waitDialog.dismiss();
 						adapter.notifyDataSetChanged();
-						listView.invalidate();
+						listView.invalidateViews();
 					}
 				});
 				onCreateEnd = true;
@@ -371,7 +398,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		// Button reloadButton = (Button) findViewById(R.id.reload_btn);
 		// reloadButton.setPressed(true);//setgetResources().getDrawable(R.drawable.ic_popup_sync));
 		position = listView.getFirstVisiblePosition();
-		; // 現在位置（リロードで復帰）
+		// 現在位置（リロードで復帰）
 		setWait();
 	}
 
@@ -597,23 +624,58 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
 			String[] query = StringUtil.queryNormalize(searchText);
 			adapter.items.clear();
-			// 検索テキストから絞込み
-			for (int i = 0; i < fthreads.size(); ++i) {
-				String text = fthreads.get(i).text;
-				// Toast.makeText(this, "text=" + text,
-				// Toast.LENGTH_SHORT).show();
-				if (StringUtil.isQueryMatch(text, query)) {
-					adapter.items.add(fthreads.get(i));
+
+			try {
+				ArrayList<String> focusWords = FocusedSettings.get(this);
+				adapter.items.clear();
+				if (!mode.equals("history") && focusWords.size() > 0) { // 通常
+					adapter.items.add(FutabaThreadContent.createMenu1());
+					Iterator<FutabaThreadContent> iterator = fthreads
+							.iterator();
+					while (iterator.hasNext()) {
+						FutabaThreadContent athread = iterator.next();
+						if (StringUtil.isQueryMatch(athread.text, query)
+								&& StringUtil.focusWordMatched(athread.text,
+										focusWords)) {
+							adapter.items.add(athread);
+						}
+					}
+					adapter.items.add(FutabaThreadContent.createMenu2());
+					iterator = fthreads.iterator();
+					while (iterator.hasNext()) {
+						FutabaThreadContent athread = iterator.next();
+						if (StringUtil.isQueryMatch(athread.text, query)
+								&& !StringUtil.focusWordMatched(athread.text,
+										focusWords)) {
+							adapter.items.add(athread);
+						}
+					}
+				} else { // 履歴モード or キーワード登録0
+					Iterator<FutabaThreadContent> iterator = fthreads
+							.iterator();
+					while (iterator.hasNext()) {
+						FutabaThreadContent athread = iterator.next();
+						if (StringUtil.isQueryMatch(athread.text, query)){
+								adapter.items.add(athread);
+						}
+					}
 				}
+			} catch (Exception e) {
+				FLog.d("message", e);
+			}
+
+			int itemnum = adapter.items.size();
+			if (!mode.equals("history") && focusWords.size() > 0) { // 通常
+				itemnum-=2; //メニューぶん減らす
 			}
 			adapter.notifyDataSetChanged(); // 再描画命令
 			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
 			// searchBar.setVisibility(View.GONE);
 			String toastText = "全" + fthreads.size() + "スレッド中、"
-					+ adapter.items.size() + "スレッドを表示します";
-			if (fthreads.size() == adapter.items.size()) {
+					+ itemnum + "スレッドを表示します";
+			if (fthreads.size() == itemnum) {
 				toastText = "すべてのスレッドを表示します";
-			} else if (adapter.items.size() == 0) {
+			} else if (itemnum == 0) {
 				toastText = "該当するスレッドは見つかりませんでした";
 			}
 			Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();

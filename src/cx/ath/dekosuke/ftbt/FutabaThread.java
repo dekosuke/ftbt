@@ -109,7 +109,7 @@ public class FutabaThread extends Activity implements Runnable {
 			Window window = getWindow();
 			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-		
+
 		Intent intent = getIntent();
 		String superFutabaLinkURL = intent.getDataString();
 		if (superFutabaLinkURL != null) { // スーパーふたばリンク（urlからのリンク)
@@ -981,11 +981,13 @@ public class FutabaThread extends Activity implements Runnable {
 
 	public boolean onSearchRequested() {
 		// Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
-		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
-		if (searchBar.getVisibility() == View.GONE) {
-			searchBar.setVisibility(View.VISIBLE);
-		} else {
-			searchBar.setVisibility(View.GONE);
+		if (false) {
+			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+			if (searchBar.getVisibility() == View.GONE) {
+				searchBar.setVisibility(View.VISIBLE);
+			} else {
+				searchBar.setVisibility(View.GONE);
+			}
 		}
 		return false;
 

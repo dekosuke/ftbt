@@ -9,7 +9,7 @@
     <item android:title="URLを共有" android:id="@+id/share"
     android:icon="@android:drawable/ic_menu_share"></item>
     >
-    <item android:title="注目ワードを編集" android:id="@+id/focusword"
-    android:icon="@android:drawable/ic_menu_view"></item>
+    <item android:title="キーワードを編集" android:id="@+id/focusword"
+    android:icon="@android:drawable/ic_menu_set_as"></item>
     >
 </menu>

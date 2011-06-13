@@ -157,5 +157,43 @@ public class StringUtil {
 			mtype = "";
 		return mtype;
 	}
+	
+	//キーワード編集のバリデーション。だめな場合は例外を吐く
+	static boolean validateFocusWord(String word) throws Exception{
+		String[] splits = word.split("[ 　]");
+		if(splits.length>1){ //半角・全角スペースを含む
+			throw new Exception("spaces_exist");
+		}
+		splits = word.split("\n");
+		if(splits.length>1){ //改行コードを含む
+			throw new Exception("newline_exist");
+		}
+		if(word.equals("")){
+			throw new Exception("noword");			
+		}
+		if(word.length()>10){
+			throw new Exception("toolongword");			
+		}
+		return true;
+	}
 
+	//テキストにキーワードのどれかが含まれているかどうか
+	static boolean focusWordMatched(String text, ArrayList<String> focuswords){
+		for(int i=0;i<focuswords.size();++i){
+			if(text.contains(focuswords.get(i))){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	static String highlightFocusWordMatched(String text, ArrayList<String> focuswords){
+		for(int i=0;i<focuswords.size();++i){
+			String fword = focuswords.get(i);
+			if(text.contains(fword)){
+				return text.replace(fword, "<font color=\"red\">"+fword+"</font>");
+			}
+		}
+		return text;
+	}
 }
