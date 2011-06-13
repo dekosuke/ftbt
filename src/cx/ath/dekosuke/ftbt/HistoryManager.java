@@ -35,6 +35,14 @@ public class HistoryManager {
 		}
 		return threads.get(threadNum);
 	}
+	
+	public boolean exist(int threadNum){
+		return threads.containsKey(threadNum);
+	}
+	
+	public int size(){
+		return threads.size();
+	}
 
 	// スレッドの追加
 	public void addThread(FutabaThreadContent thread, int maxHistoryNum) {

@@ -82,6 +82,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	int position = 0; // 現在位置(リロード時復帰用)
 
 	boolean onCreateEnd = false;
+	HistoryManager man = new HistoryManager();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -322,12 +323,15 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						fthreads.get(i).BBSName = BBSName;
 					}
 
+					//どちらにしろ必要に
+					man.Load();
+
 					title_text = BBSName + "(カタログ) - "
 							+ getString(R.string.app_name);
-
+					
 				} else { // 履歴モード。複数板混在なので注意
-					HistoryManager man = new HistoryManager();
 					man.Load();
+					
 					fthreads = man.getThreadsArray();
 
 					title_text = "履歴 - " + getString(R.string.app_name);

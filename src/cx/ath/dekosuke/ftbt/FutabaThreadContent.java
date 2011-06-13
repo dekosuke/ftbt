@@ -18,7 +18,7 @@ public class FutabaThreadContent implements Serializable{
 	public int id;
 	public String imgURL;
 	public int threadNum;
-	public int threadNumPrev;
+	public int threadNumPrev; //これは使ってないんだけど、将来のことを考えて入れた
 	public String baseUrl;//historyのときはこれが入っている。内容的にはFutabaThreadに渡すintentと同じ
 	public String resNum;
 	public String BBSName; //どの板か->過去ログ表示のときに使う

@@ -101,7 +101,7 @@ public class CatalogAdapter extends ArrayAdapter {
 				text.setTextSize(StateMan.getDescFontSize(getContext()));
 				text.setTextColor(Color.parseColor("#FFFFFF"));
 				text.setText("キーワードを含むスレッド:");
-				view.setBackgroundColor(Color.parseColor("#996666"));				
+				view.setBackgroundColor(Color.parseColor("#996666"));
 				checkbox.setVisibility(View.GONE);
 				nonclickableblank.setVisibility(View.GONE);
 				resNum.setVisibility(View.GONE);
@@ -116,7 +116,7 @@ public class CatalogAdapter extends ArrayAdapter {
 				text.setTextSize(StateMan.getDescFontSize(getContext()));
 				text.setTextColor(Color.parseColor("#FFFFFF"));
 				text.setText("その他スレッド:");
-				view.setBackgroundColor(Color.parseColor("#996666"));				
+				view.setBackgroundColor(Color.parseColor("#996666"));
 				checkbox.setVisibility(View.GONE);
 				nonclickableblank.setVisibility(View.GONE);
 				resNum.setVisibility(View.GONE);
@@ -182,7 +182,7 @@ public class CatalogAdapter extends ArrayAdapter {
 						intent.setClassName(activity.getPackageName(), activity
 								.getClass().getPackage().getName()
 								+ ".FutabaThread");
-						activity.startActivity(intent); 
+						activity.startActivity(intent);
 					}
 				});
 			}
@@ -196,14 +196,29 @@ public class CatalogAdapter extends ArrayAdapter {
 				text.setTextSize(StateMan.getMainFontSize(getContext()));
 				String mainText = item.text;
 				if (!activity.mode.equals("history")) { // 通常(not 履歴)モード
-					mainText= StringUtil.highlightFocusWordMatched(mainText, activity.focusWords);
+					mainText = StringUtil.highlightFocusWordMatched(mainText,
+							activity.focusWords);
+					FLog.d("threadNum=" + item.threadNum + " "
+							+ activity.man.size());
+					try {
+						FutabaThreadContent prevThread = activity.man
+								.get(item.threadNum);
+						int diffResNum = Integer.parseInt(item.resNum)
+								- Integer.parseInt(prevThread.resNum);
+						resNum.setText(Html.fromHtml(item.resNum + "レス" + "<font color=\"red\">(+"
+								+ Math.max(0, diffResNum) + ")</font>"));
+					} catch (Exception e) { //履歴にないよ
+						//FLog.d("message", e);
+						FLog.d("thread "+item.threadNum+" not found");
+						resNum.setText(item.resNum + "レス");
+					}
 				}
 				if (item.text != null) {
 					CharSequence cs = Html.fromHtml(mainText);
 					text.setText(cs);
+					//resNum.setText(item.resNum + "レス");
 				}
 				resNum.setTextSize(StateMan.getDescFontSize(getContext()));
-				resNum.setText(item.resNum + "レス");
 				BBSName.setTextSize(StateMan.getDescFontSize(getContext()));
 				nonclickableblank.setTextSize(StateMan
 						.getDescFontSize(getContext()));
