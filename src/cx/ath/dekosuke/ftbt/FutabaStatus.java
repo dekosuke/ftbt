@@ -17,6 +17,7 @@ public class FutabaStatus {
 	public int width;
 	public int height;
 	public String endTime; //これは先頭にしか入れないよ
+	public boolean deleted;
 
 	// 投稿時刻private date
 	// 画像private
@@ -31,6 +32,7 @@ public class FutabaStatus {
 		width = 0;
 		height = 0;
 		endTime="";
+		deleted=false;
 	}
 	
 	//区切り用仮想レス作成
