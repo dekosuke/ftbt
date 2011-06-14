@@ -37,7 +37,7 @@
 			<EditText android:text="" android:id="@+id/comment"
 				android:gravity="top" android:layout_width="wrap_content"
 				android:layout_weight="2" android:layout_height="120px"
-				android:maxLines="5"></EditText>
+				android:maxLines="5"><requestFocus/></EditText>
 		</TableRow>
 		<TableRow android:layout_width="fill_parent"
 			android:baselineAligned="false" android:layout_weight="1">
