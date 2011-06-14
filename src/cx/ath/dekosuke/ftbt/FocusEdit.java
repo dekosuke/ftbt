@@ -99,6 +99,12 @@ public class FocusEdit extends Activity {
 		}
 		adapter.addLast(text);
 		text_e.setText(""); //登録されたキーワードを消す
+		Toast.makeText(this, "「"+text+"」をキーワード登録しました", Toast.LENGTH_LONG).show();
+		/*
+		// ソフトウェアキーボードかくす
+		InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+		*/
 		//adapter.notifyDataSetChanged();
 		//adapter.notifyAll();
 	}

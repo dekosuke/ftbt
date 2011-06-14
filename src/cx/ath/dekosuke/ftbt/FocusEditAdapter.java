@@ -66,6 +66,7 @@ public class FocusEditAdapter extends ArrayAdapter {
 	}
 
 	public void deleteAt(int position) {
+		String text = this.items.get(position);
 		this.items.remove(position);
 		notifyDataSetChanged();
 		try {
@@ -73,6 +74,7 @@ public class FocusEditAdapter extends ArrayAdapter {
 		} catch (IOException e) {
 			FLog.d("message", e);
 		}
+		Toast.makeText(getContext(), "「"+text+"」をキーワードから削除しました", Toast.LENGTH_LONG).show();
 	}
 
 	public void addLast(String elem) {

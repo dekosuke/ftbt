@@ -4,7 +4,7 @@
 	android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 	<TextView android:id="@+id/widget33" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:textSize="13sp"
-		android:text="このページでは、注目するキーワードを編集することができます。キーワードを含むスレッドは、スレッド一覧で優先して（上に）表示されます。\n※キーワードが多くなると、スレッド一覧の読み込みが遅くなる可能性があります。\n※この機能は実験中で、将来的に大きく変更される可能性があります。">
+		android:text="このページでは、注目するキーワードを編集することができます。キーワードを含むスレッドは、スレッド一覧で優先して（上に）表示されます。\n※キーワードが多くなると、スレッド一覧の読み込みが遅くなる可能性があります。\n※この機能は試験中で、将来的に大きく変更される可能性があります。">
 	</TextView>
 	<TextView android:id="@+id/desc1" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:textSize="15sp"
@@ -23,7 +23,7 @@
 	</LinearLayout>
 	<TextView android:id="@+id/widget33" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:textSize="15sp"
-		android:text="以下、現在登録されているキーワード↓" android:layout_marginBottom="10dip">
+		android:text="現在登録されているキーワード↓" android:layout_marginBottom="10dip">
 	</TextView>
 	<ListView android:id="@+id/listview" android:layout_width="fill_parent"
 		android:layout_height="wrap_content">

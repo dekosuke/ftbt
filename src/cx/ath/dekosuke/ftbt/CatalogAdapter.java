@@ -212,11 +212,12 @@ public class CatalogAdapter extends ArrayAdapter {
 						FLog.d("thread "+item.threadNum+" not found");
 						resNum.setText(item.resNum + "レス");
 					}
+				}else{
+					resNum.setText(item.resNum + "レス");
 				}
 				if (item.text != null) {
 					CharSequence cs = Html.fromHtml(mainText);
 					text.setText(cs);
-					//resNum.setText(item.resNum + "レス");
 				}
 				resNum.setTextSize(StateMan.getDescFontSize(getContext()));
 				BBSName.setTextSize(StateMan.getDescFontSize(getContext()));

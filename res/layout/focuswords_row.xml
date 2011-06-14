@@ -8,6 +8,7 @@
 		<TextView android:id="@+id/word" android:layout_width="wrap_content"
 			android:layout_height="fill_parent" android:text=""
 			android:gravity="center_vertical"
+			android:textColor="#FFFFFF"
 			android:textSize="16sp">
 		</TextView>
 		<TextView android:id="@+id/blank" android:layout_width="fill_parent"

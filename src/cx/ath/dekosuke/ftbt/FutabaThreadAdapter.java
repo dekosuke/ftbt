@@ -142,6 +142,12 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							title_base += " <font color=\"#0000CC\">"
 									+ item.mailTo + "</font>";
 						}
+						
+						if (item.imgURL != null) {
+							File imgFile = new File(item.bigImgURL);
+							title_base += "<font color=\"#0000CC\">" + imgFile.getName() + "</font>";
+						}
+
 						if (activity.currentSize != 0
 								&& position >= activity.prevSize) { // 新着
 							title_base += " New!";
@@ -223,15 +229,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 								saveButton.setVisibility(View.GONE);
 							}
 							view.setLongClickable(true);
-							// view.setOnLongClickListener(new
-							// FutabaThreadOnLongClickListener());
-							/*
-							 * saveButton .setOnLongClickListener(new
-							 * View.OnLongClickListener() { public boolean
-							 * onLongClick(View arg0) { // TODO Auto-generated
-							 * method stub FLog.d("onLongClick"); return false;
-							 * } });
-							 */
 							task.execute(item.imgURL);
 							// title.setText("(画像あり)");
 						} else { // 画像なし
