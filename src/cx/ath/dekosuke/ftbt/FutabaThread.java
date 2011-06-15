@@ -156,6 +156,7 @@ public class FutabaThread extends Activity implements Runnable {
 		setContentView(R.layout.futaba_thread);
 
 		listView = (ListView) findViewById(id.threadlistview);
+		
 		// アダプターを設定します
 		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 				statuses);
@@ -163,6 +164,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 		// 長クリック－＞テキスト共有
 		listView.setOnItemLongClickListener(new FutabaThreadOnLongClickListener());
+		listView.setFastScrollEnabled(true);
 
 		setWait();
 	}

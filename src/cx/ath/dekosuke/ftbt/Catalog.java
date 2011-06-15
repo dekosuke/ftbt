@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,7 +75,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	// private ListView listView;
 	public String BBSName = ""; // 板名
 	private ListView listView;
-	public ArrayList<String> focusWords=new ArrayList<String>();
+	public ArrayList<String> focusWords = new ArrayList<String>();
 
 	// 履歴モードか通常モードか
 	public String mode;
@@ -182,6 +183,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		catalogURL = baseUrl + "futaba.php";
 		setContentView(R.layout.futaba_catalog);
 		listView = (ListView) findViewById(id.cataloglistview);
+		listView.setFastScrollEnabled(true);
 		adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
 				(ArrayList<FutabaThreadContent>) fthreads.clone());
 		// 通常モード・履歴モードの片方でしか使わないボタンを消す
@@ -323,15 +325,15 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 						fthreads.get(i).BBSName = BBSName;
 					}
 
-					//どちらにしろ必要に
+					// どちらにしろ必要に
 					man.Load();
 
 					title_text = BBSName + "(カタログ) - "
 							+ getString(R.string.app_name);
-					
+
 				} else { // 履歴モード。複数板混在なので注意
 					man.Load();
-					
+
 					fthreads = man.getThreadsArray();
 
 					title_text = "履歴 - " + getString(R.string.app_name);
@@ -341,8 +343,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 				 * if (position != 0) { listView.setSelection(Math.min(position,
 				 * listView.getCount())); }
 				 */
-				focusWords = FocusedSettings.get(adapter
-						.getContext());
+				focusWords = FocusedSettings.get(adapter.getContext());
 				adapter.items.clear();
 				if (!mode.equals("history") && focusWords.size() > 0) { // 通常
 					adapter.items.add(FutabaThreadContent.createMenu1());
@@ -659,8 +660,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 							.iterator();
 					while (iterator.hasNext()) {
 						FutabaThreadContent athread = iterator.next();
-						if (StringUtil.isQueryMatch(athread.text, query)){
-								adapter.items.add(athread);
+						if (StringUtil.isQueryMatch(athread.text, query)) {
+							adapter.items.add(athread);
 						}
 					}
 				}
@@ -670,13 +671,13 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 			int itemnum = adapter.items.size();
 			if (!mode.equals("history") && focusWords.size() > 0) { // 通常
-				itemnum-=2; //メニューぶん減らす
+				itemnum -= 2; // メニューぶん減らす
 			}
 			adapter.notifyDataSetChanged(); // 再描画命令
 			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
 			// searchBar.setVisibility(View.GONE);
-			String toastText = "全" + fthreads.size() + "スレッド中、"
-					+ itemnum + "スレッドを表示します";
+			String toastText = "全" + fthreads.size() + "スレッド中、" + itemnum
+					+ "スレッドを表示します";
 			if (fthreads.size() == itemnum) {
 				toastText = "すべてのスレッドを表示します";
 			} else if (itemnum == 0) {
@@ -709,6 +710,35 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		}
 		return false;
 
+	}
+
+	public boolean AAAAAAdispatchKeyEvent(KeyEvent event) {
+		FLog.d("dispatchKeyEvent:" + event.getAction());
+		//if(true){ return super.dispatchKeyEvent(event); }
+		if (true) {
+			int keyCode = event.getKeyCode();
+			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+
+				// 一ページ分下スクロール int topPosition =
+				listView.getFirstVisiblePosition();
+				int topPositionY = listView.getChildAt(0).getTop();
+				WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+				Display disp = wm.getDefaultDisplay();
+				int height = disp.getHeight();
+				// int height_temp =
+				// listView.setScrollIndicators(up, down)topPositionY;
+				// while(height_temp<)
+
+				return true;
+			} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+				// 一ページ分上スクロール
+				return true;
+			} else {
+				boolean ret = super.onKeyDown(keyCode, event);
+				return ret;
+			}
+		}
+		return false;
 	}
 
 	@Override
