@@ -100,7 +100,7 @@ public class CatalogAdapter extends ArrayAdapter {
 			if (FutabaThreadContent.isMenu1(item)) {
 				text.setTextSize(StateMan.getDescFontSize(getContext()));
 				text.setTextColor(Color.parseColor("#FFFFFF"));
-				text.setText("キーワードを含むスレッド:");
+				text.setText("キーワードを含むスレッド↓");
 				view.setBackgroundColor(Color.parseColor("#996666"));
 				checkbox.setVisibility(View.GONE);
 				nonclickableblank.setVisibility(View.GONE);
@@ -115,7 +115,7 @@ public class CatalogAdapter extends ArrayAdapter {
 			} else if (FutabaThreadContent.isMenu2(item)) {
 				text.setTextSize(StateMan.getDescFontSize(getContext()));
 				text.setTextColor(Color.parseColor("#FFFFFF"));
-				text.setText("その他スレッド:");
+				text.setText("その他スレッド↓");
 				view.setBackgroundColor(Color.parseColor("#996666"));
 				checkbox.setVisibility(View.GONE);
 				nonclickableblank.setVisibility(View.GONE);
@@ -206,7 +206,7 @@ public class CatalogAdapter extends ArrayAdapter {
 						int diffResNum = Integer.parseInt(item.resNum)
 								- Integer.parseInt(prevThread.resNum);
 						resNum.setText(Html.fromHtml(item.resNum + "レス" + "<font color=\"red\">(+"
-								+ Math.max(0, diffResNum) + ")</font>"));
+								+ Math.max(0, diffResNum) + "レス)</font>"));
 					} catch (Exception e) { //履歴にないよ
 						//FLog.d("message", e);
 						FLog.d("thread "+item.threadNum+" not found");
