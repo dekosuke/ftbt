@@ -246,7 +246,16 @@ public class ImageCatalog extends Activity {
 		case R.id.share:
 			intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, myImageURL);
+			intent.putExtra(Intent.EXTRA_TEXT, CircleList.get());
+			try {
+				startActivityForResult(intent, 0);
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(this, "client not found", Toast.LENGTH_SHORT)
+						.show();
+			}
+			return true;
+		case R.id.view:
+			intent = new Intent(Intent.ACTION_VIEW, Uri.parse(CircleList.get()));
 			try {
 				startActivityForResult(intent, 0);
 			} catch (android.content.ActivityNotFoundException ex) {

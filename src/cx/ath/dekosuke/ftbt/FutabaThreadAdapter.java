@@ -95,7 +95,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
-			FLog.d("potision=" + position + " datestr=" + item.datestr);
+			//FLog.d("potision=" + position + " datestr=" + item.datestr);
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
 				title.setTextSize(StateMan.getDescFontSize(getContext()));

@@ -36,6 +36,10 @@
 		android:entryValues="@array/baseFontSizeValue"
 		android:summary="フォントの大きさを設定します" />
 	 />
+	<CheckBoxPreference android:key="fastscrollenable"
+		android:title="ファストスクロールを表示"
+		android:defaultValue="Off"
+		android:summary="@string/fastScrollSummary" />
 	<PreferenceCategory android:title="保存先の設定">
 
 		<CheckBoxPreference android:key="innerCache"

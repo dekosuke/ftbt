@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -56,6 +57,7 @@ import java.net.UnknownHostException;
 
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 
 import android.widget.Button;
 
@@ -183,7 +185,18 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		catalogURL = baseUrl + "futaba.php";
 		setContentView(R.layout.futaba_catalog);
 		listView = (ListView) findViewById(id.cataloglistview);
-		listView.setFastScrollEnabled(true);
+		
+		//listView.setSmoothScrollbarEnabled(true);
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this);
+			boolean fastScrollEnabled = preferences.getBoolean(
+					"fastscrollenable", false);
+			listView.setFastScrollEnabled(fastScrollEnabled);
+		}catch(Exception e){
+			FLog.d("message", e);
+		}
+		
 		adapter = new CatalogAdapter(this, R.layout.futaba_catalog_row,
 				(ArrayList<FutabaThreadContent>) fthreads.clone());
 		// 通常モード・履歴モードの片方でしか使わないボタンを消す
@@ -712,34 +725,49 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	}
 
-	public boolean AAAAAAdispatchKeyEvent(KeyEvent event) {
+	/*
+	public boolean dispatchKeyEvent(KeyEvent event) {
 		FLog.d("dispatchKeyEvent:" + event.getAction());
-		//if(true){ return super.dispatchKeyEvent(event); }
-		if (true) {
-			int keyCode = event.getKeyCode();
-			if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+		// if(true){ return super.dispatchKeyEvent(event); }
+
+		int action = event.getAction();
+		int keyCode = event.getKeyCode();
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+			if (action == KeyEvent.ACTION_UP) {
+				FLog.d("vdown" + listView.getFirstVisiblePosition());
 
 				// 一ページ分下スクロール int topPosition =
-				listView.getFirstVisiblePosition();
+				// listView.getFirstVisiblePosition();
 				int topPositionY = listView.getChildAt(0).getTop();
 				WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
 				Display disp = wm.getDefaultDisplay();
 				int height = disp.getHeight();
+				listView.setSelectionFromTop(
+						listView.getFirstVisiblePosition(), topPositionY
+								- (height - 200));
+
 				// int height_temp =
 				// listView.setScrollIndicators(up, down)topPositionY;
 				// while(height_temp<)
-
-				return true;
-			} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-				// 一ページ分上スクロール
-				return true;
-			} else {
-				boolean ret = super.onKeyDown(keyCode, event);
-				return ret;
 			}
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			if (action == KeyEvent.ACTION_UP) {
+				// 一ページ分上スクロール
+				int topPositionY = listView.getChildAt(0).getTop();
+				WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+				Display disp = wm.getDefaultDisplay();
+				int height = disp.getHeight();
+				listView.setSelectionFromTop(
+						listView.getFirstVisiblePosition(), topPositionY
+								+ (height - 200));
+			}
+			return true;
 		}
-		return false;
+		return super.dispatchKeyEvent(event);
+		//return false;
 	}
+	*/
 
 	@Override
 	public void onStop() {

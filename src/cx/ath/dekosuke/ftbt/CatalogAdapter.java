@@ -198,8 +198,7 @@ public class CatalogAdapter extends ArrayAdapter {
 				if (!activity.mode.equals("history")) { // 通常(not 履歴)モード
 					mainText = StringUtil.highlightFocusWordMatched(mainText,
 							activity.focusWords);
-					FLog.d("threadNum=" + item.threadNum + " "
-							+ activity.man.size());
+
 					try {
 						FutabaThreadContent prevThread = activity.man
 								.get(item.threadNum);
