@@ -168,6 +168,11 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							title_base = "<font color=\"#800000\">[" + position
 									+ "</font>] " + title_base;
 						}
+						if (item.mailTo != null && !item.mailTo.equals("")) {
+							title_base += " <font color=\"#0000CC\">"
+									+ item.mailTo + "</font>";
+						}
+						
 
 					}
 

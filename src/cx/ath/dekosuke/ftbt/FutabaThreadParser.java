@@ -56,7 +56,7 @@ public class FutabaThreadParser {
 							+ ".*?<font[^>]+><b>(.*?) ?</b></font>"
 							+ "(.*?) No.([0-9]+).+?<blockquote", Pattern.DOTALL);
 			Pattern imgTextAttrPattern = Pattern.compile(
-					"<input[^>]+>([^<]*?) No.([0-9]+).+?<a", Pattern.DOTALL);
+					"<input[^>]+>(.*?) No.([0-9]+).+?<a", Pattern.DOTALL);
 			//11/05/23(月)00:05:40 No.117233203 
 			Pattern textPattern = Pattern.compile(
 					"<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
@@ -105,7 +105,8 @@ public class FutabaThreadParser {
 			} else {
 				Matcher mcTextAttr = imgTextAttrPattern.matcher(honbun);
 				if (mcTextAttr.find()) {
-					statusTop.datestr = mcTextAttr.group(1);
+					statusTop.datestr = normalize(mcTextAttr.group(1));
+					statusTop.mailTo = extractMailTo(mcTextAttr.group(1));
 					statusTop.id = Integer.parseInt(mcTextAttr.group(2));
 				}
 			}
@@ -140,7 +141,11 @@ public class FutabaThreadParser {
 					Matcher mcTextAttr = imgTextAttrPattern.matcher(mcRes
 							.group(1));
 					if (mcTextAttr.find()) {
-						status.datestr = mcTextAttr.group(1);
+						status.datestr = normalize(mcTextAttr.group(1));
+						status.mailTo = extractMailTo(mcTextAttr.group(1));
+						if(!status.mailTo.equals("")){
+							FLog.d("mailto="+status.mailTo);
+						}
 						status.id = Integer.parseInt(mcTextAttr.group(2));
 					}
 				}
