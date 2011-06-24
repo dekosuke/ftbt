@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 
 //adding listview
+import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -13,6 +16,7 @@ import android.widget.Toast;
 import android.util.Log;
 
 //using Intent
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -34,6 +38,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 
 	public FutabaBBSMenuAdapter adapter = null;
 	public boolean initial_loading = true;
+	private ListView listView;
 	String mode;
 
 	/** Called when the activity is first created. */
@@ -134,7 +139,7 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 			adapter = new FutabaBBSMenuAdapter(this, R.layout.futaba_bbs_row,
 					BBSs);
 			// アイテムを追加します
-			ListView listView = (ListView) findViewById(id.listview);
+			listView = (ListView) findViewById(id.listview);
 			// アダプターを設定します
 			listView.setAdapter(adapter);
 
@@ -177,4 +182,47 @@ public class FutabaBBSMenu extends Activity implements Runnable {
 		}
 		FLog.d("BBSMenu onResume");
 	}
+	
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		FLog.d("dispatchKeyEvent:" + event.getAction());
+		// if(true){ return super.dispatchKeyEvent(event); }
+
+		int action = event.getAction();
+		int keyCode = event.getKeyCode();
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+			if (action == KeyEvent.ACTION_UP) {
+				FLog.d("vdown" + listView.getFirstVisiblePosition());
+
+				// 一ページ分下スクロール int topPosition =
+				// listView.getFirstVisiblePosition();
+				int topPositionY = listView.getChildAt(0).getTop();
+				WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+				Display disp = wm.getDefaultDisplay();
+				int height = disp.getHeight();
+				listView.setSelectionFromTop(
+						listView.getFirstVisiblePosition(), topPositionY
+								- (height - 200));
+
+				// int height_temp =
+				// listView.setScrollIndicators(up, down)topPositionY;
+				// while(height_temp<)
+			}
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+			if (action == KeyEvent.ACTION_UP) {
+				// 一ページ分上スクロール
+				int topPositionY = listView.getChildAt(0).getTop();
+				WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+				Display disp = wm.getDefaultDisplay();
+				int height = disp.getHeight();
+				listView.setSelectionFromTop(
+						listView.getFirstVisiblePosition(), topPositionY
+								+ (height - 200));
+			}
+			return true;
+		}
+		return super.dispatchKeyEvent(event);
+		//return false;
+	}
+
 }

@@ -725,7 +725,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 	}
 
-	/*
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		FLog.d("dispatchKeyEvent:" + event.getAction());
 		// if(true){ return super.dispatchKeyEvent(event); }
@@ -767,7 +766,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 		return super.dispatchKeyEvent(event);
 		//return false;
 	}
-	*/
 
 	@Override
 	public void onStop() {

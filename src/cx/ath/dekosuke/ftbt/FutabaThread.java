@@ -1038,7 +1038,6 @@ public class FutabaThread extends Activity implements Runnable {
 		}
 	}
 	
-	/*
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		FLog.d("dispatchKeyEvent:" + event.getAction());
 		// if(true){ return super.dispatchKeyEvent(event); }
@@ -1080,5 +1079,4 @@ public class FutabaThread extends Activity implements Runnable {
 		return super.dispatchKeyEvent(event);
 		//return false;
 	}
-	*/
 }
