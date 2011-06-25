@@ -22,10 +22,6 @@
 		android:title="画像を保存ボタンを表示" 
 		android:defaultValue="On"
 		android:summary="スレッドで「画像を保存する」ボタンを表示します" />
-	<CheckBoxPreference android:key="@string/showdeletedres"
-		android:title="削除レスを表示" 
-		android:defaultValue="Off"
-		android:summary="削除されたレスも表示します" />
 	<EditTextPreference android:title="スレッド一覧の文字数"
 		android:key="threadStrNum" android:inputType="number"
 		android:defaultValue="50" android:summary="カタログ（スレッド一覧）での文字数を設定します" />
