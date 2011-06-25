@@ -682,7 +682,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 	private boolean isAnonymousThread(String url) {
 		return url.contains("img.2chan.net/b")
-				|| url.contains("up.2chan.net/e");
+				|| url.contains("up.2chan.net/e") || url.contains("dat.2chan.net/b");
 	}
 
 	private class FutabaThreadContentGetter extends Thread {
