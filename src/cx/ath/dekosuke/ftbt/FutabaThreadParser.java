@@ -44,12 +44,12 @@ public class FutabaThreadParser {
 	// TODO:mailtoのパーズ
 	// スレッドの形式:
 	// / anonymous = true は いもげとか
-	public void parse(String allData, boolean anonymous) {
+	public void parse(String allData, boolean anonymous, boolean showdeleted) {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
 			Pattern honbunPattern = Pattern.compile("<form.*?>.+?</form>",
 					Pattern.DOTALL);
-			Pattern resPattern = Pattern.compile("<table.*?>(.+?)</table>",
+			Pattern resPattern = Pattern.compile("<table(.*?)>(.+?)</table>",
 					Pattern.DOTALL);
 			Pattern textAttrPattern = Pattern
 					.compile("<input[^>]+><font[^>]+><b>(.*?)</b></font>"
@@ -68,9 +68,9 @@ public class FutabaThreadParser {
 							"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
 							Pattern.DOTALL);
 			Pattern endTimePattern = Pattern
-					.compile(
-							"<span id=\"contdisp\">([0-9:]+頃消えます)<",
-							Pattern.DOTALL);
+			.compile(
+					"<span id=\"contdisp\">([0-9:]+頃消えます)<",
+					Pattern.DOTALL);
 
 			// <span id="contdisp">05:12頃消えます<\/span>
 
@@ -124,12 +124,12 @@ public class FutabaThreadParser {
 			Matcher mcRes = resPattern.matcher(honbun);
 			while (mcRes.find()) {
 				FutabaStatus status = new FutabaStatus();
-				mcText = textPattern.matcher(mcRes.group(1));
+				mcText = textPattern.matcher(mcRes.group(2));
 				// FLog.d(mcRes.group(1) );
 				mcText.find();
 				if (!anonymous) {
 					Matcher mcTextAttr = textAttrPattern
-							.matcher(mcRes.group(1));
+							.matcher(mcRes.group(2));
 					if (mcTextAttr.find()) {
 						status.title = mcTextAttr.group(1);
 						status.name = normalize(mcTextAttr.group(2)); // メールアドレスが入っていることあり
@@ -139,7 +139,7 @@ public class FutabaThreadParser {
 					}
 				} else {
 					Matcher mcTextAttr = imgTextAttrPattern.matcher(mcRes
-							.group(1));
+							.group(2));
 					if (mcTextAttr.find()) {
 						status.datestr = normalize(mcTextAttr.group(1));
 						status.mailTo = extractMailTo(mcTextAttr.group(1));
@@ -152,7 +152,7 @@ public class FutabaThreadParser {
 
 				text = mcText.group(1);
 				status.text = text;
-				mcImg = thumbPattern.matcher(mcRes.group(1));
+				mcImg = thumbPattern.matcher(mcRes.group(2));
 				if (mcImg.find()) {
 					status.imgURL = mcImg.group(1);
 					status.width = Integer.parseInt(mcImg.group(2));
@@ -160,11 +160,14 @@ public class FutabaThreadParser {
 					// FLog.d(,
 					// "parse w="+mcImg.group(2)+"h="+mcImg.group(3) );
 				}
-				mcBigImg = imgPattern.matcher(mcRes.group(1));
+				mcBigImg = imgPattern.matcher(mcRes.group(2));
 				if (mcBigImg.find()) {
 					status.bigImgURL = mcBigImg.group(1);
 				}
-				// FLog.d(text );
+				
+				//削除済フラグ
+				status.deleted = mcRes.group(1).indexOf("class=deleted") != -1;
+
 				statuses.add(status);
 			}
 		} catch (Exception e) {

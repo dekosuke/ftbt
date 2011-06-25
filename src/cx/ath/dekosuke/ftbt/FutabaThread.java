@@ -84,6 +84,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 	private ProgressDialog waitDialog;
 	private Thread thread;
+	private boolean showDeletedRes = false;
 
 	private ListView listView;
 
@@ -109,6 +110,15 @@ public class FutabaThread extends Activity implements Runnable {
 		if (getResources().getBoolean(R.bool.avoidsleep)) {
 			Window window = getWindow();
 			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		}
+		
+		//削除済みのレスを表示するかどうか
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this);
+			showDeletedRes = preferences.getBoolean(getString(R.string.showdeletedres), false);
+		} catch (Exception e) {
+			FLog.d("message", e);
 		}
 
 		Intent intent = getIntent();
@@ -713,7 +723,7 @@ public class FutabaThread extends Activity implements Runnable {
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
 					String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
-					cacheParser.parse(cacheThreadHtml, anonymous);
+					cacheParser.parse(cacheThreadHtml, anonymous, showDeletedRes);
 					FLog.d("cache  ok  " + threadURL);
 
 				} else {
@@ -728,7 +738,7 @@ public class FutabaThread extends Activity implements Runnable {
 					// これが取得できれば最新のデータ
 					String webThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
-					webParser.parse(webThreadHtml, anonymous);
+					webParser.parse(webThreadHtml, anonymous, showDeletedRes);
 					// FLog.d(threadHtml);
 					if (cache_ok) {
 						// ↓コメント削除があるからこれは仮定できない
