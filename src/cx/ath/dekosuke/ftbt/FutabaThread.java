@@ -863,12 +863,12 @@ public class FutabaThread extends Activity implements Runnable {
 							}
 						}
 
-						Toast.makeText(adapter.getContext(), toast_text_f,
-								Toast.LENGTH_SHORT).show();
-						setTitle(title);
 						if (waitDialog != null) {
 							waitDialog.dismiss();
 						}
+						Toast.makeText(adapter.getContext(), toast_text_f,
+								Toast.LENGTH_SHORT).show();
+						setTitle(title);
 						adapter.notifyDataSetChanged();
 						listView.invalidate();
 						if (position != 0) {
