@@ -934,9 +934,9 @@ public class FutabaThread extends Activity implements Runnable {
 				// 描画に関わる処理はここに集約(メインスレッド実行)
 				handler3.post(new Runnable() {
 					public void run() {
+						FutabaThread fthread = (FutabaThread)adapter.getContext();
 						if (saved_file_f != null) {
 
-							FutabaThread fthread = (FutabaThread)adapter.getContext();
 							if(fthread.toast != null){
 								fthread.toast.cancel();
 							}
@@ -970,8 +970,13 @@ public class FutabaThread extends Activity implements Runnable {
 							contentResolver.insert(
 									Images.Media.EXTERNAL_CONTENT_URI, values);
 						} else {
-							Toast.makeText(adapter.getContext(),
-									"画像の取得に失敗しました", Toast.LENGTH_SHORT).show();
+							if(fthread.toast != null){
+								fthread.toast.cancel();
+							}
+							fthread.toast = Toast.makeText(fthread,
+									"画像の取得に失敗しました",
+									Toast.LENGTH_SHORT);
+							fthread.toast.show();
 
 						}
 					}
