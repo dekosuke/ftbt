@@ -557,6 +557,7 @@ public class FutabaThread extends Activity implements Runnable {
 				if (!waitDialog.isShowing()) { // キャンセルされた
 					return;
 				}
+				final int current = i;
 				try {
 					final String imgURL = imgURLs.get(i);
 					String threadName = "";
@@ -595,7 +596,7 @@ public class FutabaThread extends Activity implements Runnable {
 							if (saved_file_f != null) {
 
 								waitDialog.setMessage("ファイル\n" + saved_file_f
-										+ "\nに保存しました");
+										+ "\nに保存しました("+(current+1)+"/"+imgURLs.size()+")");
 
 								// ギャラリーに反映されるように登録
 								// http://www.adakoda.com/adakoda/2010/08/android-34.html
@@ -887,6 +888,7 @@ public class FutabaThread extends Activity implements Runnable {
 	// 画像を保存する
 	public void saveImage(String imgURL) {
 		// 見せなくていいや...
+		/*
 		if (waitDialog != null) {
 			waitDialog.dismiss();
 		}
@@ -895,6 +897,13 @@ public class FutabaThread extends Activity implements Runnable {
 		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); //
 		waitDialog.setCancelable(true);
 		waitDialog.show();
+		*/
+		if(this.toast!=null){
+			this.toast.cancel();
+		}
+		this.toast = Toast.makeText(this, "読み込み中...",
+				Toast.LENGTH_SHORT);
+		this.toast.show();
 
 		FutabaThreadImageRetriever getterThread = new FutabaThreadImageRetriever();
 		getterThread.setImageURL(imgURL);
@@ -927,9 +936,14 @@ public class FutabaThread extends Activity implements Runnable {
 					public void run() {
 						if (saved_file_f != null) {
 
-							Toast.makeText(adapter.getContext(),
+							FutabaThread fthread = (FutabaThread)adapter.getContext();
+							if(fthread.toast != null){
+								fthread.toast.cancel();
+							}
+							fthread.toast = Toast.makeText(fthread,
 									saved_file_f.getAbsolutePath() + "に保存しました",
-									Toast.LENGTH_SHORT).show();
+									Toast.LENGTH_SHORT);
+							fthread.toast.show();
 
 							// ギャラリーに反映されるように登録
 							// http://www.adakoda.com/adakoda/2010/08/android-34.html

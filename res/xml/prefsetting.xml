@@ -20,7 +20,7 @@
 		android:textSize="20sp" android:defaultValue="" android:summary="投稿時の削除キーを設定します"></EditTextPreference>
 	<CheckBoxPreference android:key="@string/enablesavebutton"
 		android:title="画像を保存ボタンを表示" 
-		android:defaultValue="On"
+		android:defaultValue="On"	
 		android:summary="スレッドで「画像を保存する」ボタンを表示します" />
 	<EditTextPreference android:title="スレッド一覧の文字数"
 		android:key="threadStrNum" android:inputType="number"
