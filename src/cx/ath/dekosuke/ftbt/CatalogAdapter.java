@@ -312,7 +312,7 @@ public class CatalogAdapter extends ArrayAdapter {
 			// FLog.d(,
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			// Tagが同じものが確認して、同じであれば画像を設定する
-			if (result != null && tag.equals(image.getTag().toString())) {
+			if (result != null && image!=null && tag.equals(image.getTag().toString())) {
 				image.setImageBitmap(result);
 			}
 		}

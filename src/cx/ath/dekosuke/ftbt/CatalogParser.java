@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import android.util.Log;
-import android.os.AsyncTask;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.content.Context;

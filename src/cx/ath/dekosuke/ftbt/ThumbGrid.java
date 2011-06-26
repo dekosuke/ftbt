@@ -7,12 +7,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -139,6 +141,17 @@ public class ThumbGrid extends Activity implements Runnable {
 		imagenum.setText("画像:" + thumbURLs.size() + "枚  ");
 
 		grid = (GridView) findViewById(id.gridview);
+		
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this);
+			boolean fastScrollEnabled = preferences.getBoolean(
+					"fastscrollenable", false);
+			grid.setFastScrollEnabled(fastScrollEnabled);
+		}catch(Exception e){
+			FLog.d("message", e);
+		}
+		
 		/*
 		 * GridView grid = new GridView(this); linearLayout.addView(grid,
 		 * createParam(WC, FP));

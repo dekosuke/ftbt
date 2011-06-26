@@ -346,7 +346,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			try {
 				// Tagが同じものが確認して、同じであれば画像を設定する
-				if (tag.equals(image.getTag())) {
+				if (image!=null && tag.equals(image.getTag())) {
 					if (result == null) { // 画像読み込み失敗時
 						TextView screenName = (TextView) image
 								.findViewById(R.id.title);

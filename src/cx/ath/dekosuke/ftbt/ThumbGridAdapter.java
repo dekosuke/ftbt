@@ -141,15 +141,10 @@ public class ThumbGridAdapter extends ArrayAdapter {
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			try {
 				// Tagが同じものが確認して、同じであれば画像を設定する
-				if (tag.equals(image.getTag())) {
+				if (image!=null && tag.equals(image.getTag())) {
 					if (result == null) { // 画像読み込み失敗時
 						return;
 					}
-					/*
-					 * image.setScaleType(ScaleType.MATRIX); Matrix matrix = new
-					 * Matrix(); matrix.setScale(.5f, .5f);
-					 * image.setImageMatrix(matrix);
-					 */
 					image.setImageBitmap(result);
 					if (true) { // クリックのリスナー登録 このリスナー登録は、画像をロードしたときにするようにしたい
 						image.setOnClickListener(new View.OnClickListener() {

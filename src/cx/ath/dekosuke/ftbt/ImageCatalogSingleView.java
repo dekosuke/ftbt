@@ -479,7 +479,7 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 		protected void onPostExecute(String url) {
 			// Tagが同じものが確認して、同じであれば画像を設定する
 			try {
-				if (!url.equals("") && tag != null & tag.equals(image.getTag())) {
+				if (image!=null && !url.equals("") && tag != null & tag.equals(image.getTag())) {
 					// image.setImageBitmap(result);
 					try {
 						Bitmap bmp = ImageCache.getImage(url);
