@@ -993,19 +993,23 @@ public class FutabaThread extends Activity implements Runnable {
 	public void onClickSearchButton(View v) {
 		// Toast.makeText(this, "検索ボタンが押されました", Toast.LENGTH_SHORT).show();
 
+		FLog.d("onClickSearchButton");
 		if (true) {
 			EditText searchEdit = (EditText) findViewById(id.searchinput);
 			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
-			String[] query = StringUtil.queryNormalize(searchText);
-			adapter.items.clear();
+			String[] queries = StringUtil.queryNormalize(searchText);
+			
+			adapter.searchQueries = queries;
+			
 			// 検索テキストから絞込み
 			for (int i = listView.getFirstVisiblePosition() + 1; i < statuses
 					.size(); ++i) {
 				String text = statuses.get(i).text;
 				// Toast.makeText(this, "text=" + text,
 				// Toast.LENGTH_SHORT).show();
-				if (StringUtil.isQueryMatch(text, query)) { // みつかった
+				if (StringUtil.isQueryMatch(text, queries)) { // みつかった
 					listView.setSelection(i);
+					break;
 				}
 			}
 			/*
@@ -1035,8 +1039,9 @@ public class FutabaThread extends Activity implements Runnable {
 	}
 
 	public boolean onSearchRequested() {
-		// Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
-		if (false) {
+		//Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
+		FLog.d("onSearchRequested");
+		if (true) {
 			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
 			if (searchBar.getVisibility() == View.GONE) {
 				searchBar.setVisibility(View.VISIBLE);

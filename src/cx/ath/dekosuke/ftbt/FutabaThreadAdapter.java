@@ -57,6 +57,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	// 画面サイズ
 	private int width;
 	private int height;
+	
+	//検索クエリ(ハイライトする)
+	public String[] searchQueries;
 
 	// しおり位置
 	public int shioriPosition = 0;

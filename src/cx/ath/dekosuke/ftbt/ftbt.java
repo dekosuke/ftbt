@@ -115,7 +115,7 @@ public class ftbt extends TabActivity implements Runnable {
 		if (doCacheCheck) {
 			waitDialog = new ProgressDialog(this);
 			waitDialog
-					.setMessage("キャッシュを整理しています。\n(前回起動時開いたページ数に応じて時間がかかります)");
+					.setMessage("キャッシュを整理しています。\n(前回開いたページ数に応じて時間がかかります)");
 			waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			// waitDialog.setCancelable(true);
 			waitDialog.show();
