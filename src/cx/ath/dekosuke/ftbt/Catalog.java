@@ -720,6 +720,10 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 			searchBar.setVisibility(View.VISIBLE);
 		} else {
 			searchBar.setVisibility(View.GONE);
+			// ソフトウェアキーボードかくす
+			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
 		}
 		return false;
 

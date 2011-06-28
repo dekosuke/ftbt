@@ -69,6 +69,23 @@ public class StringUtil {
 		}
 		return (String[]) splits_tmp.toArray(new String[0]);
 	}
+	
+	//queryNormalizeと違って正規化しない
+	static String[] querySplit(String str) {
+		String[] splits = str.split("[ 　]");
+		ArrayList<String> splits_tmp = new ArrayList<String>();
+		for (int i = 0; i < splits.length; ++i) {
+			if (splits[i].length() > 0) {
+				//自前HTMLエスケープ・・・
+				String elem = splits[i].replaceAll("<", "&lt;");
+				elem = elem.replaceAll(">", "&gt;");
+				elem = elem.replaceAll("\"", "&quot;");
+				splits_tmp.add(elem);
+			}
+		}
+		return (String[]) splits_tmp.toArray(new String[0]);
+	}
+
 
 	static boolean isQueryMatch(String str, String[] query) {
 		String temp = normalize(str);

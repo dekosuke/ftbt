@@ -5,14 +5,14 @@
     <item android:title="返信する" android:id="@+id/post"
     android:icon="@android:drawable/ic_menu_edit"
     />
-    <item android:title="スレの全保存" android:id="@+id/download"
-    android:icon="@android:drawable/ic_menu_save" />
-    <item android:title="順に検索" android:id="@+id/search"
+    <item android:title="検索" android:id="@+id/search"
     android:icon="@android:drawable/ic_menu_search"></item>
-    <item android:title="共有" android:id="@+id/share"
-    android:icon="@android:drawable/ic_menu_share"/>
     <item android:title="栞をはさむ" android:id="@+id/possave"
     android:icon="@drawable/ic_menu_mark" />
+    <item android:title="共有" android:id="@+id/share"
+    android:icon="@android:drawable/ic_menu_share"/>
+    <item android:title="スレの全保存" android:id="@+id/download"
+    android:icon="@android:drawable/ic_menu_save" />
     <item android:title="栞に飛ぶ" android:id="@+id/posload"
     android:icon="@drawable/ic_menu_goto" />
 </menu>

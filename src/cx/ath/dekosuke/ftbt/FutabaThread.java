@@ -1028,7 +1028,7 @@ public class FutabaThread extends Activity implements Runnable {
 		if (true) {
 			EditText searchEdit = (EditText) findViewById(id.searchinput);
 			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
-			String[] queries = StringUtil.queryNormalize(searchText);
+			String[] queries = StringUtil.querySplit(searchText);
 
 			adapter.searchQueries = queries;
 
@@ -1054,7 +1054,7 @@ public class FutabaThread extends Activity implements Runnable {
 						found = true;
 						if (true) {
 							Toast.makeText(this,
-									"スレッドの最後まで行っても見つからなかったので、最初に戻って検索しました",
+									"スレッドの最初に戻って検索しました",
 									Toast.LENGTH_SHORT).show();
 						}
 						break;
@@ -1100,8 +1100,12 @@ public class FutabaThread extends Activity implements Runnable {
 				searchBar.setVisibility(View.VISIBLE);
 			} else {
 				searchBar.setVisibility(View.GONE);
+				// ソフトウェアキーボードかくす
+				InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+				imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 			}
 		}
+		
 		return false;
 
 	}
