@@ -60,7 +60,11 @@ public class StringUtil {
 		ArrayList<String> splits_tmp = new ArrayList<String>();
 		for (int i = 0; i < splits.length; ++i) {
 			if (splits[i].length() > 0) {
-				splits_tmp.add(splits[i]);
+				//自前HTMLエスケープ・・・
+				String elem = splits[i].replaceAll("<", "&lt;");
+				elem = elem.replaceAll(">", "&gt;");
+				elem = elem.replaceAll("\"", "&quot;");
+				splits_tmp.add(elem);
 			}
 		}
 		return (String[]) splits_tmp.toArray(new String[0]);

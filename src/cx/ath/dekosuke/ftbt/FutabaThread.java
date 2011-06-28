@@ -231,6 +231,32 @@ public class FutabaThread extends Activity implements Runnable {
 
 	private void loading() {
 		LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
+
+		// Catalogのこぴぺ
+		// EditTextでenter押したときのイベント取る
+		// http://android-vl0c0lv.blogspot.com/2009/08/edittext.html
+		// このくらい簡単な処理書くのに行数多すぎるだろjk...
+		EditText searchWord = (EditText) findViewById(R.id.searchinput);
+		searchWord.setOnKeyListener(new View.OnKeyListener() {
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				FLog.d("onKey" + event);
+				// ここではEditTextに改行が入らないようにしている。
+				if (event.getAction() == KeyEvent.ACTION_DOWN
+						&& keyCode == KeyEvent.KEYCODE_ENTER) {
+					return true;
+				}
+				// Enterを離したときに検索処理を実行
+				if (event.getAction() == KeyEvent.ACTION_UP
+						&& keyCode == KeyEvent.KEYCODE_ENTER) {
+					EditText word = (EditText) findViewById(R.id.searchinput);
+					FutabaThread activity = (FutabaThread) v.getContext();
+					activity.onClickSearchButton(v);
+					return false;
+				}
+				return false;
+			}
+		});
+
 		searchBar.setVisibility(View.GONE);
 
 		FutabaThreadContentGetter getterThread = new FutabaThreadContentGetter();
@@ -1007,15 +1033,37 @@ public class FutabaThread extends Activity implements Runnable {
 			adapter.searchQueries = queries;
 
 			// 検索テキストから絞込み
-			for (int i = listView.getFirstVisiblePosition() + 1; i < statuses
+			boolean found = false;
+			for (int i = listView.getFirstVisiblePosition()+1; i < statuses
 					.size(); ++i) {
 				String text = statuses.get(i).text;
 				// Toast.makeText(this, "text=" + text,
 				// Toast.LENGTH_SHORT).show();
 				if (StringUtil.isQueryMatch(text, queries)) { // みつかった
 					listView.setSelection(i);
+					found = true;
 					break;
 				}
+			}
+			if (!found) { //最初に戻って検索
+				for (int i = 0; i < Math.min(
+						listView.getFirstVisiblePosition()+1, statuses.size()); ++i) {
+					String text = statuses.get(i).text;
+					if (StringUtil.isQueryMatch(text, queries)) { // みつかった
+						listView.setSelection(i);
+						found = true;
+						if (true) {
+							Toast.makeText(this,
+									"スレッドの最後まで行っても見つからなかったので、最初に戻って検索しました",
+									Toast.LENGTH_SHORT).show();
+						}
+						break;
+					}
+				}
+			}
+			if (!found) {
+				Toast.makeText(this, "「" + searchText + "」を含むレスが見つかりませんでした",
+						Toast.LENGTH_SHORT).show();
 			}
 			/*
 			 * adapter.notifyDataSetChanged(); // 再描画命令 LinearLayout searchBar =

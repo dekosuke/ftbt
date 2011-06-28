@@ -57,8 +57,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 	// 画面サイズ
 	private int width;
 	private int height;
-	
-	//検索クエリ(ハイライトする)
+
+	// 検索クエリ(ハイライトする)
 	public String[] searchQueries;
 
 	// しおり位置
@@ -77,7 +77,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		Display display = wm.getDefaultDisplay();
 		width = display.getWidth();
 		height = display.getHeight();
-		
+
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			// 表示すべきデータの取得
 			FutabaStatus item = (FutabaStatus) items.get(position);
-			//FLog.d("potision=" + position + " datestr=" + item.datestr);
+			// FLog.d("potision=" + position + " datestr=" + item.datestr);
 			if (item != null) {
 				TextView title = (TextView) view.findViewById(R.id.title);
 				title.setTextSize(StateMan.getDescFontSize(getContext()));
@@ -145,10 +145,11 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							title_base += " <font color=\"#0000CC\">"
 									+ item.mailTo + "</font>";
 						}
-						
+
 						if (item.imgURL != null) {
 							File imgFile = new File(item.bigImgURL);
-							title_base += "<font color=\"#0000CC\">" + imgFile.getName() + "</font>";
+							title_base += "<font color=\"#0000CC\">"
+									+ imgFile.getName() + "</font>";
 						}
 
 						if (activity.currentSize != 0
@@ -175,7 +176,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							title_base += " <font color=\"#0000CC\">"
 									+ item.mailTo + "</font>";
 						}
-						
 
 					}
 
@@ -259,6 +259,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 						 * text_html+="<br><font color=\"red\">("
 						 * +item.endTime+")</font>"; }
 						 */
+						text_html = addHighlight(text_html); // 検索ワードのハイライトを行う
 						CharSequence cs = Html.fromHtml(text_html); // HTML表示
 						text.setText(cs);
 					}
@@ -349,7 +350,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			// "tag="+tag+" image.getTag="+image.getTag().toString() );
 			try {
 				// Tagが同じものが確認して、同じであれば画像を設定する
-				if (image!=null && tag.equals(image.getTag())) {
+				if (image != null && tag.equals(image.getTag())) {
 					if (result == null) { // 画像読み込み失敗時
 						TextView screenName = (TextView) image
 								.findViewById(R.id.title);
@@ -410,5 +411,17 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 			}
 		}
 
+	}
+
+	public String addHighlight(String title) {
+		if (searchQueries != null) {
+			for (int i = 0; i < searchQueries.length; ++i) {
+				String searchQuery = searchQueries[i];
+				title = title.replaceAll(searchQuery, "<font color=\"red\">"+searchQuery+"</font>");
+				FLog.d("searchrep"+searchQuery);
+				FLog.d("replaced"+title);
+			}
+		}
+		return title;
 	}
 }
