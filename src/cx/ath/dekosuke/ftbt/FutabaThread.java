@@ -111,12 +111,13 @@ public class FutabaThread extends Activity implements Runnable {
 			Window window = getWindow();
 			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-		
-		//削除済みのレスを表示するかどうか
+
+		// 削除済みのレスを表示するかどうか
 		try {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
-			showDeletedRes = preferences.getBoolean(getString(R.string.showdeletedres), false);
+			showDeletedRes = preferences.getBoolean(
+					getString(R.string.showdeletedres), false);
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
@@ -151,11 +152,11 @@ public class FutabaThread extends Activity implements Runnable {
 				man.Load();
 				FutabaThreadContent thread;
 				thread = man.get(threadNum);
-				FLog.d("seeAt="+thread.seeAt);
+				FLog.d("seeAt=" + thread.seeAt);
 				position = thread.seeAt;
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				FLog.d("message",e);
+				FLog.d("message", e);
 			}
 
 			threadURL = baseURL + "res/" + threadNum + ".htm";
@@ -167,7 +168,7 @@ public class FutabaThread extends Activity implements Runnable {
 		setContentView(R.layout.futaba_thread);
 
 		listView = (ListView) findViewById(id.threadlistview);
-		
+
 		// アダプターを設定します
 		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
 				statuses);
@@ -176,17 +177,17 @@ public class FutabaThread extends Activity implements Runnable {
 		// 長クリック－＞テキスト共有
 		listView.setOnItemLongClickListener(new FutabaThreadOnLongClickListener());
 
-		//listView.setSmoothScrollbarEnabled(true);
+		// listView.setSmoothScrollbarEnabled(true);
 		try {
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			boolean fastScrollEnabled = preferences.getBoolean(
 					"fastscrollenable", false);
 			listView.setFastScrollEnabled(fastScrollEnabled);
-		}catch(Exception e){
+		} catch (Exception e) {
 			FLog.d("message", e);
 		}
-		
+
 		setWait();
 	}
 
@@ -596,7 +597,8 @@ public class FutabaThread extends Activity implements Runnable {
 							if (saved_file_f != null) {
 
 								waitDialog.setMessage("ファイル\n" + saved_file_f
-										+ "\nに保存しました("+(current+1)+"/"+imgURLs.size()+")");
+										+ "\nに保存しました(" + (current + 1) + "/"
+										+ imgURLs.size() + ")");
 
 								// ギャラリーに反映されるように登録
 								// http://www.adakoda.com/adakoda/2010/08/android-34.html
@@ -693,7 +695,8 @@ public class FutabaThread extends Activity implements Runnable {
 
 	private boolean isAnonymousThread(String url) {
 		return url.contains("img.2chan.net/b")
-				|| url.contains("up.2chan.net/e") || url.contains("dat.2chan.net/b");
+				|| url.contains("up.2chan.net/e")
+				|| url.contains("dat.2chan.net/b");
 	}
 
 	private class FutabaThreadContentGetter extends Thread {
@@ -724,7 +727,8 @@ public class FutabaThread extends Activity implements Runnable {
 				if (SDCard.cacheExist(FutabaCrypt.createDigest(threadURL))) {
 					String cacheThreadHtml = SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
-					cacheParser.parse(cacheThreadHtml, anonymous, showDeletedRes);
+					cacheParser.parse(cacheThreadHtml, anonymous,
+							showDeletedRes);
 					FLog.d("cache  ok  " + threadURL);
 
 				} else {
@@ -863,8 +867,12 @@ public class FutabaThread extends Activity implements Runnable {
 							}
 						}
 
-						if (waitDialog != null) {
-							waitDialog.dismiss();
+						try {
+							if (waitDialog != null) { // ここで落ちているケースを見るので、try-catchで囲んだ
+								waitDialog.dismiss();
+							}
+						} catch (Exception e) {
+							FLog.d("message", e);
 						}
 						Toast.makeText(adapter.getContext(), toast_text_f,
 								Toast.LENGTH_SHORT).show();
@@ -876,6 +884,7 @@ public class FutabaThread extends Activity implements Runnable {
 									Math.min(position, listView.getCount()),
 									positionY);
 						}
+
 					}
 				});
 
@@ -889,20 +898,16 @@ public class FutabaThread extends Activity implements Runnable {
 	public void saveImage(String imgURL) {
 		// 見せなくていいや...
 		/*
-		if (waitDialog != null) {
-			waitDialog.dismiss();
-		}
-		waitDialog = new ProgressDialog(this);
-		waitDialog.setMessage(this.getString(R.string.loading));
-		waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); //
-		waitDialog.setCancelable(true);
-		waitDialog.show();
-		*/
-		if(this.toast!=null){
+		 * if (waitDialog != null) { waitDialog.dismiss(); } waitDialog = new
+		 * ProgressDialog(this);
+		 * waitDialog.setMessage(this.getString(R.string.loading));
+		 * waitDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); //
+		 * waitDialog.setCancelable(true); waitDialog.show();
+		 */
+		if (this.toast != null) {
 			this.toast.cancel();
 		}
-		this.toast = Toast.makeText(this, "読み込み中...",
-				Toast.LENGTH_SHORT);
+		this.toast = Toast.makeText(this, "読み込み中...", Toast.LENGTH_SHORT);
 		this.toast.show();
 
 		FutabaThreadImageRetriever getterThread = new FutabaThreadImageRetriever();
@@ -934,10 +939,11 @@ public class FutabaThread extends Activity implements Runnable {
 				// 描画に関わる処理はここに集約(メインスレッド実行)
 				handler3.post(new Runnable() {
 					public void run() {
-						FutabaThread fthread = (FutabaThread)adapter.getContext();
+						FutabaThread fthread = (FutabaThread) adapter
+								.getContext();
 						if (saved_file_f != null) {
 
-							if(fthread.toast != null){
+							if (fthread.toast != null) {
 								fthread.toast.cancel();
 							}
 							fthread.toast = Toast.makeText(fthread,
@@ -970,12 +976,11 @@ public class FutabaThread extends Activity implements Runnable {
 							contentResolver.insert(
 									Images.Media.EXTERNAL_CONTENT_URI, values);
 						} else {
-							if(fthread.toast != null){
+							if (fthread.toast != null) {
 								fthread.toast.cancel();
 							}
 							fthread.toast = Toast.makeText(fthread,
-									"画像の取得に失敗しました",
-									Toast.LENGTH_SHORT);
+									"画像の取得に失敗しました", Toast.LENGTH_SHORT);
 							fthread.toast.show();
 
 						}
@@ -998,9 +1003,9 @@ public class FutabaThread extends Activity implements Runnable {
 			EditText searchEdit = (EditText) findViewById(id.searchinput);
 			String searchText = searchEdit.getText().toString(); // これでいいんだろうか
 			String[] queries = StringUtil.queryNormalize(searchText);
-			
+
 			adapter.searchQueries = queries;
-			
+
 			// 検索テキストから絞込み
 			for (int i = listView.getFirstVisiblePosition() + 1; i < statuses
 					.size(); ++i) {
@@ -1039,7 +1044,7 @@ public class FutabaThread extends Activity implements Runnable {
 	}
 
 	public boolean onSearchRequested() {
-		//Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "検索ボタンが呼ばれました", Toast.LENGTH_SHORT).show();
 		FLog.d("onSearchRequested");
 		if (true) {
 			LinearLayout searchBar = (LinearLayout) findViewById(id.search_bar);
@@ -1064,14 +1069,14 @@ public class FutabaThread extends Activity implements Runnable {
 			FutabaThreadContent thread = new FutabaThreadContent();
 			thread.seeAt = seeAt;
 			thread.threadNum = threadNum;
-			FLog.d("seeAt="+seeAt);
+			FLog.d("seeAt=" + seeAt);
 			man.updateThread(thread);
 			man.Save();
 		} catch (Exception e) {
 			FLog.d("message", e);
 		}
 	}
-	
+
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		FLog.d("dispatchKeyEvent:" + event.getAction());
 		// if(true){ return super.dispatchKeyEvent(event); }
@@ -1111,6 +1116,6 @@ public class FutabaThread extends Activity implements Runnable {
 			return true;
 		}
 		return super.dispatchKeyEvent(event);
-		//return false;
+		// return false;
 	}
 }

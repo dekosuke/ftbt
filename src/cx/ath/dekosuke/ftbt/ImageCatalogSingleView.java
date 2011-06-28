@@ -419,7 +419,12 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	}
 
 	void dismissWaitDialog() {
-		waitDialog.dismiss();
+		try{
+			//ここで落ちてるケースをたまに見る
+			waitDialog.dismiss();
+		}catch(Exception e){
+			FLog.d("message", e);
+		}
 	}
 
 	// 画像を読み込む際にAsyncTaskを使うが、
