@@ -1039,7 +1039,7 @@ public class FutabaThread extends Activity implements Runnable {
 				String text = statuses.get(i).text;
 				// Toast.makeText(this, "text=" + text,
 				// Toast.LENGTH_SHORT).show();
-				if (StringUtil.isQueryMatch(text, queries)) { // みつかった
+				if (StringUtil.isQueryMatchOr(text, queries, false)) { // みつかった
 					listView.setSelection(i);
 					found = true;
 					break;
@@ -1049,7 +1049,7 @@ public class FutabaThread extends Activity implements Runnable {
 				for (int i = 0; i < Math.min(
 						listView.getFirstVisiblePosition()+1, statuses.size()); ++i) {
 					String text = statuses.get(i).text;
-					if (StringUtil.isQueryMatch(text, queries)) { // みつかった
+					if (StringUtil.isQueryMatchOr(text, queries, false)) { // みつかった
 						listView.setSelection(i);
 						found = true;
 						if (true) {

@@ -97,6 +97,19 @@ public class StringUtil {
 		return true;
 	}
 
+	static boolean isQueryMatchOr(String str, String[] query, boolean doNormalize) {
+		String temp = str;
+		if(doNormalize){
+			temp = normalize(temp);
+		}
+		for (int i = 0; i < query.length; ++i) {
+			if (temp.contains(query[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	// http://ameblo.jp/archive-redo-blog/entry-10376390355.html
 	private static String zenkakuToHankaku(String value) {
 		StringBuilder sb = new StringBuilder(value);
