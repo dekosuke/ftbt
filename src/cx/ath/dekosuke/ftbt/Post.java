@@ -83,7 +83,7 @@ public class Post extends Activity implements Runnable {
 			Window window = getWindow();
 			window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		}
-		
+
 		try {
 			FLog.d("start Post activity");
 			Intent intent = getIntent();
@@ -327,12 +327,32 @@ public class Post extends Activity implements Runnable {
 			 */
 
 			try {
-				// クッキー内容の取得
+				// クッキー内容の取得。cookieない場合は再取得
 				{
 					List<Cookie> cookies = httpClient.getCookieStore()
 							.getCookies();
-					if (cookies.isEmpty()) {
+					if (true) {
 						FLog.d("Cookie None");
+						// cookieがないと書き込みができないので、ここでcookie再取得
+						Toast.makeText(this, "cookie再取得中...",
+								Toast.LENGTH_SHORT).show();
+						HttpGet httpGet = new HttpGet(urlStr);
+						HttpResponse httpResponse = null;
+						httpResponse = httpClient.execute(httpGet);
+						ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+						httpResponse.getEntity().writeTo(byteArrayOutputStream);
+						String retData = byteArrayOutputStream
+								.toString("Shift-JIS");
+						FutabaCookieManager.saveCookie(httpClient); // クッキー保存
+						FLog.d(retData);
+						FLog.d("cookie get end");
+						try { // 操作間隔を置く
+							Thread.sleep(3000);
+
+						} catch (Exception e) {
+							FLog.d("message", e);
+						}
+
 					} else {
 						for (int i = 0; i < cookies.size(); i++) {
 							FLog.d("" + cookies.get(i).toString());

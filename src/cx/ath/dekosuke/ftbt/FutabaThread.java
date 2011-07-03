@@ -366,7 +366,6 @@ public class FutabaThread extends Activity implements Runnable {
 	public void onClickPostBtn(View v) {
 		// Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
-		// Log.d ( "ftbt", threadNum );
 		intent.putExtra("baseURL", baseURL);
 		intent.putExtra("threadNum", threadNum);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()
@@ -707,10 +706,8 @@ public class FutabaThread extends Activity implements Runnable {
 					posted = (String) intent.getSerializableExtra("posted");
 				} catch (Exception e) {
 				}
-				if (!posted.equals("")) {
-					// 再読み込み
-					this.onClickReloadBtn(null);
-				}
+				// 再読み込み
+				this.onClickReloadBtn(null);
 			} else {
 				FLog.d("unknown result code");
 			}
@@ -1034,7 +1031,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 			// 検索テキストから絞込み
 			boolean found = false;
-			for (int i = listView.getFirstVisiblePosition()+1; i < statuses
+			for (int i = listView.getFirstVisiblePosition() + 1; i < statuses
 					.size(); ++i) {
 				String text = statuses.get(i).text;
 				// Toast.makeText(this, "text=" + text,
@@ -1045,16 +1042,16 @@ public class FutabaThread extends Activity implements Runnable {
 					break;
 				}
 			}
-			if (!found) { //最初に戻って検索
-				for (int i = 0; i < Math.min(
-						listView.getFirstVisiblePosition()+1, statuses.size()); ++i) {
+			if (!found) { // 最初に戻って検索
+				for (int i = 0; i < Math
+						.min(listView.getFirstVisiblePosition() + 1,
+								statuses.size()); ++i) {
 					String text = statuses.get(i).text;
 					if (StringUtil.isQueryMatchOr(text, queries, false)) { // みつかった
 						listView.setSelection(i);
 						found = true;
 						if (true) {
-							Toast.makeText(this,
-									"スレッドの最初に戻って検索しました",
+							Toast.makeText(this, "スレッドの最初に戻って検索しました",
 									Toast.LENGTH_SHORT).show();
 						}
 						break;
@@ -1102,10 +1099,11 @@ public class FutabaThread extends Activity implements Runnable {
 				searchBar.setVisibility(View.GONE);
 				// ソフトウェアキーボードかくす
 				InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-				imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+				imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+						0);
 			}
 		}
-		
+
 		return false;
 
 	}

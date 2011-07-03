@@ -341,10 +341,7 @@ public class SDCard {
 			File f1 = (File) o1;
 			File f2 = (File) o2;
 			long f1_lastmodified = f1.lastModified();
-			// Log.d("ftbt",
-			// f1.toString()+" is "+FutabaCrypt.isHTMLName(f1.toString()));
 			if (FutabaCrypt.isHTMLName(f1.toString())) {
-				// Log.d("ftbt", f1.toString()+" is HTML");
 				f1_lastmodified += additional_days;
 			}
 			long f2_lastmodified = f2.lastModified();

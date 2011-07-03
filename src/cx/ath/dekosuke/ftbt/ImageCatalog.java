@@ -166,7 +166,6 @@ public class ImageCatalog extends Activity {
 					try {
 						FLog.d("intent calling gridview activity");
 						Intent intent = new Intent();
-						// Log.d ( "ftbt", threadNum );
 						intent.putExtra("position", CircleList.pos());
 						intent.putExtra("imgURLs", imgURLs);
 						intent.putExtra("thumbURLs", thumbURLs);

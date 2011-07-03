@@ -539,7 +539,6 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	public void onClickPostBtn(View v) {
 		// Toast.makeText(this, "投稿ボタンが押されました", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
-		// Log.d ( "ftbt", threadNum );
 		intent.putExtra("baseURL", baseUrl);
 		intent.putExtra("threadNum", 0);
 		intent.setClassName(getPackageName(), getClass().getPackage().getName()

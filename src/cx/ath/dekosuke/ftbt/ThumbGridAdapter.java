@@ -153,7 +153,6 @@ public class ThumbGridAdapter extends ArrayAdapter {
 									FLog.d("intent calling imageCatalog activity");
 									Intent intent = new Intent();
 									ThumbGrid activity = (ThumbGrid) getContext();
-									// Log.d ( "ftbt", threadNum );
 									// これスレッドごとに作られているのが結構ひどい気がする
 									intent.putExtra("imgURLs", activity.imgURLs);
 									intent.putExtra("thumbURLs",
