@@ -18,9 +18,13 @@
 	<EditTextPreference android:title="投稿の削除キー"
 		android:key="@string/deletekey" android:inputType="textPassword"
 		android:textSize="20sp" android:defaultValue="" android:summary="投稿時の削除キーを設定します"></EditTextPreference>
+	<CheckBoxPreference android:key="horizontalthreadrow"
+		android:title="スレ画像と本文を横列" 
+		android:defaultValue="Off"	
+		android:summary="ONの場合はスレ画像の横に本文を並べます。OFFの場合、スレ画像とスレ本文を縦に並べます。横長の場合にONだと見やすいかもしれません" />
 	<CheckBoxPreference android:key="@string/enablesavebutton"
 		android:title="画像を保存ボタンを表示" 
-		android:defaultValue="On"	
+		android:defaultValue="Off"	
 		android:summary="スレッドで「画像を保存する」ボタンを表示します" />
 	<EditTextPreference android:title="スレッド一覧の文字数"
 		android:key="threadStrNum" android:inputType="number"

@@ -171,7 +171,7 @@ public class FutabaThread extends Activity implements Runnable {
 		listView = (ListView) findViewById(id.threadlistview);
 
 		// アダプターを設定します
-		adapter = new FutabaThreadAdapter(this, R.layout.futaba_thread_row,
+		adapter = new FutabaThreadAdapter(this, StateMan.getThreadRowResourceId(this),
 				statuses);
 		listView.setAdapter(adapter);
 

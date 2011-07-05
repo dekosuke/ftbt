@@ -64,4 +64,26 @@ public class StateMan {
 		int fontSizeSetting = getFontSizeSetting(context);
 		return 20.0f+fontSizeSetting;
 	}
+	
+	public static boolean getVerticalThreadRow(Context context){
+		boolean verticalThreadRow = false ;
+		try {
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(context);
+			verticalThreadRow = !preferences.getBoolean("horizontalthreadrow", false);
+		} catch (Exception e) {
+			FLog.d("message", e);
+			return false;
+		}
+		FLog.d("verticalThreadRow="+verticalThreadRow);
+		return verticalThreadRow;
+	}
+	
+	public static int getThreadRowResourceId(Context context){
+		if(getVerticalThreadRow(context)){
+			return R.layout.futaba_thread_row;
+		}else{
+			return R.layout.futaba_thread_row_yoko;			
+		}
+	}
 }

@@ -89,7 +89,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			if (view == null) {
 				// 受け取ったビューがnullなら新しくビューを生成
-				view = inflater.inflate(R.layout.futaba_thread_row, null);
+				view = inflater.inflate(StateMan.getThreadRowResourceId(getContext()), null);
 				// 背景画像をセットする
 				// view.setBackgroundResource(R.drawable.back);
 			}
@@ -107,7 +107,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				bottomtext.setTextSize(StateMan.getDescFontSize(getContext()));
 				TextView text = (TextView) view.findViewById(R.id.maintext);
 				bottomtext.setTextSize(StateMan.getMainFontSize(getContext()));
-				LinearLayout iif = (LinearLayout) view.findViewById(R.id.imageinnerframe);
+				LinearLayout iif = (LinearLayout) view
+						.findViewById(R.id.imageinnerframe);
 				iif.setVisibility(View.GONE);
 
 				if (FutabaStatus.isBlank(item)) {
@@ -223,18 +224,20 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					try {
 						if (item.imgURL != null) {
 							iif.setVisibility(View.VISIBLE);
+							if (!StateMan.getVerticalThreadRow(getContext())) {
+								iif.setLayoutParams(createParam(item.width,
+										LayoutParams.FILL_PARENT));
+							}
 							iv.setTag(item.bigImgURL);
 							bm = Bitmap.createBitmap(item.width, item.height,
 									Bitmap.Config.ALPHA_8);
-							// imageframe.setLayoutParams(createParam(item.width,
-							// LayoutParams.FILL_PARENT));
 							iv.setImageBitmap(bm);
 							ImageGetTask task = new ImageGetTask(view);
 							SharedPreferences preferences = PreferenceManager
 									.getDefaultSharedPreferences(getContext());
 							boolean enableSaveButton = preferences.getBoolean(
 									getContext().getString(
-											R.string.enablesavebutton), true);
+											R.string.enablesavebutton), false);
 							if (enableSaveButton) {
 								saveButton.setVisibility(View.VISIBLE);
 							} else {
@@ -421,9 +424,10 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 		if (searchQueries != null) {
 			for (int i = 0; i < searchQueries.length; ++i) {
 				String searchQuery = searchQueries[i];
-				title = title.replaceAll(searchQuery, "<font color=\"red\">"+searchQuery+"</font>");
-				FLog.d("searchrep"+searchQuery);
-				FLog.d("replaced"+title);
+				title = title.replaceAll(searchQuery, "<font color=\"red\">"
+						+ searchQuery + "</font>");
+				FLog.d("searchrep" + searchQuery);
+				FLog.d("replaced" + title);
 			}
 		}
 		return title;
