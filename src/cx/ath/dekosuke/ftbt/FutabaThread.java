@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 
 import android.util.Log;
@@ -1168,4 +1169,11 @@ public class FutabaThread extends Activity implements Runnable {
 		return super.dispatchKeyEvent(event);
 		// return false;
 	}
+	
+	//画面回転時に呼ばれる関数
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+    	super.onConfigurationChanged(newConfig);
+    	//adapter.notifyDataSetChanged();
+    }
 }

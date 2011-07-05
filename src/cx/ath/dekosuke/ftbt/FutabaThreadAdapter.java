@@ -107,6 +107,9 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 				bottomtext.setTextSize(StateMan.getDescFontSize(getContext()));
 				TextView text = (TextView) view.findViewById(R.id.maintext);
 				bottomtext.setTextSize(StateMan.getMainFontSize(getContext()));
+				LinearLayout iif = (LinearLayout) view.findViewById(R.id.imageinnerframe);
+				iif.setVisibility(View.GONE);
+
 				if (FutabaStatus.isBlank(item)) {
 					// 区切り線
 					ImageView iv = (ImageView) view.findViewById(R.id.image);
@@ -219,6 +222,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					// 画像をセット
 					try {
 						if (item.imgURL != null) {
+							iif.setVisibility(View.VISIBLE);
 							iv.setTag(item.bigImgURL);
 							bm = Bitmap.createBitmap(item.width, item.height,
 									Bitmap.Config.ALPHA_8);
@@ -240,6 +244,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							task.execute(item.imgURL);
 							// title.setText("(画像あり)");
 						} else { // 画像なし
+							iif.setVisibility(View.GONE);
 							saveButton.setVisibility(View.GONE);
 							/*
 							 * FLog.d("w="+item.width+" h="+item.height ); bm =
