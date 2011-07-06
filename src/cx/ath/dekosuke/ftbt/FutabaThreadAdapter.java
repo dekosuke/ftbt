@@ -89,7 +89,8 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 
 			if (view == null) {
 				// 受け取ったビューがnullなら新しくビューを生成
-				view = inflater.inflate(StateMan.getThreadRowResourceId(getContext()), null);
+				view = inflater.inflate(
+						StateMan.getThreadRowResourceId(getContext()), null);
 				// 背景画像をセットする
 				// view.setBackgroundResource(R.drawable.back);
 			}
@@ -223,11 +224,6 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 					// 画像をセット
 					try {
 						if (item.imgURL != null) {
-							iif.setVisibility(View.VISIBLE);
-							if (!StateMan.getVerticalThreadRow(getContext())) {
-								iif.setLayoutParams(createParam(item.width,
-										LayoutParams.FILL_PARENT));
-							}
 							iv.setTag(item.bigImgURL);
 							bm = Bitmap.createBitmap(item.width, item.height,
 									Bitmap.Config.ALPHA_8);
@@ -244,6 +240,18 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 								saveButton.setVisibility(View.GONE);
 							}
 							view.setLongClickable(true);
+							iif.setVisibility(View.VISIBLE);
+							if (!StateMan.getVerticalThreadRow(getContext())) {
+								// The gesture threshold expressed in dip
+								final float dip2pxscale = getContext()
+										.getResources().getDisplayMetrics().density;
+								//TODO:ここ値を直接入れてるので直す
+								int imageRectWidth = Math.max(
+										(int) (dip2pxscale * 110.0), item.width)
+										+ (int) (dip2pxscale * 12.0);
+								iif.setLayoutParams(createParam(imageRectWidth,
+										LayoutParams.FILL_PARENT));
+							}
 							task.execute(item.imgURL);
 							// title.setText("(画像あり)");
 						} else { // 画像なし
