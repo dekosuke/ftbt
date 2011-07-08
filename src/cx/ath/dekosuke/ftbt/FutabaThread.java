@@ -171,8 +171,8 @@ public class FutabaThread extends Activity implements Runnable {
 		listView = (ListView) findViewById(id.threadlistview);
 
 		// アダプターを設定します
-		adapter = new FutabaThreadAdapter(this, StateMan.getThreadRowResourceId(this),
-				statuses);
+		adapter = new FutabaThreadAdapter(this,
+				StateMan.getThreadRowResourceId(this), statuses);
 		listView.setAdapter(adapter);
 
 		// 長クリック－＞テキスト共有
@@ -707,8 +707,10 @@ public class FutabaThread extends Activity implements Runnable {
 					posted = (String) intent.getSerializableExtra("posted");
 				} catch (Exception e) {
 				}
-				// 再読み込み
-				this.onClickReloadBtn(null);
+				if (!posted.equals("")) {
+					// 再読み込み
+					this.onClickReloadBtn(null);
+				}
 			} else {
 				FLog.d("unknown result code");
 			}
@@ -721,7 +723,7 @@ public class FutabaThread extends Activity implements Runnable {
 		return url.contains("img.2chan.net/b")
 				|| url.contains("up.2chan.net/e")
 				|| url.contains("dat.2chan.net/b")
-				|| url.contains("img.2chan.net/9"); //雑談板
+				|| url.contains("img.2chan.net/9"); // 雑談板
 	}
 
 	private class FutabaThreadContentGetter extends Thread {
@@ -1170,11 +1172,11 @@ public class FutabaThread extends Activity implements Runnable {
 		return super.dispatchKeyEvent(event);
 		// return false;
 	}
-	
-	//画面回転時に呼ばれる関数
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-    	super.onConfigurationChanged(newConfig);
-    	//adapter.notifyDataSetChanged();
-    }
+
+	// 画面回転時に呼ばれる関数
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		// adapter.notifyDataSetChanged();
+	}
 }

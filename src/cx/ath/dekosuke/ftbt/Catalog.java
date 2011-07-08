@@ -444,6 +444,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 					.show();
 			return;
 		}
+		delete_option = 0; //必要(これないと、チェックなしすれ削除→チェックありすれ削除とかで困る）
 		final CharSequence[] items = { "チェック有りのスレ", "チェック無しのスレ", "すべてのスレ" };
 		AlertDialog.Builder dlg;
 		dlg = new AlertDialog.Builder(Catalog.this);
