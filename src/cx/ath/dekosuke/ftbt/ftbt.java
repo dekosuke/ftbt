@@ -297,6 +297,15 @@ public class ftbt extends TabActivity implements Runnable {
 		try {
 			favoriteBBSs.remove(bbs);
 			FavoriteSettings.setFavorites(this, favoriteBBSs); // xmlに保存
+			
+			//お気に入り側から削除した場合、全BBSタブでそれが即時反映されるようにこんなことをしている→うまくいかない
+			/*
+			tabs.invalidate();
+			((FutabaBBSMenu)tabs.getChildAt(1).getContext()).adapter.notifyDataSetChanged();
+			tabs.getChildAt(1).destroyDrawingCache();
+			tabs.getChildAt(1).invalidate();
+			*/
+		
 			FLog.d("remove " + bbs.toString());
 		} catch (Exception e) {
 			FLog.d("message", e);
