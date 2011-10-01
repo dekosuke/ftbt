@@ -109,6 +109,10 @@ public class FutabaBBSMenuParser {
 				}
 				BBSs.add(bbs);
 			}
+			FutabaBBSContent rayout_bbs = new FutabaBBSContent();
+			rayout_bbs.name = "レイアウト";
+			rayout_bbs.url = "http://may.2chan.net/layout/";
+			BBSs.add(rayout_bbs);
 		} catch (Exception e) {
 			FLog.d("failure in FutabaBBSMenuParser", e);
 		}
