@@ -21,7 +21,7 @@
 	<CheckBoxPreference android:key="horizontalthreadrow"
 		android:title="スレ画像と本文を横列" 
 		android:defaultValue="Off"	
-		android:summary="ONの場合はスレ画像の横に本文を並べます。OFFの場合、スレ画像とスレ本文を縦に並べます。横長の場合にONだと見やすいかもしれません" />
+		android:summary="ONの場合はスレ画像の横に本文を並べます。OFFの場合、スレ画像と本文を縦に並べます。横置きの場合にONだと見やすいかもしれません" />
 	<CheckBoxPreference android:key="@string/enablesavebutton"
 		android:title="画像を保存ボタンを表示" 
 		android:defaultValue="Off"	
