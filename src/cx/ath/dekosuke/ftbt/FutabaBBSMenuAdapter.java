@@ -53,7 +53,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 			this.inflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 	}
 
@@ -81,13 +81,13 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 				TextView name = (TextView) view.findViewById(R.id.name);
 				name.setTextSize(StateMan.getBBSFontSize(getContext()));
 				name.setText(item.name);
-				//ここでスレURL表示を消してる!!!
-				//url.setVisibility(View.GONE); 
+				// ここでスレURL表示を消してる!!!
+				// url.setVisibility(View.GONE);
 				final Button buttonFavorite = (Button) view
 						.findViewById(R.id.favorite_btn);
 				final FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
-				//Log.d("ftbt", "pos=" + position + " faved=" + item.faved);
-				if (activity.mode.equals("all")) {
+				// Log.d("ftbt", "pos=" + position + " faved=" + item.faved);
+				if (true) {
 					if (!item.faved) {
 						// buttonFavorite.setText("追加");
 						buttonFavorite.setBackgroundDrawable(getContext()
@@ -126,13 +126,14 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 										Toast.LENGTH_SHORT).show();
 							}
 						} else {
-							/*
-							 * ftbt ftbt_top = (ftbt) activity.getParent();
-							 * item.faved = false;
-							 * ftbt_top.removeFavoriteBBSs();
-							 * Toast.makeText(activity, item.name +
-							 * "をお気に入りから削除しました", Toast.LENGTH_SHORT).show();
-							 */
+
+							ftbt ftbt_top = (ftbt) activity.getParent();
+							item.faved = false;
+							ftbt_top.removeFavoriteBBSs(item);
+							Toast.makeText(activity,
+									item.name + "をお気に入りから削除しました",
+									Toast.LENGTH_SHORT).show();
+
 						}
 						view_parent.invalidate();
 						notifyDataSetChanged();
@@ -144,7 +145,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 						.findViewById(R.id.ll_main);
 				ll_main.setOnClickListener(new View.OnClickListener() {
 					public void onClick(View v) {
-					FLog.d("onclick_bbs");
+						FLog.d("onclick_bbs");
 						FutabaBBSMenu activity = (FutabaBBSMenu) getContext();
 						activity.transSetting(item);
 					}
@@ -152,7 +153,7 @@ public class FutabaBBSMenuAdapter extends ArrayAdapter {
 			}
 
 		} catch (Exception e) {
-		FLog.d("message", e);
+			FLog.d("message", e);
 		}
 
 		return view;
