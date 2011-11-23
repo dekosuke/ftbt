@@ -255,6 +255,7 @@ public class FutabaThreadAdapter extends ArrayAdapter {
 							task.execute(item.imgURL);
 							// title.setText("(画像あり)");
 						} else { // 画像なし
+							iv.setTag(null);
 							iif.setVisibility(View.GONE);
 							saveButton.setVisibility(View.GONE);
 							/*
