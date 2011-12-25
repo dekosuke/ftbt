@@ -47,6 +47,7 @@ import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -106,8 +107,12 @@ public class Post extends Activity implements Runnable {
 			if (newthread) {
 				titleText.setText("スレッドを建てる");
 			}
-			TextView comment_v = (TextView) findViewById(id.comment);
+			EditText comment_v = (EditText) findViewById(id.comment);
+			//comment_v.setFocusable(true);
+			//comment_v.requestFocus(View.FOCUS_DOWN);
 			comment_v.setText(postText);
+			comment_v.setSelection(postText.length()); //テキストの最後にfocus当てる。
+			//comment_v.setSelected(false);
 
 			String deleteKey = "";
 			try {
