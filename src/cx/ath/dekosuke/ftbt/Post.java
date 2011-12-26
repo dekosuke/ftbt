@@ -108,11 +108,13 @@ public class Post extends Activity implements Runnable {
 				titleText.setText("スレッドを建てる");
 			}
 			EditText comment_v = (EditText) findViewById(id.comment);
-			//comment_v.setFocusable(true);
-			//comment_v.requestFocus(View.FOCUS_DOWN);
-			comment_v.setText(postText);
-			comment_v.setSelection(postText.length()); //テキストの最後にfocus当てる。
-			//comment_v.setSelected(false);
+			// comment_v.setFocusable(true);
+			// comment_v.requestFocus(View.FOCUS_DOWN);
+			if (postText != null) {
+				comment_v.setText(postText);
+				comment_v.setSelection(postText.length()); // テキストの最後にfocus当てる。
+			}
+			// comment_v.setSelected(false);
 
 			String deleteKey = "";
 			try {
