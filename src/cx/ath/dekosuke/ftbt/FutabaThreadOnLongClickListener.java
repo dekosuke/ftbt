@@ -24,6 +24,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.provider.MediaStore;
@@ -47,13 +48,7 @@ public class FutabaThreadOnLongClickListener implements
 			FLog.d("null view at onItemLongClick");
 			return false;
 		}
-		/*
-		 * これバグい TextView bottomtext = (TextView)
-		 * view.findViewById(R.id.bottomtext); if (bottomtext==null ||
-		 * bottomtext.getText().length() < 5) { // 区切り線とか
-		 * FLog.d("no bottomtext"); return false; }else{
-		 * FLog.d("bottomtext="+bottomtext.getText()); }
-		 */
+
 		fthread = (FutabaThread) view.getContext();
 		FLog.d("longclick arg2=" + arg2 + " arg3=" + arg3);
 		AlertDialog.Builder dlg;
@@ -110,9 +105,7 @@ public class FutabaThreadOnLongClickListener implements
 
 	}
 
-	// これ数ヶ所で使いまわしてるので注意
 	public void onClick(DialogInterface dialog, int which) {
-		// TODO Auto-generated method stub
 		chosen = which;
 	}
 
@@ -120,23 +113,30 @@ public class FutabaThreadOnLongClickListener implements
 		chosen = 0;
 		TextView text = (TextView) view.findViewById(R.id.maintext);
 		if (text != null) {
-			String[] addition = { "(レス全体)" };
+			String[] addition = {};// "(レス全体)" };
 			final String strs_all = text.getText().toString();
 			final String[] strs = StringUtil.nonBlankSplit(strs_all, addition);
+			final boolean[] quoteFlags = new boolean[strs.length]; //各行を引用するかどうか
 			AlertDialog.Builder dlg;
 			dlg = new AlertDialog.Builder(fthread);
 			dlg.setTitle("引用する場所を選択");
 			// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
 			dlg.setCancelable(true);
-			dlg.setSingleChoiceItems(strs, 0, this);
-			dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					FLog.d("chosen=" + chosen);
-					if (chosen >= 0 && chosen < strs.length) {
-						String text = strs[chosen];
-						if (chosen == strs.length - 1 && strs.length > 2) { // すべて選択
-							text = strs_all;
+			dlg.setMultiChoiceItems(strs, quoteFlags, new DialogInterface.OnMultiChoiceClickListener(){
+	        	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+	        		quoteFlags[which] = isChecked;
+	        	}
+	        })
+	        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+	        	public void onClick(DialogInterface dialog, int whichButton) {
+	        		/* OKボタンをクリックした時の処理 */
+	        		String text = "";
+					for(int i=0;i<quoteFlags.length;++i){
+						if(quoteFlags[i]){
+							text+=strs[i]+"\n";
 						}
+					}
+					{
 						// アクティビティ飛ばす
 						Intent intent = new Intent();
 						intent.putExtra("baseURL", fthread.baseURL);
@@ -151,16 +151,14 @@ public class FutabaThreadOnLongClickListener implements
 							FLog.d("failed to find target activity to share text");
 						}
 					}
-				}
-			});
-			dlg.setNegativeButton("キャンセル",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// Catalog.cancel();
-							// Catalog.this.deleteThreads(false);
-						}
-					});
-			dlg.show();
+	        	}
+	        })
+	        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	        	public void onClick(DialogInterface dialog, int whichButton) {
+	        		/* Cancel ボタンをクリックした時の処理 */
+	        	}
+	        })
+	        .show();
 
 		}
 	}
@@ -169,23 +167,30 @@ public class FutabaThreadOnLongClickListener implements
 		chosen = 0;
 		TextView text = (TextView) view.findViewById(R.id.maintext);
 		if (text != null) {
-			String[] addition = { "(レス全体)" };
+			String[] addition = {};// "(レス全体)" };
 			final String strs_all = text.getText().toString();
 			final String[] strs = StringUtil.nonBlankSplit(strs_all, addition);
+			final boolean[] quoteFlags = new boolean[strs.length]; //各行を引用するかどうか
 			AlertDialog.Builder dlg;
 			dlg = new AlertDialog.Builder(fthread);
 			dlg.setTitle("テキストを共有\n(外部アプリに送る)");
 			// dlg.setMessage("クリップボードにコピーするテキストを選択してください");
 			dlg.setCancelable(true);
-			dlg.setSingleChoiceItems(strs, 0, this);
-			dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					FLog.d("chosen=" + chosen);
-					if (chosen >= 0 && chosen < strs.length) {
-						String text = strs[chosen];
-						if (chosen == strs.length - 1 && strs.length > 2) { // すべて選択
-							text = strs_all;
+			dlg.setMultiChoiceItems(strs, quoteFlags, new DialogInterface.OnMultiChoiceClickListener(){
+	        	public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+	        		quoteFlags[which] = isChecked;
+	        	}
+	        })
+	        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+	        	public void onClick(DialogInterface dialog, int whichButton) {
+	        		/* OKボタンをクリックした時の処理 */
+	        		String text = "";
+					for(int i=0;i<quoteFlags.length;++i){
+						if(quoteFlags[i]){
+							text+=strs[i]+"\n";
 						}
+					}
+					{
 						// アクティビティ飛ばす
 						Intent intent = new Intent(Intent.ACTION_SEND);
 						intent.setType("text/plain");
@@ -197,16 +202,14 @@ public class FutabaThreadOnLongClickListener implements
 							FLog.d("failed to find target activity to share text");
 						}
 					}
-				}
-			});
-			dlg.setNegativeButton("キャンセル",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							// Catalog.cancel();
-							// Catalog.this.deleteThreads(false);
-						}
-					});
-			dlg.show();
+	        	}
+	        })
+	        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	        	public void onClick(DialogInterface dialog, int whichButton) {
+	        		/* Cancel ボタンをクリックした時の処理 */
+	        	}
+	        })
+	        .show();
 
 		}
 	}
@@ -315,36 +318,3 @@ public class FutabaThreadOnLongClickListener implements
 		}
 	}
 }
-
-/*
- * 
- * if (view != null) { TextView text = (TextView)
- * view.findViewById(R.id.maintext); if (text != null) { // これいまいちだな・・・ String[]
- * addition = { "(レス全体)" }; final String strs_all = text.getText().toString();
- * final String[] strs = StringUtil.nonBlankSplit(strs_all, addition); //
- * FLog.d(str);
- * 
- * // CharSequence[] items = new CharSequence[strs.length]; AlertDialog.Builder
- * dlg; dlg = new AlertDialog.Builder(FutabaThread.this);
- * dlg.setTitle("テキストを共有\n(外部アプリに送る)"); //
- * dlg.setMessage("クリップボードにコピーするテキストを選択してください"); dlg.setCancelable(true);
- * dlg.setSingleChoiceItems(strs, 0, new DialogInterface.OnClickListener() {
- * public void onClick(DialogInterface dialog, int item) { //
- * button.setText(String.format("%sが選択されました。",items[item])); //
- * Catalog.this.delete_option = item; FutabaThread.this.itemLongClick_chosen =
- * item; } }); dlg.setPositiveButton("OK", new DialogInterface.OnClickListener()
- * { public void onClick(DialogInterface dialog, int id) { //
- * Catalog.this.finish(); // Catalog.this.deleteThreads(); int chosen =
- * FutabaThread.this.itemLongClick_chosen; FLog.d("chosen=" + chosen); if
- * (chosen >= 0 && chosen < strs.length) { String text = strs[chosen];
- * if(chosen==strs.length-1 && strs.length>2){ //すべて選択 text = strs_all; } //
- * アクティビティ飛ばす Intent intent = new Intent( Intent.ACTION_SEND);
- * intent.setType("text/plain"); intent.putExtra(Intent.EXTRA_TEXT, text); try {
- * startActivity(intent); } catch (android.content.ActivityNotFoundException ex)
- * { FLog.d("failed to find target activity to share text"); } } } });
- * dlg.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() { public
- * void onClick(DialogInterface dialog, int id) { // Catalog.cancel(); //
- * Catalog.this.deleteThreads(false); } }); dlg.show();
- * 
- * } }
- */
