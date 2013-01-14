@@ -27,10 +27,13 @@ import java.io.ObjectOutputStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
+import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.graphics.BitmapFactory;
+import org.apache.http.client.methods.HttpPost;
+
+import android.graphics.BitmapFactory;	
 
 //SDカードといいつつSDカードへの保存に加えてHTTPアクセスも扱っているクラス
 public class SDCard {
@@ -227,7 +230,7 @@ public class SDCard {
 			} else {
 				filename = getCacheDir() + name;
 			}
-
+			
 			// InputStream is = url.openStream();
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 

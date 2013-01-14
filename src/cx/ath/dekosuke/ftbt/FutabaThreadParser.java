@@ -47,6 +47,13 @@ public class FutabaThreadParser {
 	public void parse(String allData, boolean anonymous, boolean showdeleted) {
 		try {
 			// 正規表現でパーズ範囲を絞り込む
+			Pattern pthbPattern = Pattern.compile("<input[^>]+?pthb(.+?)>",
+					Pattern.DOTALL);
+			Pattern pthcPattern = Pattern.compile("<input[^>]+?pthc(.+?)>",
+					Pattern.DOTALL);
+			Pattern pthdPattern = Pattern.compile("<input[^>]+?pthd(.+?)>",
+					Pattern.DOTALL);
+
 			Pattern honbunPattern = Pattern.compile("<form.*?>.+?</form>",
 					Pattern.DOTALL);
 			Pattern resPattern = Pattern.compile("<table(.*?)>(.+?)</table>",
@@ -79,6 +86,7 @@ public class FutabaThreadParser {
 			mc.find();
 			mc.find(); // 2つ目
 			String honbun = mc.group(0);
+
 			// ここで画像(img)とテキスト(blockquote)のマッチング
 			FutabaStatus statusTop = new FutabaStatus();
 			Matcher mcImg = thumbPattern.matcher(honbun);

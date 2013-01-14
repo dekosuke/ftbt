@@ -100,7 +100,7 @@ public class Post extends Activity implements Runnable {
 			} else {
 				threadURL = baseURL + threadNum;
 			}
-			urlStr = baseURL + "futaba.php";
+			urlStr = baseURL + "futaba.php?guid=on";
 
 			setContentView(R.layout.post);
 			TextView titleText = (TextView) findViewById(id.titletext);
@@ -152,10 +152,6 @@ public class Post extends Activity implements Runnable {
 			 * tablelayout.setColumnCollapsed(3, true);
 			 * tablelayout.setColumnCollapsed(4, true);
 			 */
-
-			// cookie関連
-			CookieSyncManager.createInstance(this);
-			CookieSyncManager.getInstance().startSync();
 
 			FutabaCookieManager.PrintCookie();
 
@@ -312,7 +308,7 @@ public class Post extends Activity implements Runnable {
 
 			DefaultHttpClient httpClient;
 			httpClient = new DefaultHttpClient();
-			// httpClient.setHeader( "Connection", "Keep-Alive" );
+			//httpClient.setHeader( "Connection", "Keep-Alive" );
 			FutabaCookieManager.loadCookie(httpClient);
 			httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY,
 					CookiePolicy.BROWSER_COMPATIBILITY);
@@ -320,54 +316,14 @@ public class Post extends Activity implements Runnable {
 					.setParameter("http.connection.timeout", 5000);
 			httpClient.getParams().setParameter("http.socket.timeout", 3000);
 
-			/*
-			 * HttpGet httpGet = new HttpGet(urlStr); HttpResponse httpResponse
-			 * = null; httpResponse = httpClient.execute(httpGet);
-			 * ByteArrayOutputStream byteArrayOutputStream = new
-			 * ByteArrayOutputStream();
-			 * httpResponse.getEntity().writeTo(byteArrayOutputStream); String
-			 * retData = byteArrayOutputStream.toString("Shift-JIS");
-			 * FLog.d(retData);FLog.d("1st access end");
-			 * 
-			 * try { // 操作間隔を置く Thread.sleep(3000); } catch (Exception e) {
-			 * FLog.d("message", e); }
-			 */
-
-			try {
-				// クッキー内容の取得。cookieない場合は再取得
-				{
-					List<Cookie> cookies = httpClient.getCookieStore()
-							.getCookies();
-					if (true) {
-						FLog.d("Cookie None");
-						// cookieがないと書き込みができないので、ここでcookie再取得
-						Toast.makeText(this, "cookie再取得中...",
-								Toast.LENGTH_SHORT).show();
-						HttpGet httpGet = new HttpGet(urlStr);
-						HttpResponse httpResponse = null;
-						httpResponse = httpClient.execute(httpGet);
-						ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-						httpResponse.getEntity().writeTo(byteArrayOutputStream);
-						String retData = byteArrayOutputStream
-								.toString("Shift-JIS");
-						FutabaCookieManager.saveCookie(httpClient); // クッキー保存
-						FLog.d(retData);
-						FLog.d("cookie get end");
-						try { // 操作間隔を置く
-							Thread.sleep(3000);
-
-						} catch (Exception e) {
-							FLog.d("message", e);
-						}
-
-					} else {
-						for (int i = 0; i < cookies.size(); i++) {
-							FLog.d("" + cookies.get(i).toString());
-						}
-					}
+			String posttime = "";
+			List<Cookie> cookies = httpClient.getCookieStore()
+					.getCookies();
+			for (int i = 0; i < cookies.size(); i++) {
+				if(cookies.get(i).getName().equals("posttime")){
+					posttime = cookies.get(i).getValue();
+					FLog.d("posttime="+posttime);
 				}
-			} catch (Exception e) {
-				FLog.d("message", e);
 			}
 
 			HttpPost httppost = new HttpPost(urlStr);
@@ -399,11 +355,21 @@ public class Post extends Activity implements Runnable {
 			entity.addPart("email", new StringBody(email, sjisCharset));
 			entity.addPart("name", new StringBody(name, sjisCharset));
 			entity.addPart("mode", new StringBody("regist"));
+			entity.addPart("MAX_FILE_SIZE", new StringBody("512000"));
+			entity.addPart("baseform", new StringBody(""));
+			entity.addPart("pthb", new StringBody(posttime));
+			entity.addPart("pthc", new StringBody(posttime));
+			entity.addPart("pthd", new StringBody(posttime));
+			entity.addPart("flvr", new StringBody(""));
+			entity.addPart("scsz", new StringBody(""));
+			//entity.addPart("textonly", new StringBody("on"));
+			//entity.addPart("hash", new StringBody("1357485774338496-0050adb1005979e5402e80655b02a76d"));
+			entity.addPart("js", new StringBody("on"));
 			if (!newthread) {
 				entity.addPart("resto", new StringBody("" + threadNum));
 			}
 			entity.addPart("com", new StringBody(comment, sjisCharset));
-			entity.addPart("sub", new StringBody(""));
+			entity.addPart("sub", new StringBody("")); //題名
 			entity.addPart("pwd", new StringBody(deletekey));
 			if (imageContent != null) { // content:// -> file://
 				FLog.d("imageContent=" + imageContent);
@@ -422,9 +388,11 @@ public class Post extends Activity implements Runnable {
 			httppost.setEntity(entity);
 			// httppost.setEntity(new UrlEncodedFormEntity(nameValuePair,
 			// "Shift-JIS"));
-			httppost.addHeader("referer", threadURL);
+			httppost.addHeader("referer", threadURL+".htm");
+			//httppost.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)");
+
 			HttpResponse response = httpClient.execute(httppost);
-			FutabaCookieManager.saveCookie(httpClient);
+			//FutabaCookieManager.saveCookie(httpClient);
 			ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
 			response.getEntity().writeTo(byteArrayOutputStream2);
 			String retData2 = byteArrayOutputStream2.toString("Shift-JIS");

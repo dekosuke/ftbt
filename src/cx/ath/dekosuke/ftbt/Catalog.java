@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -95,6 +96,8 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 
 		CookieSyncManager.createInstance(this);
 		CookieSyncManager.getInstance().startSync();
+		CookieManager.getInstance().setAcceptCookie(true);
+		CookieManager.getInstance().removeExpiredCookie();		
 
 		// 無操作で暗くなるのを防ぐ
 		if (getResources().getBoolean(R.bool.avoidsleep)) {

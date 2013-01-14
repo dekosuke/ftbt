@@ -756,22 +756,26 @@ public class FutabaThread extends Activity implements Runnable {
 							.createDigest(threadURL));
 					cacheParser.parse(cacheThreadHtml, anonymous,
 							showDeletedRes);
-					FLog.d("cache  ok  " + threadURL);
+					FLog.d("cache-ok  " + threadURL);
 
 				} else {
 					cache_ok = false;
-					FLog.d("cache fail " + threadURL);
+					FLog.d("cache-fail " + threadURL);
 				}
 
 				String threadHtml = "";
 				try {
+					/*
 					SDCard.saveFromURL(FutabaCrypt.createDigest(threadURL),
 							new URL(threadURL), true); // キャッシュに保存
-					// これが取得できれば最新のデータ
-					String webThreadHtml = SDCard.loadTextCache(FutabaCrypt
+							webThreadHtml=SDCard.loadTextCache(FutabaCrypt
 							.createDigest(threadURL));
+					*/
+					// これが取得できれば最新のデータ
+					String webThreadHtml = FutabaCookieManager.GetWithCookie(threadURL);
+					SDCard.saveBin(FutabaCrypt.createDigest(threadURL), webThreadHtml.getBytes("SHIFT-JIS"), true);
 					webParser.parse(webThreadHtml, anonymous, showDeletedRes);
-					// FLog.d(threadHtml);
+					FLog.d("thtml="+webThreadHtml);
 					if (cache_ok) {
 						// ↓コメント削除があるからこれは仮定できない
 						/*
@@ -800,6 +804,7 @@ public class FutabaThread extends Activity implements Runnable {
 
 					network_ok = true;
 				} catch (IOException e) {
+
 					network_ok = false;
 					// ホスト見つからない(ネットワークない) とか
 					// レスポンスコードが2XX以外とか(スレ落ちなど)
