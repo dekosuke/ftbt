@@ -163,13 +163,13 @@ public class Post extends Activity implements Runnable {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		CookieSyncManager.getInstance().stopSync();
+		//CookieSyncManager.getInstance().startSync();
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
-		CookieSyncManager.getInstance().sync();
+		//CookieSyncManager.getInstance().stopSync();
 	}
 
 	public void setWait() {

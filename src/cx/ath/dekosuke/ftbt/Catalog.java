@@ -112,7 +112,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		CookieSyncManager.getInstance().stopSync();
+		CookieSyncManager.getInstance().startSync();
 		try {
 			FLog.d("Catalog::onResume");
 			if (adapter != null) {
@@ -132,7 +132,7 @@ public class Catalog extends Activity implements OnClickListener, Runnable {
 	protected void onPause() {
 		super.onPause();
 		System.gc();
-		CookieSyncManager.getInstance().sync();
+		CookieSyncManager.getInstance().stopSync();
 	}
 
 	public void setWait() {
