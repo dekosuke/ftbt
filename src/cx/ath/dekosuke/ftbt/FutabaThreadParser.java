@@ -61,11 +61,11 @@ public class FutabaThreadParser {
 			Pattern textPattern = Pattern.compile(
 					"<blockquote.*?>(.+?)</blockquote>", Pattern.DOTALL);
 			Pattern imgPattern = Pattern.compile(
-					"<a.*?target.*?href=(?:\"|\')(.+?)(?:\"|\')",
+					"<a[^>]*?href=(?:\"|')([^\"'>]+?[.](?:jpe|jpg|jpeg|bmp|png|gif))(?:\"|').*?>",
 					Pattern.DOTALL);
 			Pattern thumbPattern = Pattern
 					.compile(
-							"<img.*?src=(?:\"|\')(.+?)(?:\"|\').+?width=([0-9]+).+?height=([0-9]+)",
+							"<img[^>]*?src=(?:\"|')([^\"'>]+?2chan[.]net[^\"'>]+?thumb[^\"'>]+?[.](?:jpe|jpg|jpeg|bmp|png|gif))(?:\"|')[^>]+?width=([0-9]+).+?height=([0-9]+)",
 							Pattern.DOTALL);
 			Pattern endTimePattern = Pattern
 			.compile(
