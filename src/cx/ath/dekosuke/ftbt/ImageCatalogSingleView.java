@@ -357,9 +357,16 @@ class ImageCatalogSingleView extends ImageView implements Runnable {
 	}
 
 	private PointF getMiddle(MotionEvent e, PointF p) {
-		float x = e.getX(0) + e.getX(1);
-		float y = e.getY(0) + e.getY(1);
-		p.set(x / 2, y / 2);
+		try{
+			float x = e.getX(0) + e.getX(1);
+			float y = e.getY(0) + e.getY(1);
+			p.set(x / 2, y / 2);
+		}catch(Exception exception){
+			// Android 4 && from double tap
+			float x = e.getX(0) ;
+			float y = e.getY(0) ;
+			p.set(x / 2, y / 2);
+		}
 		return p;
 	}
 
